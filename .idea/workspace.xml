@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e17f17fd-6e42-45a0-9144-4d0344a5aa27" name="Default" comment="" />
+    <list default="true" id="e17f17fd-6e42-45a0-9144-4d0344a5aa27" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/read_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/read_ledger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/serviceAgentRelation.go" beforeDir="false" afterPath="$PROJECT_DIR$/serviceRelationAgent.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/servicemarbles.go" beforeDir="false" afterPath="$PROJECT_DIR$/servicemarbles.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/write_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/write_ledger.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,11 +22,8 @@
       <file leaf-file-name="servicemarbles.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/servicemarbles.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="430">
-              <caret line="106" column="21" selection-start-line="106" selection-start-column="21" selection-end-line="106" selection-end-column="21" />
-              <folding>
-                <element signature="e#14#132#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="480">
+              <caret line="127" column="18" lean-forward="true" selection-start-line="127" selection-start-column="18" selection-end-line="127" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -26,10 +31,10 @@
       <file leaf-file-name="read_ledger.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/read_ledger.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="387" column="23" lean-forward="true" selection-start-line="387" selection-start-column="23" selection-end-line="387" selection-end-column="23" />
+            <state relative-caret-position="557">
+              <caret line="116" column="4" selection-start-line="116" selection-start-column="4" selection-end-line="116" selection-end-column="28" />
               <folding>
-                <element signature="e#776#1017#0" expanded="true" />
+                <element signature="e#776#988#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -38,8 +43,8 @@
       <file leaf-file-name="write_ledger.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/write_ledger.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="48" column="31" lean-forward="true" selection-start-line="48" selection-start-column="31" selection-end-line="48" selection-end-column="31" />
+            <state relative-caret-position="465">
+              <caret line="48" column="50" selection-start-line="48" selection-start-column="50" selection-end-line="48" selection-end-column="50" />
             </state>
           </provider>
         </entry>
@@ -47,8 +52,8 @@
       <file leaf-file-name="agent.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="490">
-              <caret line="127" column="77" selection-start-line="127" selection-start-column="77" selection-end-line="127" selection-end-column="77" />
+            <state relative-caret-position="287">
+              <caret line="111" column="5" selection-start-line="111" selection-start-column="5" selection-end-line="111" selection-end-column="5" />
               <folding>
                 <element signature="e#14#156#0" expanded="true" />
               </folding>
@@ -56,11 +61,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serviceAgentRelation.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+      <file leaf-file-name="serviceRelationAgent.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="83" lean-forward="true" selection-start-line="83" selection-end-line="83" />
+            <state relative-caret-position="682">
+              <caret line="314" column="39" lean-forward="true" selection-start-line="314" selection-start-column="39" selection-end-line="314" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="encode.go" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/local/go/src/encoding/json/encode.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="296">
+              <caret line="158" column="5" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="interfaces_stable.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="617">
+              <caret line="144" column="78" lean-forward="true" selection-start-line="144" selection-start-column="78" selection-end-line="144" selection-end-column="78" />
             </state>
           </provider>
         </entry>
@@ -77,8 +100,8 @@
       <file leaf-file-name="service.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/service.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="223" column="5" selection-start-line="223" selection-start-column="5" selection-end-line="223" selection-end-column="5" />
+            <state relative-caret-position="3270">
+              <caret line="230" column="40" selection-start-line="230" selection-start-column="40" selection-end-line="230" selection-end-column="40" />
               <folding>
                 <element signature="e#14#159#0" expanded="true" />
               </folding>
@@ -89,7 +112,7 @@
       <file leaf-file-name="interfaces_stable.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
+            <state relative-caret-position="1575">
               <caret line="110" column="4" selection-start-line="110" selection-start-column="4" selection-end-line="110" selection-end-column="4" />
             </state>
           </provider>
@@ -107,20 +130,27 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>float</find>
+      <find>gethistor</find>
+      <find>index</find>
+      <find>getser</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/ServiceAgentRelation.go" />
-        <option value="$PROJECT_DIR$/write_ledger.go" />
-        <option value="$PROJECT_DIR$/service.go" />
-        <option value="$PROJECT_DIR$/agent.go" />
         <option value="$PROJECT_DIR$/lib.go" />
         <option value="$PROJECT_DIR$/read_ledger.go" />
-        <option value="$PROJECT_DIR$/servicemarbles.go" />
         <option value="$PROJECT_DIR$/serviceAgentRelation.go" />
+        <option value="$PROJECT_DIR$/service.go" />
+        <option value="$PROJECT_DIR$/agent.go" />
+        <option value="$PROJECT_DIR$/write_ledger.go" />
+        <option value="$PROJECT_DIR$/servicemarbles.go" />
+        <option value="$PROJECT_DIR$/serviceRelationAgent.go" />
       </list>
     </option>
   </component>
@@ -139,11 +169,15 @@
     <option name="width" value="1613" />
     <option name="height" value="1025" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -155,15 +189,16 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -206,10 +241,10 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3293348" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32896176" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32896176" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -254,23 +289,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/servicemarbles.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1740">
-          <caret line="120" column="16" selection-start-line="120" selection-start-column="16" selection-end-line="120" selection-end-column="16" />
-          <folding>
-            <element signature="e#14#132#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/write_ledger.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="34" column="11" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/agent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1200">
@@ -281,7 +299,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6195">
           <caret line="420" column="127" selection-start-line="420" selection-end-line="420" selection-end-column="127" />
@@ -316,9 +334,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1440">
           <caret line="99" column="60" selection-start-line="99" selection-start-column="60" selection-end-line="99" selection-end-column="60" />
-          <folding>
-            <element signature="e#776#1017#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -326,9 +341,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1440">
           <caret line="100" column="31" selection-start-line="100" selection-start-column="31" selection-end-line="100" selection-end-column="31" />
-          <folding>
-            <element signature="e#14#132#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -377,7 +389,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
           <caret line="30" column="23" lean-forward="true" selection-start-line="30" selection-start-column="23" selection-end-line="30" selection-end-column="23" />
@@ -436,7 +448,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3915">
           <caret line="268" column="37" lean-forward="true" selection-start-line="268" selection-start-column="37" selection-end-line="268" selection-end-column="37" />
@@ -464,7 +476,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5475">
           <caret line="372" column="13" lean-forward="true" selection-start-line="372" selection-start-column="13" selection-end-line="372" selection-end-column="13" />
@@ -544,7 +556,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
@@ -579,26 +591,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/write_ledger.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="48" column="31" lean-forward="true" selection-start-line="48" selection-start-column="31" selection-end-line="48" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/agent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="127" column="77" selection-start-line="127" selection-start-column="77" selection-end-line="127" selection-end-column="77" />
-          <folding>
-            <element signature="e#14#156#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
+        <state relative-caret-position="1575">
           <caret line="110" column="4" selection-start-line="110" selection-start-column="4" selection-end-line="110" selection-end-column="4" />
         </state>
       </provider>
@@ -610,20 +605,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/read_ledger.go">
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="387" column="23" lean-forward="true" selection-start-line="387" selection-start-column="23" selection-end-line="387" selection-end-column="23" />
-          <folding>
-            <element signature="e#776#1017#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="617">
+          <caret line="144" column="78" lean-forward="true" selection-start-line="144" selection-start-column="78" selection-end-line="144" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/write_ledger.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="48" column="50" selection-start-line="48" selection-start-column="50" selection-end-line="48" selection-end-column="50" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/service.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="223" column="5" selection-start-line="223" selection-start-column="5" selection-end-line="223" selection-end-column="5" />
+        <state relative-caret-position="3270">
+          <caret line="230" column="40" selection-start-line="230" selection-start-column="40" selection-end-line="230" selection-end-column="40" />
           <folding>
             <element signature="e#14#159#0" expanded="true" />
           </folding>
@@ -632,18 +631,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/servicemarbles.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="430">
-          <caret line="106" column="21" selection-start-line="106" selection-start-column="21" selection-end-line="106" selection-end-column="21" />
+        <state relative-caret-position="480">
+          <caret line="127" column="18" lean-forward="true" selection-start-line="127" selection-start-column="18" selection-end-line="127" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="111" column="5" selection-start-line="111" selection-start-column="5" selection-end-line="111" selection-end-column="5" />
           <folding>
-            <element signature="e#14#132#0" expanded="true" />
+            <element signature="e#14#156#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serviceAgentRelation.go">
+    <entry file="file:///usr/local/go/src/encoding/json/encode.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="83" lean-forward="true" selection-start-line="83" selection-end-line="83" />
+        <state relative-caret-position="296">
+          <caret line="158" column="5" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/read_ledger.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="557">
+          <caret line="116" column="4" selection-start-line="116" selection-start-column="4" selection-end-line="116" selection-end-column="28" />
+          <folding>
+            <element signature="e#776#988#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="682">
+          <caret line="314" column="39" lean-forward="true" selection-start-line="314" selection-start-column="39" selection-end-line="314" selection-end-column="39" />
         </state>
       </provider>
     </entry>

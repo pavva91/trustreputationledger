@@ -45,6 +45,11 @@ func initLedger(stub shim.ChaincodeStubInterface) pb.Response {
 		Agent{AgentId:"idagent4", Name:"agent4", Address:"address4"},
 		Agent{AgentId:"idagent5", Name:"agent5", Address:"address5"},
 	}
+
+	// non funziona ( come chiamare, si può fare?)
+	initServiceAgentRelation(stub, []string{"idservice1idagent1","idservice1","idagent1","5","3","9"})
+	initServiceAgentRelation(stub, []string{"idservice1idagent2","idservice1","idagent2","6","2","8"})
+
 	for i := 0; i < len(services); i++ {
 		fmt.Println("i is ", i)
 		serviceAsBytes, _ := json.Marshal(services[i])

@@ -77,12 +77,14 @@ func getValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 //  key
 //  "abc"
 //
-// Returns - string
+// Returns Payload:
+// SUCCESS (found key value): shim.Success(json.RawMessage)
+// FAIL (not found key-value): shim.Error
 // ============================================================================================================================
 func read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, jsonResp string
 	var err error
-	fmt.Println("starting read")
+	var outJson json.RawMessage
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting key of the var to query")
@@ -95,16 +97,33 @@ func read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	}
 
 	key = args[0]
-	valAsbytes, err := stub.GetState(key)           //get the var from ledger
+	valAsbytes, err := stub.GetState(key)   //get the var from ledger
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
 		return shim.Error(jsonResp)
 	}
 
+	// Trasformo risposta da bytes a JSON (così ritorna null in caso di risultato vuoto)
+	json.Unmarshal(valAsbytes, &outJson)
+	out, _ := json.Marshal(outJson)
 
 
-	fmt.Println("- end read")
-	return shim.Success(valAsbytes)                  //send it onward
+	// We are crazy, we work directly with []byte :P
+	// if bytes.Equal(out,[]byte{110,117,108,108}){
+	// 	return shim.Error("Key not found in the Ledger")
+	// }
+
+	// Normal people work with string
+	stringOut := string(out)
+	fmt.Print("Raw bytes: ")
+	fmt.Println(out)
+	fmt.Println("String: " + stringOut)
+	if stringOut == "null" {
+		return shim.Error("Key not found in the Ledger")
+
+	}
+
+	return shim.Success(out)                  //send it onward
 }
 
 // ============================================================================================================================
@@ -242,7 +261,7 @@ func getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	}
 
 	serviceId := args[0]
-	fmt.Printf("- start getHistoryForService: %s\n", serviceId)
+	fmt.Printf("- start getHistory: %s\n", serviceId)
 
 	// Get History
 	resultsIterator, err := stub.GetHistoryForKey(serviceId)
@@ -281,11 +300,11 @@ func getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 func prettyPrintHistory(history []queryresult.KeyModification){
 	for i := 0; i< len(history); i++ {
-		fmt.Printf("Valore %s:\n",strconv.Itoa(i))
+		fmt.Printf("Value version: %s:\n",strconv.Itoa(i))
 		fmt.Println("Timestamp: " + history[i].Timestamp.String())
 		fmt.Println("Value: " + string(history[i].Value))
 		fmt.Println("TxId: " + history[i].TxId)
-		fmt.Println("Value: " + strconv.FormatBool(history[i].IsDelete))
+		fmt.Println("IsDelete: " + strconv.FormatBool(history[i].IsDelete))
 		fmt.Println("=====================================================================")
 	}
 }
@@ -304,7 +323,7 @@ func getServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	type ServiceHistory struct {
 		TxId    string   `json:"txId"`
 		Value   Service   `json:"value"`
-		Timestamp *google_protobuf.Timestamp
+		// Timestamp *google_protobuf.Timestamp
 		IsDelete bool `json:"isDelete"`
 	}
 	var history []ServiceHistory

@@ -81,7 +81,7 @@ func queryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	agent, err := getAgent(stub, agentId)
 	if err != nil{
 		fmt.Println("Failed to find agent by id " + agentId)
-		return shim.Error(err.Error())
+		return shim.Error("Failed to find agent by id: " + err.Error())
 	}else {
 		fmt.Println("Agent: " + agent.Name + ", with Address: " + agent.Address + " found")
 		// ==== Marshal the byService query result ====
@@ -107,17 +107,25 @@ func createAgent(agentId string, agentName string, agentAddress string, stub shi
 }
 
 // ============================================================================================================================
-// Get Agent - get an agent asset from ledger
+// Get Agent - get an agent asset from ledger (error!=nil ---> key not found)
 // ============================================================================================================================
-func getAgent(stub shim.ChaincodeStubInterface, idAgent string) (Agent, error) {
+func getAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 	var agent Agent
-	agentAsBytes, err := stub.GetState(idAgent) //getState retreives agent key/value from the ledger
+	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
 	if err != nil {                                          //this seems to always succeed, even if key didn't exist
-		return agent, errors.New("Failed to find agent - " + idAgent)
+		return agent, errors.New("Error in finding agent - " + error.Error(err))
 	}
+	fmt.Println(agentAsBytes)
+	fmt.Println(agent)
+	if agentAsBytes == nil{
+		return agent, errors.New("Agent non found, AgentId: " + agentId)
+	}
+
 	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
 
-	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
+	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)
+
+	fmt.Println(agent)
 
 	return agent, nil
 }

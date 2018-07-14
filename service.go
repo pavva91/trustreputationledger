@@ -145,18 +145,24 @@ func createNameIndex(serviceToIndex *Service, stub shim.ChaincodeStubInterface) 
 }
 
 // ============================================================================================================================
-// Get Service - get the service asset from ledger
+// Get Service - get the service asset from ledger (error!=nil ---> key not found)
 // ============================================================================================================================
-func getService(stub shim.ChaincodeStubInterface, idService string) (Service, error) {
+func getService(stub shim.ChaincodeStubInterface, serviceId string) (Service, error) {
 	var service Service
-	serviceAsBytes, err := stub.GetState(idService) //getState retreives a key/value from the ledger
+	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
 	if err != nil {                                            //this seems to always succeed, even if key didn't exist
-		return service, errors.New("Failed to get service - " + idService)
+		return service, errors.New("Error in finding service: "+error.Error(err))
+	}
+	fmt.Println(serviceAsBytes)
+	fmt.Println(service)
+	if serviceAsBytes == nil {
+		return service, errors.New("Service non found, ServiceId: " + serviceId)
 	}
 	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
 
+	fmt.Println(service)
 	return service, nil
 }
 

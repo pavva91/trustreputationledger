@@ -4,12 +4,16 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"fmt"
+	"bytes"
 )
 
 
 // ==== CHAINCODE RUN (CHAINCODE CONTAINER) ==================
 
 // CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=scc:0 ./servicemarbles
+
+// ==== IMPORT PACKAGE (CLI) ==================
+// go get github.com/hyperledger/fabric/protos/ledger/queryresult
 
 // ==== CHAINCODE INSTALLATION (CLI) ==================
 
@@ -35,7 +39,7 @@ import (
 // ==== CREATE ASSET FUNCTIONS ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "initService", "Args":["idservice5","service1","description1"]}
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "initAgent", "Args":["idagent10","agent10","address10"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent1","2","6","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent2","2","6","8"]}'
 
 // ==== GET ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getService", "Args":["idservice1"]}'
@@ -43,7 +47,9 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getServiceRelationAgent", "Args":["idservice1idagent1"]}'
 
 // ==== GET HISTORY ==================
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "getHistory", "Args":["idservice5"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getServiceHistory", "Args":["idservice5"]}'
+
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byService", "Args":["idservice1"]}'
@@ -57,11 +63,17 @@ import (
 // ==== CALLS IN THE REAL PROJECT ====
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "helloWorld", "Args":[]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initLedger", "Args":[]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initService", "Args":["idservice1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "allLedger", "Args":[]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getHistory", "Args":["service5"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initAgent", "Args":["idagent10","agent10","address10"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initService", "Args":["idservice10","service10","description10"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getService", "Args":["idservice1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent1","3","5","7"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getAgentsByService", "Args":["x"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getService", "Args":["b"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getAgent", "Args":["idagent1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getServiceRelationAgent", "Args":["idservice1idagent1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent2","3","5","7"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getAgentsByService", "Args":["idservice1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getService", "Args":["idservice5"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "deleteService", "Args":["idservice5"]}'
 
 
 
@@ -104,6 +116,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "initAgent":
 		return initAgent(stub, args)
 	case "initServiceAgentRelation":
+		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
 		return initServiceAgentRelation(stub, args)
 	case "getHistory":
 		return getHistory(stub,args)
@@ -120,6 +133,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "byAgent":
 		return queryByAgentServiceRelation(stub,args)
 	case "getAgentsByService":
+		// also with only one record result return always a JSONArray
 		return getServiceRelationAgentByServiceWithCostAndTime(stub,args)
 	case "deleteService":
 		return deleteService(stub,args)
@@ -136,8 +150,16 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "getValue":
 		return getValue(stub, args)
 	case "helloWorld":
-		fmt.Println("buonasera A Valerioasdf")
-		return shim.Success(nil)
+		fmt.Println("Ciao")
+		// in := []byte(`{"Hello":"HelloWorld"}`)
+		// var raw map[string]interface{}
+		// json.Unmarshal(in, &raw)
+		// out, _ := json.Marshal(raw)
+		var buffer bytes.Buffer
+
+		buffer.WriteString("[{\"Hello\":\"HelloWorld\"}]")
+
+		return shim.Success(buffer.Bytes())
 	default:
 		return shim.Error("Invalid Smart Contract function Name.")
 	}
