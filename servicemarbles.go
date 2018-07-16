@@ -1,12 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"fmt"
-	"bytes"
 )
-
 
 // ==== CHAINCODE RUN (CHAINCODE CONTAINER) ==================
 
@@ -39,7 +38,8 @@ import (
 // ==== CREATE ASSET FUNCTIONS ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "initService", "Args":["idservice5","service1","description1"]}
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "initAgent", "Args":["idagent10","agent10","address10"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent2","2","6","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent1","2","6","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "initServiceAndServiceAgentRelation", "Args":["idservice10", "service10","description10","idagent2","2","6","8"]}'
 
 // ==== GET ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getService", "Args":["idservice1"]}'
@@ -48,13 +48,14 @@ import (
 
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getHistory", "Args":["idservice5"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "getServiceHistory", "Args":["idservice5"]}'
-
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "getServiceHistory", "Args":["idservice10"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgent", "Args":["idAgent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getAgentsByService", "Args":["idservice1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "getServicesByAgent", "Args":["idagent1"]}'
+
 
 // ==== DELETE ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "deleteService", "Args":["idservice1"]}'
@@ -71,11 +72,10 @@ import (
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getAgent", "Args":["idagent1"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getServiceRelationAgent", "Args":["idservice1idagent1"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "initServiceAgentRelation", "Args":["idservice1","idagent2","3","5","7"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getAgentsByService", "Args":["idservice1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getAgentsByService", "Args":["CIAO"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "byAgent", "Args":["a1"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "getService", "Args":["idservice5"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "deleteService", "Args":["idservice5"]}'
-
-
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
@@ -118,31 +118,37 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "initServiceAgentRelation":
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
 		return initServiceAgentRelation(stub, args)
+	case "initServiceAndServiceAgentRelation":
+		// If service doesn't exist it will create
+		return initServiceAndServiceAgentRelation(stub, args)
 	case "getHistory":
-		return getHistory(stub,args)
+		return getHistory(stub, args)
 	case "getServiceHistory":
-		return getServiceHistory(stub,args)
+		return getServiceHistory(stub, args)
 	case "getService":
-		return queryService(stub,args)
+		return queryService(stub, args)
 	case "getAgent":
-		return queryAgent(stub,args)
+		return queryAgent(stub, args)
 	case "getServiceRelationAgent":
-		return queryServiceRelationAgent(stub,args)
+		return queryServiceRelationAgent(stub, args)
 	case "byService":
-		return queryByServiceAgentRelation(stub,args)
+		return queryByServiceAgentRelation(stub, args)
 	case "byAgent":
-		return queryByAgentServiceRelation(stub,args)
+		return queryByAgentServiceRelation(stub, args)
 	case "getAgentsByService":
 		// also with only one record result return always a JSONArray
-		return getServiceRelationAgentByServiceWithCostAndTime(stub,args)
+		return getServiceRelationAgentByServiceWithCostAndTime(stub, args)
+	case "getServicesByAgent":
+		// also with only one record result return always a JSONArray
+		return getServiceRelationAgentByAgentWithCostAndTime(stub, args)
 	case "deleteService":
-		return deleteService(stub,args)
+		return deleteService(stub, args)
 	case "deleteAgent":
-		return deleteAgent(stub,args)
+		return deleteAgent(stub, args)
 	case "write":
-		return  write(stub,args)
+		return write(stub, args)
 	case "read":
-		return read(stub,args)
+		return read(stub, args)
 	case "readEverything":
 		return readEverything(stub)
 	case "allLedger":

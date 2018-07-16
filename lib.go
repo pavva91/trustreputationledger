@@ -22,18 +22,24 @@ package main
 import (
 	"errors"
 	"strconv"
-
 )
+
+func argumentSizeVerification(args []string, numberOfArguments int) error {
+	if len(args) != numberOfArguments {
+		return errors.New("Incorrect number of arguments. Expecting " + string(numberOfArguments))
+	}
+	return nil
+}
 
 // ========================================================
 // Input Sanitation - dumb input checking, look for empty strings
 // ========================================================
-func sanitize_arguments(strs []string) error{
-	for i, val:= range strs {
-		if len(val) <= 0 {
+func sanitizeArguments(args []string) error {
+	for i, arg := range args {
+		if len(arg) <= 0 {
 			return errors.New("Argument " + strconv.Itoa(i) + " must be a non-empty string")
 		}
-		if len(val) > 32 {
+		if len(arg) > 32 {
 			return errors.New("Argument " + strconv.Itoa(i) + " must be <= 32 characters")
 		}
 	}

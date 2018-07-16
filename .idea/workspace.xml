@@ -4,9 +4,10 @@
     <list default="true" id="e17f17fd-6e42-45a0-9144-4d0344a5aa27" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agent.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/read_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/read_ledger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serviceAgentRelation.go" beforeDir="false" afterPath="$PROJECT_DIR$/serviceRelationAgent.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/serviceRelationAgent.go" beforeDir="false" afterPath="$PROJECT_DIR$/serviceRelationAgent.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/servicemarbles.go" beforeDir="false" afterPath="$PROJECT_DIR$/servicemarbles.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/write_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/write_ledger.go" afterDir="false" />
     </list>
@@ -22,8 +23,8 @@
       <file leaf-file-name="servicemarbles.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/servicemarbles.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="127" column="18" lean-forward="true" selection-start-line="127" selection-start-column="18" selection-end-line="127" selection-end-column="18" />
+            <state relative-caret-position="630">
+              <caret line="140" column="28" lean-forward="true" selection-start-line="140" selection-start-column="28" selection-end-line="140" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -31,11 +32,8 @@
       <file leaf-file-name="read_ledger.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/read_ledger.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="557">
-              <caret line="116" column="4" selection-start-line="116" selection-start-column="4" selection-end-line="116" selection-end-column="28" />
-              <folding>
-                <element signature="e#776#988#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-4777">
+              <caret line="112" column="4" selection-start-line="112" selection-start-column="4" selection-end-line="112" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -43,8 +41,8 @@
       <file leaf-file-name="write_ledger.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/write_ledger.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="48" column="50" selection-start-line="48" selection-start-column="50" selection-end-line="48" selection-end-column="50" />
+            <state relative-caret-position="450">
+              <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -52,38 +50,38 @@
       <file leaf-file-name="agent.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="111" column="5" selection-start-line="111" selection-start-column="5" selection-end-line="111" selection-end-column="5" />
+            <state relative-caret-position="225">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="agentInvokeCall.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/agentInvokeCall.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" column="47" lean-forward="true" selection-start-line="6" selection-end-line="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serviceRelationAgent.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
               <folding>
-                <element signature="e#14#156#0" expanded="true" />
+                <element signature="e#14#170#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serviceRelationAgent.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
+      <file leaf-file-name="serviceRelationAgentInvokeCall.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/serviceRelationAgentInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="682">
-              <caret line="314" column="39" lean-forward="true" selection-start-line="314" selection-start-column="39" selection-end-line="314" selection-end-column="39" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="encode.go" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/go/src/encoding/json/encode.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="158" column="5" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="interfaces_stable.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="617">
-              <caret line="144" column="78" lean-forward="true" selection-start-line="144" selection-start-column="78" selection-end-line="144" selection-end-column="78" />
+            <state relative-caret-position="414">
+              <caret line="555" column="38" lean-forward="true" selection-start-line="555" selection-start-column="38" selection-end-line="555" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -91,8 +89,8 @@
       <file leaf-file-name="lib.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="40" column="1" selection-start-line="40" selection-start-column="1" selection-end-line="40" selection-end-column="1" />
+            <state relative-caret-position="345">
+              <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -100,20 +98,20 @@
       <file leaf-file-name="service.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/service.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3270">
-              <caret line="230" column="40" selection-start-line="230" selection-start-column="40" selection-end-line="230" selection-end-column="40" />
-              <folding>
-                <element signature="e#14#159#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="105">
+              <caret line="7" column="37" lean-forward="true" selection-start-line="7" selection-end-line="8" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="interfaces_stable.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
+      <file leaf-file-name="serviceInvokeCall.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/serviceInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1575">
-              <caret line="110" column="4" selection-start-line="110" selection-start-column="4" selection-end-line="110" selection-end-column="4" />
+            <state relative-caret-position="345">
+              <caret line="23" column="29" lean-forward="true" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+              <folding>
+                <element signature="e#14#101#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -133,6 +131,7 @@
       <find>gethistor</find>
       <find>index</find>
       <find>getser</find>
+      <find>getAgent</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
@@ -143,13 +142,16 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/ServiceAgentRelation.go" />
-        <option value="$PROJECT_DIR$/lib.go" />
         <option value="$PROJECT_DIR$/read_ledger.go" />
         <option value="$PROJECT_DIR$/serviceAgentRelation.go" />
-        <option value="$PROJECT_DIR$/service.go" />
-        <option value="$PROJECT_DIR$/agent.go" />
         <option value="$PROJECT_DIR$/write_ledger.go" />
+        <option value="$PROJECT_DIR$/lib.go" />
         <option value="$PROJECT_DIR$/servicemarbles.go" />
+        <option value="$PROJECT_DIR$/service.go" />
+        <option value="$PROJECT_DIR$/serviceInvokeCall.go" />
+        <option value="$PROJECT_DIR$/agent.go" />
+        <option value="$PROJECT_DIR$/agentInvokeCall.go" />
+        <option value="$PROJECT_DIR$/serviceRelationAgentInvokeCall.go" />
         <option value="$PROJECT_DIR$/serviceRelationAgent.go" />
       </list>
     </option>
@@ -289,37 +291,10 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/agent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1200">
-          <caret line="85" column="26" selection-start-line="85" selection-start-column="26" selection-end-line="85" selection-end-column="26" />
-          <folding>
-            <element signature="e#14#156#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6195">
-          <caret line="420" column="127" selection-start-line="420" selection-end-line="420" selection-end-column="127" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="27" column="59" lean-forward="true" selection-start-line="27" selection-start-column="59" selection-end-line="27" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/service.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1410">
           <caret line="100" column="34" selection-start-line="100" selection-start-column="34" selection-end-line="100" selection-end-column="34" />
-          <folding>
-            <element signature="e#14#159#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -376,9 +351,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1290">
           <caret line="92" selection-start-line="92" selection-end-line="95" selection-end-column="9" />
-          <folding>
-            <element signature="e#14#159#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -435,9 +407,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1290">
           <caret line="92" selection-start-line="92" selection-end-line="95" selection-end-column="9" />
-          <folding>
-            <element signature="e#14#159#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -494,9 +463,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3075">
           <caret line="211" selection-start-line="211" selection-end-line="221" selection-end-column="9" />
-          <folding>
-            <element signature="e#14#159#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -598,75 +564,93 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="40" column="1" selection-start-line="40" selection-start-column="1" selection-end-line="40" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="617">
-          <caret line="144" column="78" lean-forward="true" selection-start-line="144" selection-start-column="78" selection-end-line="144" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/write_ledger.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="48" column="50" selection-start-line="48" selection-start-column="50" selection-end-line="48" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3270">
-          <caret line="230" column="40" selection-start-line="230" selection-start-column="40" selection-end-line="230" selection-end-column="40" />
-          <folding>
-            <element signature="e#14#159#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/servicemarbles.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="127" column="18" lean-forward="true" selection-start-line="127" selection-start-column="18" selection-end-line="127" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/agent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="111" column="5" selection-start-line="111" selection-start-column="5" selection-end-line="111" selection-end-column="5" />
-          <folding>
-            <element signature="e#14#156#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="2085">
+          <caret line="144" column="78" selection-start-line="144" selection-start-column="78" selection-end-line="144" selection-end-column="78" />
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/local/go/src/encoding/json/encode.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
+        <state relative-caret-position="2145">
           <caret line="158" column="5" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/write_ledger.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/servicemarbles.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="140" column="28" lean-forward="true" selection-start-line="140" selection-start-column="28" selection-end-line="140" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/serviceInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="29" lean-forward="true" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+          <folding>
+            <element signature="e#14#101#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="37" lean-forward="true" selection-start-line="7" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agentInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="47" lean-forward="true" selection-start-line="6" selection-end-line="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/read_ledger.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="557">
-          <caret line="116" column="4" selection-start-line="116" selection-start-column="4" selection-end-line="116" selection-end-column="28" />
-          <folding>
-            <element signature="e#776#988#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-4777">
+          <caret line="112" column="4" selection-start-line="112" selection-start-column="4" selection-end-line="112" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="314" column="39" lean-forward="true" selection-start-line="314" selection-start-column="39" selection-end-line="314" selection-end-column="39" />
+        <state relative-caret-position="255">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="e#14#170#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/serviceRelationAgentInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="555" column="38" lean-forward="true" selection-start-line="555" selection-start-column="38" selection-end-line="555" selection-end-column="38" />
         </state>
       </provider>
     </entry>

@@ -19,12 +19,13 @@ under the License.
 
 package main
 
-import ("github.com/hyperledger/fabric/core/chaincode/shim"
-	pb "github.com/hyperledger/fabric/protos/peer"
-	"fmt"
-	"encoding/json"
+import (
 	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/ledger/queryresult"
+	pb "github.com/hyperledger/fabric/protos/peer"
 	"strconv"
 )
 
@@ -51,10 +52,6 @@ func getValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	return shim.Success(valAsbytes)
 }
-
-
-
-
 
 //
 // import (
@@ -91,13 +88,13 @@ func read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	}
 
 	// input sanitation
-	err = sanitize_arguments(args)
+	err = sanitizeArguments(args)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
 	key = args[0]
-	valAsbytes, err := stub.GetState(key)   //get the var from ledger
+	valAsbytes, err := stub.GetState(key) //get the var from ledger
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
 		return shim.Error(jsonResp)
@@ -106,7 +103,6 @@ func read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// Trasformo risposta da bytes a JSON (così ritorna null in caso di risultato vuoto)
 	json.Unmarshal(valAsbytes, &outJson)
 	out, _ := json.Marshal(outJson)
-
 
 	// We are crazy, we work directly with []byte :P
 	// if bytes.Equal(out,[]byte{110,117,108,108}){
@@ -123,7 +119,7 @@ func read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	}
 
-	return shim.Success(out)                  //send it onward
+	return shim.Success(out) //send it onward
 }
 
 // ============================================================================================================================
@@ -180,13 +176,13 @@ func readEverything(stub shim.ChaincodeStubInterface) pb.Response {
 		queryValAsBytes := aKeyValue.Value
 		fmt.Println("on agent id - ", queryKeyAsStr)
 		var agent Agent
-		json.Unmarshal(queryValAsBytes, &agent) //un stringify it aka JSON.parse()
+		json.Unmarshal(queryValAsBytes, &agent)              //un stringify it aka JSON.parse()
 		everything.Agents = append(everything.Agents, agent) //add this service to the list
 	}
 	fmt.Println("agent array - ", everything.Agents)
 
 	//change to array of bytes
-	everythingAsBytes, _ := json.Marshal(everything)              //convert to array of bytes
+	everythingAsBytes, _ := json.Marshal(everything) //convert to array of bytes
 	return shim.Success(everythingAsBytes)
 }
 
@@ -241,6 +237,7 @@ func readAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
 
 	return shim.Success(buffer.Bytes())
 }
+
 // ============================================================================================================================
 // Get history of a general asset
 //
@@ -279,28 +276,28 @@ func getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		var tx queryresult.KeyModification
 		tx.TxId = historyData.TxId                  //copy transaction id over
 		json.Unmarshal(historyData.Value, &service) //un stringify it aka JSON.parse()
-		if historyData.Value == nil {                  //service has been deleted
+		if historyData.Value == nil {               //service has been deleted
 			var emptyBytes []byte
 			tx.Value = emptyBytes //copy nil service
 		} else {
 			json.Unmarshal(historyData.Value, &service) //un stringify it aka JSON.parse()
-			tx.Value = historyData.Value //copy service over
+			tx.Value = historyData.Value                //copy service over
 			tx.Timestamp = historyData.Timestamp
 			tx.IsDelete = historyData.IsDelete
 		}
-		history = append(history, tx)              //add this tx to the list
+		history = append(history, tx) //add this tx to the list
 	}
 	// fmt.Printf("- getHistoryForService returning:\n%s", history)
 	prettyPrintHistory(history)
 
 	//change to array of bytes
-	historyAsBytes, _ := json.Marshal(history)     //convert to array of bytes
+	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
 	return shim.Success(historyAsBytes)
 }
 
-func prettyPrintHistory(history []queryresult.KeyModification){
-	for i := 0; i< len(history); i++ {
-		fmt.Printf("Value version: %s:\n",strconv.Itoa(i))
+func prettyPrintHistory(history []queryresult.KeyModification) {
+	for i := 0; i < len(history); i++ {
+		fmt.Printf("Value version: %s:\n", strconv.Itoa(i))
 		fmt.Println("Timestamp: " + history[i].Timestamp.String())
 		fmt.Println("Value: " + string(history[i].Value))
 		fmt.Println("TxId: " + history[i].TxId)
@@ -321,8 +318,8 @@ func prettyPrintHistory(history []queryresult.KeyModification){
 // ============================================================================================================================
 func getServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type ServiceHistory struct {
-		TxId    string   `json:"txId"`
-		Value   Service   `json:"value"`
+		TxId  string  `json:"txId"`
+		Value Service `json:"value"`
 		// Timestamp *google_protobuf.Timestamp
 		IsDelete bool `json:"isDelete"`
 	}
@@ -352,20 +349,20 @@ func getServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 		var tx ServiceHistory
 		tx.TxId = historyData.TxId                  //copy transaction id over
 		json.Unmarshal(historyData.Value, &service) //un stringify it aka JSON.parse()
-		if historyData.Value == nil {                  //service has been deleted
+		if historyData.Value == nil {               //service has been deleted
 			var emptyService Service
 			tx.Value = emptyService //copy nil service
 		} else {
 			json.Unmarshal(historyData.Value, &service) //un stringify it aka JSON.parse()
-			tx.Value = service //copy service over
+			tx.Value = service                          //copy service over
 			tx.IsDelete = historyData.IsDelete
 		}
-		history = append(history, tx)              //add this tx to the list
+		history = append(history, tx) //add this tx to the list
 	}
 	fmt.Printf("- getHistoryForService returning:\n%s", history)
 
 	//change to array of bytes
-	historyAsBytes, _ := json.Marshal(history)     //convert to array of bytes
+	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
 	return shim.Success(historyAsBytes)
 }
 
@@ -381,9 +378,9 @@ func getServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 // ============================================================================================================================
 func getAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type AgentHistory struct {
-		TxId    string   `json:"txId"`
-		Value   Agent   `json:"value"`
-		IsDelete bool `json:"isDelete"`
+		TxId     string `json:"txId"`
+		Value    Agent  `json:"value"`
+		IsDelete bool   `json:"isDelete"`
 	}
 	var history []AgentHistory
 	var agent Agent
@@ -411,19 +408,19 @@ func getAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 		var tx AgentHistory
 		tx.TxId = historyData.TxId                //copy transaction id over
 		json.Unmarshal(historyData.Value, &agent) //un stringify it aka JSON.parse()
-		if historyData.Value == nil {                  //agent has been deleted
+		if historyData.Value == nil {             //agent has been deleted
 			var emptyAgent Agent
 			tx.Value = emptyAgent //copy nil agent
 		} else {
 			json.Unmarshal(historyData.Value, &agent) //un stringify it aka JSON.parse()
 			tx.Value = agent                          //copy agent over
 		}
-		history = append(history, tx)              //add this tx to the list
+		history = append(history, tx) //add this tx to the list
 	}
 	fmt.Printf("- getHistoryForAgent returning:\n%s", history)
 
 	//change to array of bytes
-	historyAsBytes, _ := json.Marshal(history)     //convert to array of bytes
+	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
 	return shim.Success(historyAsBytes)
 }
 
@@ -439,8 +436,8 @@ func getAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 // ============================================================================================================================
 func getServiceRelationAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type AuditHistory struct {
-		TxId    string   `json:"txId"`
-		Value   ServiceRelationAgent   `json:"value"`
+		TxId  string               `json:"txId"`
+		Value ServiceRelationAgent `json:"value"`
 	}
 	var history []AuditHistory
 	var serviceRelationAgent ServiceRelationAgent
@@ -468,19 +465,18 @@ func getServiceRelationAgentHistory(stub shim.ChaincodeStubInterface, args []str
 		var tx AuditHistory
 		tx.TxId = historyData.TxId                               //copy transaction id over
 		json.Unmarshal(historyData.Value, &serviceRelationAgent) //un stringify it aka JSON.parse()
-		if historyData.Value == nil {                  //serviceRelationAgent has been deleted
+		if historyData.Value == nil {                            //serviceRelationAgent has been deleted
 			var emptyServiceRelationAgent ServiceRelationAgent
 			tx.Value = emptyServiceRelationAgent //copy nil serviceRelationAgent
 		} else {
 			json.Unmarshal(historyData.Value, &serviceRelationAgent) //un stringify it aka JSON.parse()
 			tx.Value = serviceRelationAgent                          //copy serviceRelationAgent over
 		}
-		history = append(history, tx)              //add this tx to the list
+		history = append(history, tx) //add this tx to the list
 	}
 	fmt.Printf("- getHistoryForServiceRelationAgent returning:\n%s", history)
 
 	//change to array of bytes
-	historyAsBytes, _ := json.Marshal(history)     //convert to array of bytes
+	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
 	return shim.Success(historyAsBytes)
 }
-
