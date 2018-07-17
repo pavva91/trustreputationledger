@@ -401,6 +401,35 @@
 			"revisionTime": "2018-06-21T16:16:11Z"
 		},
 		{
+			"checksumSHA1": "H2PuNJfOUgErqQE2ECrFrgd3mAk=",
+			"path": "github.com/pavva91/arglib",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "s8yfdaKkMIFD+aXuOyCrdKMXync=",
+			"path": "github.com/pavva91/servicemarbles",
+			"revision": "84b17a194242a3a5f55d2cc31cd52af009a66595",
+			"revisionTime": "2018-07-16T15:27:25Z"
+		},
+		{
+			"checksumSHA1": "foJ4pgloTYVmd4H+JkpRmOIoAMs=",
+			"path": "github.com/pavva91/servicemarbles/generalcc",
+			"revision": "84b17a194242a3a5f55d2cc31cd52af009a66595",
+			"revisionTime": "2018-07-16T15:27:25Z"
+		},
+		{
+			"checksumSHA1": "JxnhoBYdW14m7zNUzd9u46iDy8o=",
+			"path": "github.com/pavva91/servicemarbles/invokeapi",
+			"revision": "84b17a194242a3a5f55d2cc31cd52af009a66595",
+			"revisionTime": "2018-07-16T15:27:25Z"
+		},
+		{
+			"checksumSHA1": "RsIvpaSOX5LZ9DtyynvP+mbsTvk=",
+			"path": "github.com/pavva91/servicemarbles/model",
+			"revision": "84b17a194242a3a5f55d2cc31cd52af009a66595",
+			"revisionTime": "2018-07-16T15:27:25Z"
+		},
+		{
 			"checksumSHA1": "rJab1YdNhQooDiBWNnt7TLWPyBU=",
 			"origin": "github.com/hyperledger/fabric/vendor/github.com/pkg/errors",
 			"path": "github.com/pkg/errors",
