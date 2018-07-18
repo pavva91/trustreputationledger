@@ -1,3 +1,9 @@
+/*
+Package main is the entry point of the hyperledger fabric chaincode and implements the shim.ChaincodeStubInterface
+*/
+/*
+Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
+ */
 package main
 
 import (
@@ -6,7 +12,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	invoke "github.com/pavva91/servicemarbles/invokeapi"
-	"github.com/pavva91/servicemarbles/model"
+	a "github.com/pavva91/servicemarbles/assets"
 	gen "github.com/pavva91/servicemarbles/generalcc"
 )
 
@@ -50,7 +56,7 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
 
 // ==== GET HISTORY ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idagent2"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory", "Args":["idservice10"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
@@ -68,7 +74,7 @@ import (
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "helloWorld", "Args":[]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitLedger", "Args":[]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "allLedger", "Args":[]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetHistory", "Args":["service5"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceHistory2", "Args":["service5"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitService", "Args":["idservice10","service10","description10"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetService", "Args":["idservice1"]}'
@@ -106,7 +112,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 // Invoke - Our entry point for Invocations
 // ============================================================================================================================
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	// TODO: Refactor the "Not found asset" from throwing error to get back null payload
+	// TODO: General Refactor the "Not found asset" from throwing error to get back null payload
 	function, args := stub.GetFunctionAndParameters()
 	fmt.Println(" ")
 	fmt.Println("starting invoke, for - " + function)
@@ -114,7 +120,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	switch function {
 	case "InitLedger":
-		response := model.InitLedger(stub)
+		response := a.InitLedger(stub)
 		return response
 	case "InitService":
 		return invoke.InitService(stub, args)
@@ -127,13 +133,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		// If service doesn't exist it will create
 		return invoke.InitServiceAndServiceAgentRelation(stub, args)
 	case "GetHistory":
-		// TODO: Refacoring GetHistory da generalcc
-		return model.GetHistory(stub, args)
-	case "GetGenHistory":
-		// TODO: Refacoring GetHistory da generalcc
+		// TODO: Refacoring GetServiceHistory2 da generalcc
 		return gen.GetGeneralHistory(stub,args)
 	case "GetServiceHistory":
-		return model.GetServiceHistory(stub, args)
+		return a.GetServiceHistory(stub, args)
 	case "GetService":
 		return invoke.QueryService(stub, args)
 	case "GetAgent":
@@ -147,24 +150,24 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "GetAgentsByService":
 		// also with only one record result return always a JSONArray
 		return invoke.GetServiceRelationAgentByServiceWithCostAndTime(stub, args)
-	case "getServicesByAgent":
+	case "GetServicesByAgent":
 		// also with only one record result return always a JSONArray
 		return invoke.GetServiceRelationAgentByAgentWithCostAndTime(stub, args)
 	case "DeleteService":
-		return model.DeleteService(stub, args)
+		return a.DeleteService(stub, args)
 	case "DeleteAgent":
-		return model.DeleteAgent(stub, args)
+		return a.DeleteAgent(stub, args)
 	case "Write":
 		return gen.Write(stub, args)
 	case "Read":
 		return gen.Read(stub, args)
 	case "ReadEverything":
-		return model.ReadEverything(stub)
-	case "allLedger":
+		return a.ReadEverything(stub)
+	case "AllLedger":
 		return gen.ReadAllLedger(stub)
 	case "GetValue":
 		return gen.GetValue(stub, args)
-	case "helloWorld":
+	case "HelloWorld":
 		fmt.Println("Ciao")
 		// in := []byte(`{"Hello":"HelloWorld"}`)
 		// var raw map[string]interface{}

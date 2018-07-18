@@ -1,3 +1,6 @@
+/*
+Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
+ */
 package invokeapi
 
 import (
@@ -7,7 +10,7 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 
 	"github.com/pavva91/arglib"
-	m "github.com/pavva91/servicemarbles/model"
+	a "github.com/pavva91/servicemarbles/assets"
 )
 
 // ============================================================================================================================
@@ -41,7 +44,7 @@ func InitAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("This agent already exists: " + agentName)
 	}
 
-	agent := m.CreateAgent(agentId, agentName, agentAddress, stub)
+	agent := a.CreateAgent(agentId, agentName, agentAddress, stub)
 
 	// indexAgent(agent, stub)
 	// TODO: index agent, sarà da fare lo stesso se riesco a fare queste due tabelle?
@@ -71,7 +74,7 @@ func QueryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	agentId := args[0]
 
 	// ==== get the agent ====
-	agent, err := m.GetAgent(stub, agentId)
+	agent, err := a.GetAgent(stub, agentId)
 	if err != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + err.Error())

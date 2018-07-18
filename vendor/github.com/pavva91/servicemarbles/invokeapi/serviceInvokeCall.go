@@ -1,3 +1,9 @@
+/*
+Package invokeapi is the middle layer between the Chaincode entry point (main package) and the Assets (assets package) that is called directly from the chaincode's Invoke funtions and aggregate the calls to the assets to follow the "business logic"
+ */
+/*
+Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
+ */
 package invokeapi
 
 import (
@@ -6,7 +12,7 @@ import (
 	"encoding/json"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
-	"github.com/pavva91/servicemarbles/model"
+	a "github.com/pavva91/servicemarbles/assets"
 )
 
 // ============================================================================================================================
@@ -33,7 +39,7 @@ func InitService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	serviceDescription := args[2]
 
 	// ==== Check if service already exists ====
-	serviceAsBytes, err := model.GetServiceAsBytes(stub, serviceId)
+	serviceAsBytes, err := a.GetServiceAsBytes(stub, serviceId)
 	if err != nil {
 		return shim.Error("Failed to get service: " + err.Error())
 	} else if serviceAsBytes != nil {
@@ -41,21 +47,21 @@ func InitService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("This service already exists: " + serviceName)
 	}
 
-	service, err := model.CreateService(serviceId, serviceName, serviceDescription, stub)
+	service, err := a.CreateService(serviceId, serviceName, serviceDescription, stub)
 	if err != nil {
 		return shim.Error("Failed to create the service: " + err.Error())
 	}
 
 	// ==== Indexing of service by Name (to do query by Name, if you want) ====
 	// index create
-	nameIndexKey, nameIndexError := model.CreateNameIndex(service, stub)
+	nameIndexKey, nameIndexError := a.CreateNameIndex(service, stub)
 	if nameIndexError != nil {
 		return shim.Error(nameIndexError.Error())
 	}
 	fmt.Println(nameIndexKey)
 
 	// index save
-	saveIndexError := model.SaveIndex(nameIndexKey, stub)
+	saveIndexError := a.SaveIndex(nameIndexKey, stub)
 	if saveIndexError != nil {
 		return shim.Error(saveIndexError.Error())
 	}
@@ -86,7 +92,7 @@ func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	serviceId := args[0]
 
 	// ==== get the service ====
-	service, err := model.GetService(stub, serviceId)
+	service, err := a.GetService(stub, serviceId)
 	if err != nil {
 		fmt.Println("Failed to find service by id " + serviceId)
 		return shim.Error(err.Error())

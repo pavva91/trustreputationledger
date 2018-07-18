@@ -1,21 +1,9 @@
 /*
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
+Package generalcc implements a simple library for common fabric hyperledger's chaincode functions.
 */
+/*
+Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
+ */
 
 package generalcc
 
@@ -165,7 +153,7 @@ func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(buffer.Bytes())
 }
 
-// TODO: Trovare il modo di generalizzare senza usare model.Service
+// TODO: Trovare il modo di generalizzare senza usare assets.Service
 // ============================================================================================================================
 // Get history of a general asset
 //
@@ -234,5 +222,30 @@ func PrettyPrintHistory(history []queryresult.KeyModification) {
 		fmt.Println("=====================================================================")
 	}
 }
+
+// ============================================================================================================================
+// Print Results Iterator - Print on screen the general iterator of the composite index query result
+// ============================================================================================================================
+func PrintResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
+	// USE DEFER BECAUSE it will close also in case of error throwing (premature return)
+	defer queryIterator.Close()
+	for i := 0; queryIterator.HasNext(); i++ {
+		responseRange, err := queryIterator.Next()
+		if err != nil {
+			return err
+		}
+		objectType, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
+		if err != nil {
+			return err
+		}
+		i := 0
+		for _,keyPart:=range compositeKeyParts{
+			fmt.Printf("Found a Relation OBJECT_TYPE:%s KEYPART %s: %s", objectType,i,keyPart)
+			i++
+		}
+	}
+	return nil
+}
+
 
 

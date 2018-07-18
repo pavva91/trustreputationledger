@@ -1,3 +1,6 @@
+/*
+Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
+ */
 package invokeapi
 
 import (
@@ -8,7 +11,7 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 
 	"github.com/pavva91/arglib"
-	"github.com/pavva91/servicemarbles/model"
+	a "github.com/pavva91/servicemarbles/assets"
 )
 
 // ========================================================================================================================
@@ -46,7 +49,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	fmt.Println(time)
 
 	// ==== Check if already existing service ====
-	service, errS := model.GetService(stub, serviceId)
+	service, errS := a.GetService(stub, serviceId)
 	if errS != nil {
 		fmt.Println("Failed to find service by id " + serviceId)
 		return shim.Error("Failed to find service by id " + errS.Error())
@@ -54,7 +57,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	fmt.Println("Service ok")
 
 	// ==== Check if already existing agent ====
-	agent, errA := model.GetAgent(stub, agentId)
+	agent, errA := a.GetAgent(stub, agentId)
 	if errA != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
@@ -73,7 +76,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 
 	// ==== Actual creation of serviceRelationAgent  ====
 	relationId := serviceId + agentId
-	serviceRelationAgent, err := model.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, agentReputation, stub)
+	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, agentReputation, stub)
 	if err != nil {
 		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
 	}
@@ -81,7 +84,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	// ==== Indexing of serviceRelationAgent by Service ====
 
 	// index create
-	serviceAgentIndexKey, serviceIndexError := model.CreateServiceIndex(serviceRelationAgent, stub)
+	serviceAgentIndexKey, serviceIndexError := a.CreateServiceIndex(serviceRelationAgent, stub)
 	if serviceIndexError != nil {
 		return shim.Error(serviceIndexError.Error())
 	}
@@ -97,7 +100,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	// ==== Indexing of serviceRelationAgent by Agent ====
 
 	// index create
-	agentServiceIndexKey, agentIndexError := model.CreateAgentIndex(serviceRelationAgent, stub)
+	agentServiceIndexKey, agentIndexError := a.CreateAgentIndex(serviceRelationAgent, stub)
 	if agentIndexError != nil {
 		return shim.Error(agentIndexError.Error())
 	}
@@ -150,18 +153,18 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 	fmt.Println(time)
 
 	// ==== Check if already existing agent ====
-	agent, errA := model.GetAgent(stub, agentId)
+	agent, errA := a.GetAgent(stub, agentId)
 	if errA != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
 	}
 
 	// ==== Check if already existing service ====
-	service, errS := model.GetService(stub, serviceId)
+	service, errS := a.GetService(stub, serviceId)
 	if errS != nil {
 		// se il servizio non esiste lo creo
 		fmt.Println("Failed to find service by id " + serviceId)
-		errorCreateAndIndex := model.CreateAndIndexService(serviceId, serviceName, serviceDescription, stub)
+		errorCreateAndIndex := a.CreateAndIndexService(serviceId, serviceName, serviceDescription, stub)
 		if errorCreateAndIndex != nil {
 			return shim.Error("Error in creating and indexing service: " + errorCreateAndIndex.Error())
 		}
@@ -180,7 +183,7 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 
 	// ==== Actual creation of serviceRelationAgent  ====
 	relationId := serviceId + agentId
-	serviceRelationAgent, err := model.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, agentReputation, stub)
+	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, agentReputation, stub)
 	if err != nil {
 		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
 	}
@@ -188,7 +191,7 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 	// ==== Indexing of serviceRelationAgent by Service ====
 
 	// index create
-	serviceAgentIndexKey, serviceIndexError := model.CreateServiceIndex(serviceRelationAgent, stub)
+	serviceAgentIndexKey, serviceIndexError := a.CreateServiceIndex(serviceRelationAgent, stub)
 	if serviceIndexError != nil {
 		return shim.Error(serviceIndexError.Error())
 	}
@@ -204,7 +207,7 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 	// ==== Indexing of serviceRelationAgent by Agent ====
 
 	// index create
-	agentServiceIndexKey, agentIndexError := model.CreateAgentIndex(serviceRelationAgent, stub)
+	agentServiceIndexKey, agentIndexError := a.CreateAgentIndex(serviceRelationAgent, stub)
 	if agentIndexError != nil {
 		return shim.Error(agentIndexError.Error())
 	}
@@ -241,7 +244,7 @@ func QueryServiceRelationAgent(stub shim.ChaincodeStubInterface, args []string) 
 	relationId := args[0]
 
 	// ==== get the serviceRelationAgent ====
-	serviceRelationAgent, err := model.GetServiceRelationAgent(stub, relationId)
+	serviceRelationAgent, err := a.GetServiceRelationAgent(stub, relationId)
 	if err != nil {
 		fmt.Println("Failed to find serviceRelationAgent by id " + relationId)
 		return shim.Error(err.Error())
@@ -279,14 +282,14 @@ func QueryByServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string
 	serviceId := args[0]
 
 	// ==== Check if already existing service ====
-	service, err := model.GetService(stub, serviceId)
+	service, err := a.GetService(stub, serviceId)
 	if err != nil {
 		fmt.Println("Failed to find service  by id " + serviceId)
 		return shim.Error(err.Error())
 	}
 
 	// ==== Run the byService query ====
-	byServiceQuery, err := model.GetByService(serviceId, stub)
+	byServiceQuery, err := a.GetByService(serviceId, stub)
 	if err != nil {
 		fmt.Println("Failed to get service relation " + serviceId)
 		return shim.Error(err.Error())
@@ -295,7 +298,7 @@ func QueryByServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string
 	fmt.Printf("Agents that expose the service: %s, with Description: %s\n", service.Name, service.Description)
 
 	// ==== Print the byService query result ====
-	err = model.PrintByServiceResultsIterator(byServiceQuery, stub)
+	err = a.PrintByServiceResultsIterator(byServiceQuery, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -327,21 +330,21 @@ func GetAgentsByService(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 	serviceId := args[0]
 
 	// ==== Check if already existing service ====
-	service, err := model.GetService(stub, serviceId)
+	service, err := a.GetService(stub, serviceId)
 	if err != nil {
 		fmt.Println("The service doesn't exist " + serviceId)
 		return shim.Error(err.Error())
 	}
 
 	// ==== Run the byService query ====
-	byServiceQuery, err := model.GetByService(serviceId, stub)
+	byServiceQuery, err := a.GetByService(serviceId, stub)
 	if err != nil {
 		fmt.Println("The service " + service.Name + " is not mapped with any agent " + serviceId)
 		return shim.Error(err.Error())
 	}
 
 	// ==== Get the Agents for the byService query result ====
-	agentSlice, err := model.GetAgentSliceFromByServiceQuery(byServiceQuery, stub)
+	agentSlice, err := a.GetAgentSliceFromByServiceQuery(byServiceQuery, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -379,14 +382,14 @@ func GetServiceRelationAgentByServiceWithCostAndTime(stub shim.ChaincodeStubInte
 	serviceId := args[0]
 
 	// ==== Check if already existing service ====
-	service, err := model.GetService(stub, serviceId)
+	service, err := a.GetService(stub, serviceId)
 	if err != nil {
 		fmt.Println("The service doesn't exist " + serviceId)
 		return shim.Error("The service doesn't exist: " + err.Error())
 	}
 
 	// ==== Run the byService query ====
-	byServiceQueryIterator, err := model.GetByService(serviceId, stub)
+	byServiceQueryIterator, err := a.GetByService(serviceId, stub)
 	// byServiceQueryIterator, err := stub.GetStateByPartialCompositeKey("service~agent~relation", []string{serviceId})
 	defer byServiceQueryIterator.Close()
 
@@ -399,7 +402,7 @@ func GetServiceRelationAgentByServiceWithCostAndTime(stub shim.ChaincodeStubInte
 	}
 
 	// ==== Get the Agents for the byService query result ====
-	serviceRelationSlice, err := model.GetServiceRelationSliceFromRangeQuery(byServiceQueryIterator, stub)
+	serviceRelationSlice, err := a.GetServiceRelationSliceFromRangeQuery(byServiceQueryIterator, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -448,14 +451,14 @@ func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterf
 	agentId := args[0]
 
 	// ==== Check if already existing agent ====
-	agent, err := model.GetAgent(stub, agentId)
+	agent, err := a.GetAgent(stub, agentId)
 	if err != nil {
 		fmt.Println("The agent doesn't exist " + agentId)
 		return shim.Error("The agent doesn't exist: " + err.Error())
 	}
 
 	// ==== Run the byService query ====
-	byAgentQueryIterator, err := model.GetByAgent(agentId, stub)
+	byAgentQueryIterator, err := a.GetByAgent(agentId, stub)
 	defer byAgentQueryIterator.Close()
 
 	if err != nil {
@@ -467,7 +470,7 @@ func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterf
 	}
 
 	// ==== Get the Agents for the byService query result ====
-	serviceRelationSlice, err := model.GetServiceRelationSliceFromRangeQuery(byAgentQueryIterator, stub)
+	serviceRelationSlice, err := a.GetServiceRelationSliceFromRangeQuery(byAgentQueryIterator, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -513,14 +516,14 @@ func QueryByAgentServiceRelation(stub shim.ChaincodeStubInterface, args []string
 	agentId := args[0]
 
 	// ==== Check if already existing agent ====
-	agent, err := model.GetAgent(stub, agentId)
+	agent, err := a.GetAgent(stub, agentId)
 	if err != nil {
 		fmt.Println("Failed to find agent  by id " + agentId)
 		return shim.Error(err.Error())
 	}
 
 	// ==== Run the byAgent query ====
-	byAgentQuery, err := model.GetByAgent(agentId, stub)
+	byAgentQuery, err := a.GetByAgent(agentId, stub)
 	if err != nil {
 		fmt.Println("Failed to get agent relation " + agentId)
 		return shim.Error(err.Error())
@@ -529,7 +532,7 @@ func QueryByAgentServiceRelation(stub shim.ChaincodeStubInterface, args []string
 	fmt.Printf("The agent %s expose the services:\n", agent.Name)
 
 	// ==== Print the byService query result ====
-	printError := model.PrintByAgentResultsIterator(byAgentQuery, stub)
+	printError := a.PrintByAgentResultsIterator(byAgentQuery, stub)
 	if printError != nil {
 		return shim.Error(printError.Error())
 	}
@@ -561,14 +564,14 @@ func RemoveServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 	relationId := args[0]
 
 	// get the serviceRelationAgent
-	serviceRelationAgent, err := model.GetServiceRelationAgent(stub, relationId)
+	serviceRelationAgent, err := a.GetServiceRelationAgent(stub, relationId)
 	if err != nil {
 		fmt.Println("Failed to find serviceRelationAgent by relationId " + relationId)
 		return shim.Error(err.Error())
 	}
 
 	// remove the serviceRelationAgent
-	err = model.DeleteServiceAgentRelation(stub, relationId) //remove the key from chaincode state
+	err = a.DeleteServiceAgentRelation(stub, relationId) //remove the key from chaincode state
 	if err != nil {
 		return shim.Error("Failed to delete state")
 	}

@@ -1,3 +1,9 @@
+/*
+Package main is the entry point of the hyperledger fabric chaincode and implements the shim.ChaincodeStubInterface
+*/
+/*
+Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
+*/
 package main
 
 import (
@@ -5,9 +11,9 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	invoke "github.com/pavva91/servicemarbles/invokeapi"
-	model "github.com/pavva91/servicemarbles/model"
+	a "github.com/pavva91/servicemarbles/assets"
 	gen "github.com/pavva91/servicemarbles/generalcc"
+	invoke "github.com/pavva91/servicemarbles/invokeapi"
 )
 
 // ==== CHAINCODE RUN (CHAINCODE CONTAINER) ==================
@@ -28,7 +34,7 @@ import (
 // ==== CHAINCODE EXECUTION SAMPLES (CLI) ==================
 
 // ==== Invoke servicemarbles ====
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "helloWorld", "Args":[]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "HelloWorld", "Args":[]}'
 // ==== INITIALIZATION FUNCTIONS ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "InitLedger", "Args":[]}'
 
@@ -36,10 +42,10 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "Read", "Args":["idagent1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetValue", "Args":["idagent2"]}' -v 0
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "ReadEverything", "Args":[]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "allLedger", "Args":[]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "AllLedger", "Args":[]}' //TODO: ALL STATE WORLD
 
 // ==== CREATE ASSET FUNCTIONS ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitService", "Args":["idservice5","service1","description1"]}
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitService", "Args":["idservice5","service1","description1asdfasdf"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent1","2","6","8"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "InitServiceAndServiceAgentRelation", "Args":["idservice10", "service10","description10","idagent2","2","6","8"]}'
@@ -51,14 +57,13 @@ import (
 
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory", "Args":["idservice10"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idservice10"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgent", "Args":["idAgent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgentsByService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getServicesByAgent", "Args":["idagent1"]}'
-
 
 // ==== DELETE ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteService", "Args":["idservice1"]}'
@@ -106,7 +111,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 // Invoke - Our entry point for Invocations
 // ============================================================================================================================
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	// TODO: Refactor the "Not found asset" from throwing error to get back null payload
+	// TODO: General Refactor the "Not found asset" from throwing error to get back null payload
 	function, args := stub.GetFunctionAndParameters()
 	fmt.Println(" ")
 	fmt.Println("starting invoke, for - " + function)
@@ -114,7 +119,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	switch function {
 	case "InitLedger":
-		response := model.InitLedger(stub)
+		response := a.InitLedger(stub)
 		return response
 	case "InitService":
 		return invoke.InitService(stub, args)
@@ -128,9 +133,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return invoke.InitServiceAndServiceAgentRelation(stub, args)
 	case "GetHistory":
 		// TODO: Refacoring GetServiceHistory2 da generalcc
-		return gen.GetGeneralHistory(stub,args)
+		return gen.GetGeneralHistory(stub, args)
 	case "GetServiceHistory":
-		return model.GetServiceHistory(stub, args)
+		return a.GetServiceHistory(stub, args)
 	case "GetService":
 		return invoke.QueryService(stub, args)
 	case "GetAgent":
@@ -144,24 +149,24 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "GetAgentsByService":
 		// also with only one record result return always a JSONArray
 		return invoke.GetServiceRelationAgentByServiceWithCostAndTime(stub, args)
-	case "getServicesByAgent":
+	case "GetServicesByAgent":
 		// also with only one record result return always a JSONArray
 		return invoke.GetServiceRelationAgentByAgentWithCostAndTime(stub, args)
 	case "DeleteService":
-		return model.DeleteService(stub, args)
+		return a.DeleteService(stub, args)
 	case "DeleteAgent":
-		return model.DeleteAgent(stub, args)
+		return a.DeleteAgent(stub, args)
 	case "Write":
 		return gen.Write(stub, args)
 	case "Read":
 		return gen.Read(stub, args)
 	case "ReadEverything":
-		return model.ReadEverything(stub)
-	case "allLedger":
+		return a.ReadEverything(stub)
+	case "AllLedger":
 		return gen.ReadAllLedger(stub)
 	case "GetValue":
 		return gen.GetValue(stub, args)
-	case "helloWorld":
+	case "HelloWorld":
 		fmt.Println("Ciao")
 		// in := []byte(`{"Hello":"HelloWorld"}`)
 		// var raw map[string]interface{}
