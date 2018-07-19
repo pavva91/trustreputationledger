@@ -1,15 +1,13 @@
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 package invokeapi
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"strconv"
-	"encoding/json"
 	pb "github.com/hyperledger/fabric/protos/peer"
-
 	"github.com/pavva91/arglib"
 	a "github.com/pavva91/servicemarbles/assets"
 )
@@ -17,10 +15,10 @@ import (
 // ========================================================================================================================
 // Init Service Agent Relation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
 // ========================================================================================================================
-func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	//   0               1       2       3         4
-	// "ServiceId", "AgentId", "Cost", "Time", "AgentReputation"
-	argumentSizeError := arglib.ArgumentSizeVerification(args, 5)
+func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0               1       2       3
+	// "ServiceId", "AgentId", "Cost", "Time"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 4)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
@@ -38,10 +36,6 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	agentId := args[1]
 	cost := args[2]
 	time := args[3]
-	agentReputation, err := strconv.ParseFloat(args[4], 64)
-	if err != nil {
-		return shim.Error("Wrong emptyValue inserted in AgentReputation, need float64: " + err.Error())
-	}
 
 	fmt.Println(serviceId)
 	fmt.Println(agentId)
@@ -49,7 +43,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	fmt.Println(time)
 
 	// ==== Check if already existing service ====
-	service, errS := a.GetService(stub, serviceId)
+	service, errS := a.GetServiceNotFoundError(stub, serviceId)
 	if errS != nil {
 		fmt.Println("Failed to find service by id " + serviceId)
 		return shim.Error("Failed to find service by id " + errS.Error())
@@ -57,7 +51,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 	fmt.Println("Service ok")
 
 	// ==== Check if already existing agent ====
-	agent, errA := a.GetAgent(stub, agentId)
+	agent, errA := a.GetAgentNotFoundError(stub, agentId)
 	if errA != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
@@ -76,7 +70,7 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 
 	// ==== Actual creation of serviceRelationAgent  ====
 	relationId := serviceId + agentId
-	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, agentReputation, stub)
+	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, stub)
 	if err != nil {
 		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
 	}
@@ -110,8 +104,15 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 		return shim.Error("Error  saving Agent index: " + putStateAgentIndexError.Error())
 	}
 
+	// ==== Check, Create, Indexing Reputation ====
+	initReputationValue := "6"
+	reputation,reputationError := a.CheckCreateIndexReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	if reputationError != nil {
+		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
+	}
+
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " nella relazione con reputazione: " + strconv.FormatFloat(serviceRelationAgent.AgentReputation, 'f', 6, 64) + " - end init serviceRelationAgent")
+	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " nella relazione con reputazione iniziale: "+ reputation.Value)
 	return shim.Success(nil)
 }
 
@@ -119,10 +120,10 @@ func InitServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) p
 // Init Service And Service Agent Relation - Same as InitServiceAgentRelation, but if the service doesn't exist
 // it will create the service (and relative indexes) first
 // ========================================================================================================================
-func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	//   0            1             2                     3         4       5       6
-	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time", "AgentReputation"
-	argumentSizeError := arglib.ArgumentSizeVerification(args, 7)
+func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1             2                     3         4       5
+	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 6)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
@@ -140,10 +141,6 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 	agentId := args[3]
 	cost := args[4]
 	time := args[5]
-	agentReputation, err := strconv.ParseFloat(args[4], 64)
-	if err != nil {
-		return shim.Error("Wrong emptyValue inserted in AgentReputation, need float64: " + err.Error())
-	}
 
 	fmt.Println(serviceId)
 	fmt.Println(serviceName)
@@ -153,14 +150,14 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 	fmt.Println(time)
 
 	// ==== Check if already existing agent ====
-	agent, errA := a.GetAgent(stub, agentId)
+	agent, errA := a.GetAgentNotFoundError(stub, agentId)
 	if errA != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
 	}
 
 	// ==== Check if already existing service ====
-	service, errS := a.GetService(stub, serviceId)
+	service, errS := a.GetServiceNotFoundError(stub, serviceId)
 	if errS != nil {
 		// se il servizio non esiste lo creo
 		fmt.Println("Failed to find service by id " + serviceId)
@@ -183,7 +180,7 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 
 	// ==== Actual creation of serviceRelationAgent  ====
 	relationId := serviceId + agentId
-	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, agentReputation, stub)
+	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, stub)
 	if err != nil {
 		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
 	}
@@ -217,13 +214,20 @@ func InitServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args [
 		return shim.Error("Error  saving Agent index: " + putStateAgentIndexError.Error())
 	}
 
+	// ==== Check, Create, Indexing Reputation ====
+	initReputationValue := "6"
+	reputation,reputationError := a.CheckCreateIndexReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	if reputationError != nil {
+		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
+	}
+
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " nella relazione con reputazione: " + strconv.FormatFloat(serviceRelationAgent.AgentReputation, 'f', 6, 64) + " - end init serviceRelationAgent")
+	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " nella relazione con reputazione: "+ reputation.Value)
 	return shim.Success(nil)
 }
 
 // ============================================================================================================================
-// Query ServiceRelationAgent - wrapper of GetService called from the chaincode invoke
+// Query ServiceRelationAgent - wrapper of GetServiceNotFoundError called from the chaincode invoke
 // ============================================================================================================================
 func QueryServiceRelationAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
@@ -232,7 +236,6 @@ func QueryServiceRelationAgent(stub shim.ChaincodeStubInterface, args []string) 
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
-
 
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
@@ -249,7 +252,7 @@ func QueryServiceRelationAgent(stub shim.ChaincodeStubInterface, args []string) 
 		fmt.Println("Failed to find serviceRelationAgent by id " + relationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Service ID: " + serviceRelationAgent.ServiceId + ", Agent: " + serviceRelationAgent.AgentId + ", with Cost: " + serviceRelationAgent.Cost + ", with Time: " + serviceRelationAgent.Time + ", with Reputation: " + strconv.FormatFloat(serviceRelationAgent.AgentReputation, 'f', 6, 64))
+		fmt.Println("Service ID: " + serviceRelationAgent.ServiceId + ", Agent: " + serviceRelationAgent.AgentId + ", with Cost: " + serviceRelationAgent.Cost + ", with Time: " + serviceRelationAgent.Time + ", with Reputation: ")
 		// ==== Marshal the byService query result ====
 		serviceAsJSON, err := json.Marshal(serviceRelationAgent)
 		if err != nil {
@@ -282,7 +285,7 @@ func QueryByServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string
 	serviceId := args[0]
 
 	// ==== Check if already existing service ====
-	service, err := a.GetService(stub, serviceId)
+	service, err := a.GetServiceNotFoundError(stub, serviceId)
 	if err != nil {
 		fmt.Println("Failed to find service  by id " + serviceId)
 		return shim.Error(err.Error())
@@ -330,7 +333,7 @@ func GetAgentsByService(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 	serviceId := args[0]
 
 	// ==== Check if already existing service ====
-	service, err := a.GetService(stub, serviceId)
+	service, err := a.GetServiceNotFoundError(stub, serviceId)
 	if err != nil {
 		fmt.Println("The service doesn't exist " + serviceId)
 		return shim.Error(err.Error())
@@ -382,7 +385,7 @@ func GetServiceRelationAgentByServiceWithCostAndTime(stub shim.ChaincodeStubInte
 	serviceId := args[0]
 
 	// ==== Check if already existing service ====
-	service, err := a.GetService(stub, serviceId)
+	service, err := a.GetServiceNotFoundError(stub, serviceId)
 	if err != nil {
 		fmt.Println("The service doesn't exist " + serviceId)
 		return shim.Error("The service doesn't exist: " + err.Error())
@@ -451,7 +454,7 @@ func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterf
 	agentId := args[0]
 
 	// ==== Check if already existing agent ====
-	agent, err := a.GetAgent(stub, agentId)
+	agent, err := a.GetAgentNotFoundError(stub, agentId)
 	if err != nil {
 		fmt.Println("The agent doesn't exist " + agentId)
 		return shim.Error("The agent doesn't exist: " + err.Error())
@@ -516,7 +519,7 @@ func QueryByAgentServiceRelation(stub shim.ChaincodeStubInterface, args []string
 	agentId := args[0]
 
 	// ==== Check if already existing agent ====
-	agent, err := a.GetAgent(stub, agentId)
+	agent, err := a.GetAgentNotFoundError(stub, agentId)
 	if err != nil {
 		fmt.Println("Failed to find agent  by id " + agentId)
 		return shim.Error(err.Error())
@@ -576,8 +579,6 @@ func RemoveServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error("Failed to delete state")
 	}
 
-	fmt.Printf("Deleted serviceRelationAgent that maps ServiceId: %s, with AgentId: %s of Cost: %s, Time: %s, Agent reputation: %s\n", serviceRelationAgent.ServiceId, serviceRelationAgent.AgentId, serviceRelationAgent.Cost, serviceRelationAgent.Time,
-		strconv.FormatFloat(serviceRelationAgent.AgentReputation, 'f', 6, 64))
+	fmt.Printf("Deleted serviceRelationAgent that maps ServiceId: %s, with AgentId: %s of Cost: %s, Time: %s\n", serviceRelationAgent.ServiceId, serviceRelationAgent.AgentId, serviceRelationAgent.Cost, serviceRelationAgent.Time)
 	return shim.Success(nil)
 }
-

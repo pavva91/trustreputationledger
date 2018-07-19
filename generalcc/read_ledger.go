@@ -100,15 +100,17 @@ func Read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(out) //send it onward
 }
 
-// ============================================================================================================================
-// Get all the ledger
+// =====================================================================================================================
+// Get all the Ledger's Current State Data (State Database) - The ledger’s current state data represents the latest
+// values for all keys ever included in the chain transaction log.
+// (https://hyperledger-fabric.readthedocs.io/en/release-1.1/ledger.html)
 //
 // Inputs - none
 //
 // Returns:
 // }
-// ============================================================================================================================
-func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
+// =====================================================================================================================
+func ReadAllStateDB(stub shim.ChaincodeStubInterface) pb.Response {
 
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
@@ -153,8 +155,9 @@ func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 // TODO: Trovare il modo di generalizzare senza usare assets.Service
-// ============================================================================================================================
-// Get history of a general asset
+// =====================================================================================================================
+// Get history of a general asset in the Chain - The chain is a transaction log, structured as hash-linked blocks
+// (https://hyperledger-fabric.readthedocs.io/en/release-1.1/ledger.html)
 //
 // Shows Off GetHistoryForKey() - reading complete history of a key/value
 //
@@ -162,8 +165,8 @@ func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
 //  0
 //  id
 //  "m01490985296352SjAyM"
-// ============================================================================================================================
-func GetGeneralHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+// =====================================================================================================================
+func GetHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	var history []queryresult.KeyModification
 	var value interface{}

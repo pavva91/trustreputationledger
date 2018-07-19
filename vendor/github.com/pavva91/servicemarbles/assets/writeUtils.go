@@ -1,12 +1,12 @@
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 package assets
 
 import (
-	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 
 	"errors"
@@ -30,6 +30,7 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 		Agent{AgentId: "idagent4", Name: "agent4", Address: "address4"},
 		Agent{AgentId: "idagent5", Name: "agent5", Address: "address5"},
 	}
+
 
 	// non funziona ( come chiamare, si può fare?)
 	// InitServiceAgentRelation(stub, []string{"idservice1idagent1", "idservice1", "idagent1", "5", "3", "9"})

@@ -37,27 +37,6 @@ func CreateAgent(agentId string, agentName string, agentAddress string, stub shi
 	return agent
 }
 // =====================================================================================================================
-// Get Agent - get an agent asset from ledger - return (nil,nil) if not found
-// =====================================================================================================================
-func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
-	var agent Agent
-	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
-	if err != nil {                             //this seems to always succeed, even if key didn't exist
-		return agent, errors.New("Error in finding agent - " + error.Error(err))
-	}
-	fmt.Println(agentAsBytes)
-	fmt.Println(agent)
-
-	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
-
-	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)
-
-	fmt.Println(agent)
-
-	return agent, nil
-}
-
-// =====================================================================================================================
 // Get Agent Not Found Error - get an agent asset from ledger- throws error if not found (error!=nil ---> key not found)
 // =====================================================================================================================
 func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
@@ -72,6 +51,28 @@ func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Ag
 	if agentAsBytes == nil {
 		return agent, errors.New("Agent non found, AgentId: " + agentId)
 	}
+
+	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
+
+	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)
+
+	fmt.Println(agent)
+
+	return agent, nil
+}
+// =====================================================================================================================
+// Get Agent - get an agent asset from ledger - return (nil,nil) if not found
+// =====================================================================================================================
+func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
+	var agent Agent
+	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
+	if err != nil {                             //this seems to always succeed, even if key didn't exist
+		return agent, errors.New("Error in finding agent - " + error.Error(err))
+	}
+	fmt.Println(agentAsBytes)
+	fmt.Println(agent)
+
+
 	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)

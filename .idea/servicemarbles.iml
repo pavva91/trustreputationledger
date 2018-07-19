@@ -3,6 +3,10 @@
   <component name="Go" enabled="true" />
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/arglib" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/servicemarbles/assets" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/servicemarbles/generalcc" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

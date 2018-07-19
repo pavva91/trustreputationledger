@@ -1,6 +1,6 @@
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 
 package generalcc
 
@@ -10,8 +10,6 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
 )
-
-
 
 // ============================================================================================================================
 // simpleWrite() - generic simpleWrite variable into ledger
@@ -24,6 +22,7 @@ import (
 //  "abc" , "test"
 // ============================================================================================================================
 func Write(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
 	var key, value string
 	var err error
 	fmt.Println("starting simpleWrite")
@@ -48,5 +47,3 @@ func Write(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("- end simpleWrite")
 	return shim.Success(nil)
 }
-
-

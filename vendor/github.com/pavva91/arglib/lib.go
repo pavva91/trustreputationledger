@@ -30,6 +30,12 @@ func ArgumentSizeVerification(args []string, numberOfArguments int) error {
 	}
 	return nil
 }
+func ArgumentSizeLimitVerification(args []string, numberOfArguments int) error {
+	if len(args) > numberOfArguments {
+		return errors.New("Incorrect number of arguments. Expecting " + string(numberOfArguments))
+	}
+	return nil
+}
 
 // ========================================================
 // Input Sanitation - dumb input checking, look for empty strings
@@ -39,9 +45,10 @@ func SanitizeArguments(args []string) error {
 		if len(arg) <= 0 {
 			return errors.New("Argument " + strconv.Itoa(i) + " must be a non-empty string")
 		}
-		if len(arg) > 32 {
-			return errors.New("Argument " + strconv.Itoa(i) + " must be <= 32 characters")
-		}
+		// TODO: Fix, on serviceEvaluation the id now is too long, after ID definitions
+		// if len(arg) > 32 {
+		// 	return errors.New("Argument " + strconv.Itoa(i) + " must be <= 32 characters")
+		// }
 	}
 	return nil
 }

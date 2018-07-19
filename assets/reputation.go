@@ -18,21 +18,24 @@ import (
 // - ServiceId
 // - AgentRole
 // - Value
+// UNIVOCAL: AgentId, ServiceId, AgentRole
+
 type Reputation struct {
 	ReputationId        string `json:"ReputationId"`
 	AgentId             string `json:"AgentId"`
 	ServiceId           string `json:"ServiceId"`
 	AgentRole           string `json:"AgentRole"` // TODO:Available roles: Executer, Demander
-	Value               float64 `json:"Value"`  // Value of Reputation of the agent
+	Value               string `json:"Value"`  // Value of Reputation of the agent
 }
 
 
 //TODO: Don't delete reputation of a deleted agent
+//TODO: ADD UPDATE Reputation.Value function
 
 // =====================================================================================================================
 // createReputation - create a new reputation identified as: service-agent-agentrole (Demander || Executer)
 // =====================================================================================================================
-func createReputation(reputationId string, serviceId string, agentId string, agentRole string, value float64, stub shim.ChaincodeStubInterface) (*Reputation, error) {
+func CreateReputation(reputationId string,  agentId string, serviceId string, agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error) {
 	// agentRoleNow := "Demander"
 	// ==== Create marble object and marshal to JSON ====
 	reputation := &Reputation{reputationId, agentId, serviceId,  agentRole, value}
@@ -59,6 +62,48 @@ func CreateAgentServiceRoleIndex(reputation *Reputation, stub shim.ChaincodeStub
 		return agentServiceRoleIndex, err
 	}
 	return agentServiceRoleIndex, nil
+}
+
+func CheckCreateIndexReputation(agentId string, serviceId string,agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error){
+	// ==== Check if AgentRole == Demander || Executer ====
+	if ("DEMANDER"!=agentRole && "EXECUTER"!=agentRole){
+		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \"DEMANDER\"or \"EXECUTER\"")
+	}
+
+	// ==== Check if reputation already exists ====
+	// TODO: Definire come creare reputationId, per ora è composto dai tre ID (agentId + serviceId + agentRole)
+	reputationId := agentId + serviceId + agentRole
+	reputationAsBytes, err := stub.GetState(reputationId)
+	if err != nil {
+		return nil,errors.New("Failed to get service agent reputation: " + err.Error())
+	} else if reputationAsBytes != nil {
+		fmt.Println("This service agent reputation already exists with reputationId: " + reputationId)
+		return nil,errors.New("This service agent reputation already exists with reputationId: " + reputationId)
+	}
+
+	// ==== Actual creation of Reputation  ====
+	reputation, err := CreateReputation(reputationId, agentId, serviceId, agentRole, value, stub)
+	if err != nil {
+		return nil,errors.New("Failed to create reputation of  agent  "+ agentId + " relation of service " + serviceId)
+	}
+
+	// ==== Indexing of reputation by Service Tx Id ====
+
+	// index create
+	agentReputationIndex, serviceIndexError := CreateAgentServiceRoleIndex(reputation, stub)
+	if serviceIndexError != nil {
+		return nil,errors.New(serviceIndexError.Error())
+	}
+	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
+	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
+	emptyValue := []byte{0x00}
+	// index save
+	putStateError := stub.PutState(agentReputationIndex, emptyValue)
+	if putStateError != nil {
+		return nil,errors.New("Error saving Agent Reputation index: " + putStateError.Error())
+	}
+
+	return reputation,nil
 }
 
 // =====================================================================================================================
@@ -109,11 +154,42 @@ func GetReputationNotFoundError(stub shim.ChaincodeStubInterface, reputationId s
 func GetByAgentServiceRole(agentId string, serviceId string, agentRole string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
 	// Query the service~agent~relation index by service
 	// This will execute a key range query on all keys starting with 'service'
-	serviceAgentResultsIterator, err := stub.GetStateByPartialCompositeKey("agent~service~agentRole~reputation", []string{agentId,serviceId,agentRole})
+	indexName := "agent~service~agentRole~reputation"
+
+	serviceAgentResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{agentId,serviceId,agentRole})
 	if err != nil {
 		return serviceAgentResultsIterator, err
 	}
-	defer serviceAgentResultsIterator.Close()
+	return serviceAgentResultsIterator, nil
+}
+
+// =====================================================================================================================
+// Get the service query on ServiceRelationAgent - Execute the query based on service composite index
+// =====================================================================================================================
+func GetByAgentService(agentId string, serviceId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
+	// Query the service~agent~relation index by service
+	// This will execute a key range query on all keys starting with 'service'
+	indexName := "agent~service~agentRole~reputation"
+
+	serviceAgentResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{agentId,serviceId})
+	if err != nil {
+		return serviceAgentResultsIterator, err
+	}
+	return serviceAgentResultsIterator, nil
+}
+
+// =====================================================================================================================
+// Get the service query on ServiceRelationAgent - Execute the query based on service composite index
+// =====================================================================================================================
+func GetByAgentOnly(agentId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
+	// Query the service~agent~relation index by service
+	// This will execute a key range query on all keys starting with 'service'
+	indexName := "agent~service~agentRole~reputation"
+
+	serviceAgentResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{agentId})
+	if err != nil {
+		return serviceAgentResultsIterator, err
+	}
 	return serviceAgentResultsIterator, nil
 }
 
@@ -145,9 +221,9 @@ func DeleteAgentServiceRoleIndex(stub shim.ChaincodeStubInterface, indexName str
 	return nil
 }
 
-// =====================================================================================================================
+// ============================================================================================================================
 // GetAgentSliceFromByServiceQuery - Get the Agent and ServiceRelationAgent Slices from the result of query "byService"
-// =====================================================================================================================
+// ============================================================================================================================
 func GetReputationSliceFromRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Reputation, error) {
 	var serviceRelationAgentSlice []Reputation
 	defer queryIterator.Close()
@@ -171,11 +247,11 @@ func GetReputationSliceFromRangeQuery(queryIterator shim.StateQueryIteratorInter
 	return serviceRelationAgentSlice, nil
 }
 
-
-// =====================================================================================================================
+// ============================================================================================================================
 // Print Results Iterator - Print on screen the general iterator of the composite index query result
-// =====================================================================================================================
+// ============================================================================================================================
 func PrintByAgentServiceRoleReputationResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
+	defer queryIterator.Close()
 	for i := 0; queryIterator.HasNext(); i++ {
 		// Note that we don't get the value (2nd return variable), we'll just get the marble Name from the composite key
 		responseRange, err := queryIterator.Next()
@@ -190,11 +266,10 @@ func PrintByAgentServiceRoleReputationResultsIterator(queryIterator shim.StateQu
 		agentRole := compositeKeyParts[2]
 		reputationId := compositeKeyParts[3]
 
-
 		if err != nil {
 			return err
 		}
-		fmt.Printf("- found a relation from OBJECT_TYPE:%s AGENT ID:%s SERVICE ID:%s AGENT ROLE: %s RELATION ID: %s\n", objectType, agentId, serviceId, agentRole, reputationId)
+		fmt.Printf("- found a relation from OBJECT_TYPE:%s AGENT ID:%s SERVICE ID:%s AGENT ROLE: %s REPUTATION ID: %s\n", objectType, agentId, serviceId, agentRole, reputationId)
 	}
 	return nil
 }

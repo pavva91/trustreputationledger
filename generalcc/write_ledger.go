@@ -22,6 +22,7 @@ import (
 //  "abc" , "test"
 // ============================================================================================================================
 func Write(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
 	var key, value string
 	var err error
 	fmt.Println("starting simpleWrite")

@@ -2,6 +2,9 @@
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
  */
 package invokeapi
+// WHEN CHANGE THAT NAME REFACTOR DOESN'T WORK NOW THAT IS A PACKAGE, YOU MODIFY HERE, SAVE AND FROM CLI
+// DO: govendor update +vendor
+// POI VAI A MODIFICARE LE VARIE CHIAMATE DEL PACKAGE INTERESSATE DAL CAMBIAMENTO
 
 import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -13,10 +16,10 @@ import (
 	a "github.com/pavva91/servicemarbles/assets"
 )
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Init Agent - wrapper of CreateAgent called from the chaincode invoke
-// ============================================================================================================================
-func InitAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+// =====================================================================================================================
+func CreateAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                 2
 	// "AgentId", "agentName", "agentAddress"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 3)
@@ -53,9 +56,9 @@ func InitAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(nil)
 }
 
-// ============================================================================================================================
-// Query Agent - wrapper of GetAgent called from the chaincode invoke
-// ============================================================================================================================
+// =====================================================================================================================
+// Query Agent - wrapper of GetAgentNotFoundError called from the chaincode invoke
+// =====================================================================================================================
 func QueryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
 	// "AgentId"
@@ -74,7 +77,7 @@ func QueryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	agentId := args[0]
 
 	// ==== get the agent ====
-	agent, err := a.GetAgent(stub, agentId)
+	agent, err := a.GetAgentNotFoundError(stub, agentId)
 	if err != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + err.Error())

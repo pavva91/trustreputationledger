@@ -3,7 +3,7 @@ Package generalcc implements a simple library for common fabric hyperledger's ch
 */
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 
 package generalcc
 
@@ -14,8 +14,8 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/ledger/queryresult"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"strconv"
 	"github.com/pavva91/arglib"
+	"strconv"
 )
 
 // ===============================================
@@ -41,7 +41,6 @@ func GetValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	return shim.Success(valAsbytes)
 }
-
 
 // ============================================================================================================================
 // Read - Read a generic variable from ledger
@@ -101,15 +100,17 @@ func Read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(out) //send it onward
 }
 
-// ============================================================================================================================
-// Get all the ledger
+// =====================================================================================================================
+// Get all the Ledger's Current State Data (State Database) - The ledger’s current state data represents the latest
+// values for all keys ever included in the chain transaction log.
+// (https://hyperledger-fabric.readthedocs.io/en/release-1.1/ledger.html)
 //
 // Inputs - none
 //
 // Returns:
 // }
-// ============================================================================================================================
-func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
+// =====================================================================================================================
+func ReadAllStateDB(stub shim.ChaincodeStubInterface) pb.Response {
 
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
@@ -154,8 +155,9 @@ func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 // TODO: Trovare il modo di generalizzare senza usare assets.Service
-// ============================================================================================================================
-// Get history of a general asset
+// =====================================================================================================================
+// Get history of a general asset in the Chain - The chain is a transaction log, structured as hash-linked blocks
+// (https://hyperledger-fabric.readthedocs.io/en/release-1.1/ledger.html)
 //
 // Shows Off GetHistoryForKey() - reading complete history of a key/value
 //
@@ -163,8 +165,8 @@ func ReadAllLedger(stub shim.ChaincodeStubInterface) pb.Response {
 //  0
 //  id
 //  "m01490985296352SjAyM"
-// ============================================================================================================================
-func GetGeneralHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+// =====================================================================================================================
+func GetHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	var history []queryresult.KeyModification
 	var value interface{}
@@ -192,7 +194,7 @@ func GetGeneralHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 		var tx queryresult.KeyModification
 		tx.TxId = historyData.TxId                //copy transaction id over
 		json.Unmarshal(historyData.Value, &value) //un stringify it aka JSON.parse()
-		if historyData.Value == nil {               //value has been deleted
+		if historyData.Value == nil {             //value has been deleted
 			var emptyBytes []byte
 			tx.Value = emptyBytes //copy nil value
 		} else {
@@ -210,7 +212,6 @@ func GetGeneralHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
 	return shim.Success(historyAsBytes)
 }
-
 
 func PrettyPrintHistory(history []queryresult.KeyModification) {
 	for i := 0; i < len(history); i++ {
@@ -239,13 +240,10 @@ func PrintResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub s
 			return err
 		}
 		i := 0
-		for _,keyPart:=range compositeKeyParts{
-			fmt.Printf("Found a Relation OBJECT_TYPE:%s KEYPART %s: %s", objectType,i,keyPart)
+		for _, keyPart := range compositeKeyParts {
+			fmt.Printf("Found a Relation OBJECT_TYPE:%s KEYPART %s: %s", objectType, i, keyPart)
 			i++
 		}
 	}
 	return nil
 }
-
-
-

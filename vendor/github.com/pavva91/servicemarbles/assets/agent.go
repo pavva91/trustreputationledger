@@ -12,9 +12,9 @@ import (
 	"github.com/pavva91/arglib"
 )
 
-// ===================================================================================
+// =====================================================================================================================
 // Define the Agent structure, with 3 properties.  Structure tags are used by encoding/json library
-// ===================================================================================
+// =====================================================================================================================
 // - AgentId
 // - Name
 // - Address
@@ -24,9 +24,9 @@ type Agent struct {
 	Address string `json:"Address"`
 }
 
-// ============================================================
+// =====================================================================================================================
 // CreateAgent - create a new agent and return the created agent
-// ============================================================
+// =====================================================================================================================
 func CreateAgent(agentId string, agentName string, agentAddress string, stub shim.ChaincodeStubInterface) *Agent {
 	// ==== Create marble object and marshal to JSON ====
 	agent := &Agent{AgentId: agentId, Name: agentName, Address: agentAddress}
@@ -36,10 +36,10 @@ func CreateAgent(agentId string, agentName string, agentAddress string, stub shi
 	stub.PutState(agent.AgentId, agentJSONAsBytes)
 	return agent
 }
-// ============================================================================================================================
-// Get Agent - get an agent asset from ledger - return (nil,nil) if not found
-// ============================================================================================================================
-func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
+// =====================================================================================================================
+// Get Agent Not Found Error - get an agent asset from ledger- throws error if not found (error!=nil ---> key not found)
+// =====================================================================================================================
+func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 	var agent Agent
 	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
 	if err != nil {                             //this seems to always succeed, even if key didn't exist
@@ -47,6 +47,10 @@ func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 	}
 	fmt.Println(agentAsBytes)
 	fmt.Println(agent)
+
+	if agentAsBytes == nil {
+		return agent, errors.New("Agent non found, AgentId: " + agentId)
+	}
 
 	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
 
@@ -56,11 +60,10 @@ func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 
 	return agent, nil
 }
-
-// ============================================================================================================================
-// Get Agent Not Found Error - get an agent asset from ledger- throws error if not found (error!=nil ---> key not found)
-// ============================================================================================================================
-func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
+// =====================================================================================================================
+// Get Agent - get an agent asset from ledger - return (nil,nil) if not found
+// =====================================================================================================================
+func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 	var agent Agent
 	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
 	if err != nil {                             //this seems to always succeed, even if key didn't exist
@@ -68,11 +71,8 @@ func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Ag
 	}
 	fmt.Println(agentAsBytes)
 	fmt.Println(agent)
-	// TODO: Levare trigger error ma gestire il payload null
 
-	if agentAsBytes == nil {
-		return agent, errors.New("Agent non found, AgentId: " + agentId)
-	}
+
 	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)
@@ -107,14 +107,14 @@ func GetAllAgents(stub shim.ChaincodeStubInterface) ([]Agent, error) {
 	return agents, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // DeleteAgent() - remove a agent from state and from agent index
 //
 // Shows Off DelState() - "removing"" a key/value from the ledger
 //
 // Inputs:
 //      0
-//     ServiceId
+//     // =====================================================================================================================
 // ============================================================================================================================
 func DeleteAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("starting delete_marble")
@@ -154,9 +154,9 @@ func DeleteAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(nil)
 }
 
-// ============================================================
+// =====================================================================================================================
 // DeleteAllAgentServiceRelations - delete all the Agent relations with service (aka: Reference Integrity)
-// ============================================================
+// =====================================================================================================================
 func DeleteAllAgentServiceRelations(agentId string, stub shim.ChaincodeStubInterface) error {
 	agentServiceResultsIterator, err := GetByAgent(agentId, stub)
 	if err != nil {

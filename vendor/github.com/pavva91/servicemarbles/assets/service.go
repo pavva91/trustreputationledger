@@ -1,9 +1,9 @@
 /*
 Package assets represent the assets with relatives base functions (create, indexing, queries) that can be stored in the ledger of hyperledger fabric blockchain
- */
+*/
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 package assets
 
 import (
@@ -15,9 +15,10 @@ import (
 	"github.com/pavva91/arglib"
 )
 
-// ===================================================================================
-// Define the Service structure, with 3 properties. trying(https://medium.com/@wishmithasmendis/from-rdbms-to-key-value-store-data-modeling-techniques-a2874906bc46)
-// ===================================================================================
+// =====================================================================================================================
+// Define the Service structure, with 3 properties.
+// trying(https://medium.com/@wishmithasmendis/from-rdbms-to-key-value-store-data-modeling-techniques-a2874906bc46)
+// =====================================================================================================================
 // - ServiceId
 // - Name
 // - Description
@@ -27,9 +28,9 @@ type Service struct {
 	Description string `json:"Description"`
 }
 
-// ============================================================
+// =====================================================================================================================
 // CreateService - create a new service and return the created agent
-// ============================================================
+// =====================================================================================================================
 func CreateService(serviceId string, serviceName string, serviceDescription string, stub shim.ChaincodeStubInterface) (*Service, error) {
 	// ==== Create marble object and marshal to JSON ====
 	service := &Service{serviceId, serviceName, serviceDescription}
@@ -43,9 +44,9 @@ func CreateService(serviceId string, serviceName string, serviceDescription stri
 	return service, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Create Service's Name based Index - to do query based on Name of the Service
-// ============================================================================================================================
+// =====================================================================================================================
 func CreateNameIndex(serviceToIndex *Service, stub shim.ChaincodeStubInterface) (nameServiceIndexKey string, err error) {
 	//  ==== Index the serviceAgentRelation to enable service-based range queries, e.g. return all x services ====
 	//  An 'index' is a normal key/value entry in state.
@@ -60,9 +61,9 @@ func CreateNameIndex(serviceToIndex *Service, stub shim.ChaincodeStubInterface) 
 	return nameServiceIndexKey, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Create Service and create and save the index - Atomic function of 3 the subfunctions: save, index, saveindex
-// ============================================================================================================================
+// =====================================================================================================================
 func CreateAndIndexService(serviceId string, serviceName string, serviceDescription string, stub shim.ChaincodeStubInterface) error {
 	service, err := CreateService(serviceId, serviceName, serviceDescription, stub)
 	if err != nil {
@@ -78,7 +79,7 @@ func CreateAndIndexService(serviceId string, serviceName string, serviceDescript
 	fmt.Println(nameIndexKey)
 	// TODO: Mettere a Posto (fare un create Service index
 
-	saveIndexError :=  SaveIndex(nameIndexKey, stub)
+	saveIndexError := SaveIndex(nameIndexKey, stub)
 	if saveIndexError != nil {
 		return errors.New(saveIndexError.Error())
 	}
@@ -86,9 +87,34 @@ func CreateAndIndexService(serviceId string, serviceName string, serviceDescript
 
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
+// Get Service Not Found Error - get the service asset from ledger -
+// throws error if not found (error!=nil ---> key not found)
+// =====================================================================================================================
+func GetServiceNotFoundError(stub shim.ChaincodeStubInterface, serviceId string) (Service, error) {
+	var service Service
+	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
+	if err != nil {                                 //this seems to always succeed, even if key didn't exist
+		return service, errors.New("Error in finding service: " + error.Error(err))
+	}
+	fmt.Println(serviceAsBytes)
+	fmt.Println(service)
+
+	if serviceAsBytes == nil {
+		return service, errors.New("Service non found, ServiceId: " + serviceId)
+	}
+
+	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
+
+	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
+
+	fmt.Println(service)
+	return service, nil
+}
+// =====================================================================================================================
 // Get Service - get the service asset from ledger - return (nil,nil) if not found
-// ============================================================================================================================
+// =====================================================================================================================
+
 func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, error) {
 	var service Service
 	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
@@ -98,6 +124,7 @@ func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, er
 	fmt.Println(serviceAsBytes)
 	fmt.Println(service)
 
+
 	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
@@ -106,33 +133,9 @@ func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, er
 	return service, nil
 }
 
-// ============================================================================================================================
-// Get Service Not Found Error - get the service asset from ledger - throws error if not found (error!=nil ---> key not found)
-// ============================================================================================================================
-func GetServiceNotFoundError(stub shim.ChaincodeStubInterface, serviceId string) (Service, error) {
-	var service Service
-	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
-	if err != nil {                                 //this seems to always succeed, even if key didn't exist
-		return service, errors.New("Error in finding service: " + error.Error(err))
-	}
-	fmt.Println(serviceAsBytes)
-	fmt.Println(service)
-	// TODO: Levare trigger error ma gestire il payload null
-
-	if serviceAsBytes == nil {
-		return service, errors.New("Service non found, ServiceId: " + serviceId)
-	}
-	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
-
-	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
-
-	fmt.Println(service)
-	return service, nil
-}
-
-// ============================================================================================================================
+// =====================================================================================================================
 // Get Service as Bytes - get the service as bytes from ledger
-// ============================================================================================================================
+// =====================================================================================================================
 func GetServiceAsBytes(stub shim.ChaincodeStubInterface, idService string) ([]byte, error) {
 	serviceAsBytes, err := stub.GetState(idService) //getState retreives a key/value from the ledger
 	if err != nil {                                 //this seems to always succeed, even if key didn't exist
@@ -141,7 +144,7 @@ func GetServiceAsBytes(stub shim.ChaincodeStubInterface, idService string) ([]by
 	return serviceAsBytes, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // DeleteService() - remove a service from state and from service index
 //
 // Shows Off DelState() - "removing"" a key/value from the ledger
@@ -149,7 +152,7 @@ func GetServiceAsBytes(stub shim.ChaincodeStubInterface, idService string) ([]by
 // Inputs:
 //      0
 //     ServiceId
-// ============================================================================================================================
+// =====================================================================================================================
 func DeleteService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("starting delete_marble")
 
@@ -188,9 +191,9 @@ func DeleteService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	return shim.Success(nil)
 }
 
-// ============================================================
+// =====================================================================================================================
 // DeleteAllServiceAgentRelations - delete all the Service relations with agent (aka: Reference Integrity)
-// ============================================================
+// =====================================================================================================================
 func DeleteAllServiceAgentRelations(serviceId string, stub shim.ChaincodeStubInterface) error {
 	serviceAgentResultsIterator, err := GetByService(serviceId, stub)
 	if err != nil {
@@ -221,7 +224,7 @@ func DeleteAllServiceAgentRelations(serviceId string, stub shim.ChaincodeStubInt
 		}
 
 		// remove the service index
-		err = deleteServiceIndex(stub, objectType, serviceId, agentId, relationId) //remove the key from chaincode state
+		err = DeleteServiceIndex(stub, objectType, serviceId, agentId, relationId) //remove the key from chaincode state
 		if err != nil {
 			return err
 		}

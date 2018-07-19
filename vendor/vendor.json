@@ -406,28 +406,28 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "WBW4/edTGmAS017aGCXmmUHiI3s=",
+			"checksumSHA1": "IZomn51zivk8q7VhxUlO+BJCu1k=",
 			"path": "github.com/pavva91/servicemarbles",
-			"revision": "aa8f9ad659b3994c902ff3057cde47e18019e444",
-			"revisionTime": "2018-07-17T14:32:49Z"
+			"revision": "3a21cc719d4e1a9a3530a65cfe7793f40993d242",
+			"revisionTime": "2018-07-18T15:23:09Z"
 		},
 		{
-			"checksumSHA1": "wbCs7f0nYdFkZx1j5OwjslaBSeU=",
+			"checksumSHA1": "2PVJOfK1k3q4H1hxSSpSSBemcgs=",
 			"path": "github.com/pavva91/servicemarbles/assets",
-			"revision": "aa8f9ad659b3994c902ff3057cde47e18019e444",
-			"revisionTime": "2018-07-17T14:32:49Z"
+			"revision": "3a21cc719d4e1a9a3530a65cfe7793f40993d242",
+			"revisionTime": "2018-07-18T15:23:09Z"
 		},
 		{
-			"checksumSHA1": "VDLNpdVnRM4IPMXn9ZYP65KLkUo=",
+			"checksumSHA1": "8wNbmAnloIJI3wl1q3f6Rvcq9zM=",
 			"path": "github.com/pavva91/servicemarbles/generalcc",
-			"revision": "aa8f9ad659b3994c902ff3057cde47e18019e444",
-			"revisionTime": "2018-07-17T14:32:49Z"
+			"revision": "3a21cc719d4e1a9a3530a65cfe7793f40993d242",
+			"revisionTime": "2018-07-18T15:23:09Z"
 		},
 		{
-			"checksumSHA1": "CS/3N0XtpgBCJN7486LSfR+VO7Y=",
+			"checksumSHA1": "Jeq7IZRtm/4eGw3fNVUBpE/Rxh8=",
 			"path": "github.com/pavva91/servicemarbles/invokeapi",
-			"revision": "aa8f9ad659b3994c902ff3057cde47e18019e444",
-			"revisionTime": "2018-07-17T14:32:49Z"
+			"revision": "3a21cc719d4e1a9a3530a65cfe7793f40993d242",
+			"revisionTime": "2018-07-18T15:23:09Z"
 		},
 		{
 			"checksumSHA1": "RsIvpaSOX5LZ9DtyynvP+mbsTvk=",

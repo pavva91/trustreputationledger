@@ -1,24 +1,26 @@
 /*
-Package invokeapi is the middle layer between the Chaincode entry point (main package) and the Assets (assets package) that is called directly from the chaincode's Invoke funtions and aggregate the calls to the assets to follow the "business logic"
- */
+Package invokeapi is the middle layer between the Chaincode entry point (main package) and the Assets (assets package)
+that is called directly from the chaincode's Invoke funtions and aggregate the calls to the assets to follow the
+"business logic"
+*/
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 package invokeapi
 
 import (
-	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
 	a "github.com/pavva91/servicemarbles/assets"
 )
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Init Service - wrapper of CreateService called from the chaincode invoke
-// ============================================================================================================================
-func InitService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+// =====================================================================================================================
+func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                 2
 	// "ServiceId", "serviceName", "serviceDescription"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 3)
@@ -71,9 +73,9 @@ func InitService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(nil)
 }
 
-// ============================================================================================================================
-// Query Service - wrapper of GetService called from the chaincode invoke
-// ============================================================================================================================
+// =====================================================================================================================
+// Query Service - wrapper of GetServiceNotFoundError called from the chaincode invoke
+// =====================================================================================================================
 func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
 	// "ServiceId"
@@ -92,7 +94,7 @@ func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	serviceId := args[0]
 
 	// ==== get the service ====
-	service, err := a.GetService(stub, serviceId)
+	service, err := a.GetServiceNotFoundError(stub, serviceId)
 	if err != nil {
 		fmt.Println("Failed to find service by id " + serviceId)
 		return shim.Error(err.Error())
@@ -106,4 +108,3 @@ func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Success(serviceAsJSON)
 	}
 }
-

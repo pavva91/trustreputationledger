@@ -1,6 +1,6 @@
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 package assets
 
 import (
@@ -16,16 +16,15 @@ type ServiceRelationAgent struct {
 	AgentId         string  `json:"AgentId"`
 	Cost            string  `json:"Cost"`            //TODO: Usare float64
 	Time            string  `json:"Time"`            //TODO: Usare float64
-	AgentReputation float64 `json:"AgentReputation"` //TODO: Se uso Reputation type devo levare
+	// AgentReputation float64 `json:"AgentReputation"` //TODO: Se uso Reputation lo devo levare
 }
-
 
 // ============================================================
 // createServiceAgentMapping - create a new mapping service agent
 // ============================================================
-func CreateServiceAgentRelation(relationId string, serviceId string, agentId string, cost string, time string, agentReputation float64, stub shim.ChaincodeStubInterface) (*ServiceRelationAgent, error) {
+func CreateServiceAgentRelation(relationId string, serviceId string, agentId string, cost string, time string,  stub shim.ChaincodeStubInterface) (*ServiceRelationAgent, error) {
 	// ==== Create marble object and marshal to JSON ====
-	serviceRelationAgent := &ServiceRelationAgent{relationId, serviceId, agentId, cost, time, agentReputation}
+	serviceRelationAgent := &ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
 	serviceRelationAgentJSONAsBytes, _ := json.Marshal(serviceRelationAgent)
 
 	// === Save marble to state ===
@@ -95,8 +94,6 @@ func GetServiceRelationAgentNotFoundError(stub shim.ChaincodeStubInterface, rela
 		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
 	}
 
-	// TODO: Levare trigger error ma gestire il payload null
-
 	if serviceRelationAgentAsBytes == nil {
 		return ServiceRelationAgent{}, errors.New("ServiceRelationAgent non found, RelationId: " + relationId)
 	}
@@ -150,7 +147,7 @@ func DeleteServiceAgentRelation(stub shim.ChaincodeStubInterface, relationId str
 // ============================================================================================================================
 // Delete Service Agent Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
 // ============================================================================================================================
-func deleteServiceIndex(stub shim.ChaincodeStubInterface, indexName string, serviceId string, agentId string, relationId string) error {
+func DeleteServiceIndex(stub shim.ChaincodeStubInterface, indexName string, serviceId string, agentId string, relationId string) error {
 	// remove the serviceRelationAgent
 	// TODO: Capire come funziona, perché prima crea la composite key?
 	agentServiceIndex, err := stub.CreateCompositeKey(indexName, []string{serviceId, agentId, relationId})

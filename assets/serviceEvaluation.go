@@ -1,14 +1,13 @@
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
-*/
-
+ */
 package assets
 
 import (
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 // ===================================================================================
@@ -26,10 +25,10 @@ import (
 // - IsFinalEvaluation
 // UNIVOCAL: WriterAgentId, DemanderAgentId, ExecuterAgentId, ExecutedServiceTxId
 type ServiceEvaluation struct {
-	EvaluationId        string `json:"ReputationId"`
-	WriterAgentId       string `json:"AgentId"` // WriterAgentId = DemanderAgentId || ExecuterAgentId
-	DemanderAgentId     string `json:"ServiceId"`
-	ExecuterAgentId     string `json:"AgentRole"`
+	EvaluationId        string `json:"EvaluationId"`
+	WriterAgentId       string `json:"WriterAgentId"`// WriterAgentId = DemanderAgentId || ExecuterAgentId
+	DemanderAgentId     string `json:"DemanderAgentId"`
+	ExecuterAgentId     string `json:"ExecuterAgentId"`
 	ExecutedServiceId   string `json:"ExecutedServiceId"`
 	ExecutedServiceTxid string `json:"ExecutedServiceTxid"` //Relativo all'esecuzione del servizio
 	Timestamp           string `json:"Timestamp"`
@@ -41,12 +40,12 @@ type ServiceEvaluation struct {
 // ============================================================
 // Create Service Evaluation - create a new service evaluation
 // ============================================================
-func createServiceEvaluation(evaluationId string, writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string, stub shim.ChaincodeStubInterface) (*ServiceEvaluation, error) {
+func CreateServiceEvaluation(evaluationId string, writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string, stub shim.ChaincodeStubInterface) (*ServiceEvaluation, error) {
 	// ==== Create marble object and marshal to JSON ====
-	serviceEvaluation := &ServiceEvaluation{evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value}
+	serviceEvaluation := &ServiceEvaluation{evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId,timestamp,value}
 	serviceEvaluationJSONAsBytes, _ := json.Marshal(serviceEvaluation)
 
-	// === Save marble to state ===
+	// === Save Service Evaluation to state ===
 	stub.PutState(evaluationId, serviceEvaluationJSONAsBytes)
 
 	return serviceEvaluation, nil
@@ -82,7 +81,7 @@ func CreateDemanderExecuterIndex(serviceEvaluation *ServiceEvaluation, stub shim
 func GetServiceEvaluation(stub shim.ChaincodeStubInterface, evaluationId string) (ServiceEvaluation, error) {
 	var serviceRelationAgent ServiceEvaluation
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) //getState retreives a key/value from the ledger
-	if err != nil {                                                 //this seems to always succeed, even if key didn't exist
+	if err != nil {                                               //this seems to always succeed, even if key didn't exist
 		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
 	}
 
@@ -99,7 +98,7 @@ func GetServiceEvaluation(stub shim.ChaincodeStubInterface, evaluationId string)
 func GetServiceEvaluationNotFoundError(stub shim.ChaincodeStubInterface, evaluationId string) (ServiceEvaluation, error) {
 	var serviceRelationAgent ServiceEvaluation
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) //getState retreives a key/value from the ledger
-	if err != nil {                                                 //this seems to always succeed, even if key didn't exist
+	if err != nil {                                               //this seems to always succeed, even if key didn't exist
 		return serviceRelationAgent, errors.New("Error in finding service evaluation: " + error.Error(err))
 	}
 
@@ -124,22 +123,20 @@ func GetByExecutedServiceTx(executedServiceTxId string, stub shim.ChaincodeStubI
 	if err != nil {
 		return executedServiceTxResultsIterator, err
 	}
-	defer executedServiceTxResultsIterator.Close()
 	return executedServiceTxResultsIterator, nil
 }
 
 // ============================================================================================================================
 // Get the agent query on ServiceRelationAgent - Execute the query based on agent composite index
 // ============================================================================================================================
-func GetByDemanderExecuter(serviceId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
+func GetByDemanderExecuter(demanderAgentId string, executerAgentId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
 	// Query the service~agent~relation index by service
 	// This will execute a key range query on all keys starting with 'service'
 	indexName := "demander~executer~evaluation"
-	demanderExecuterResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{serviceId})
+	demanderExecuterResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{demanderAgentId, executerAgentId})
 	if err != nil {
 		return demanderExecuterResultsIterator, err
 	}
-	defer demanderExecuterResultsIterator.Close()
 	return demanderExecuterResultsIterator, nil
 }
 
@@ -194,7 +191,7 @@ func DeleteDemanderExecuterIndex(stub shim.ChaincodeStubInterface, demanderAgent
 // ============================================================================================================================
 // GetServiceRelationSliceFromServiceTxRangeQuery - Get the ServiceEvaluation Slices from the result of query "GetByExecutedServiceTx"
 // ============================================================================================================================
-func GetServiceRelationSliceFromServiceTxRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceEvaluation, error) {
+func GetServiceEvaluationSliceFromServiceTxIdRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceEvaluation, error) {
 	var serviceEvaluations []ServiceEvaluation
 	defer queryIterator.Close()
 
@@ -218,9 +215,9 @@ func GetServiceRelationSliceFromServiceTxRangeQuery(queryIterator shim.StateQuer
 }
 
 // ============================================================================================================================
-// GetServiceRelationSliceFromDemanderExecuterRangeQuery - Get the Agent and ServiceEvaluation Slices from the result of query "GetByDemanderExecuter"
+// GetServiceEvaluationSliceFromDemanderExecuterRangeQuery - Get the Agent and ServiceEvaluation Slices from the result of query "GetByDemanderExecuter"
 // ============================================================================================================================
-func GetServiceRelationSliceFromDemanderExecuterRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceEvaluation, error) {
+func GetServiceEvaluationSliceFromDemanderExecuterRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceEvaluation, error) {
 	var serviceEvaluations []ServiceEvaluation
 	// USE DEFER BECAUSE it will close also in case of error throwing (premature return)
 	defer queryIterator.Close()
@@ -247,7 +244,7 @@ func GetServiceRelationSliceFromDemanderExecuterRangeQuery(queryIterator shim.St
 // ============================================================================================================================
 // Print Service Tx Results Iterator - Print on screen the iterator of the executed service tx id query result
 // ============================================================================================================================
-func PrintByServiceTxResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
+func PrintByExecutedServiceTxIdResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
 	// USE DEFER BECAUSE it will close also in case of error throwing (premature return)
 	defer queryIterator.Close()
 	for i := 0; queryIterator.HasNext(); i++ {
@@ -292,3 +289,4 @@ func PrintByDemanderExecuterResultsIterator(queryIterator shim.StateQueryIterato
 	}
 	return nil
 }
+

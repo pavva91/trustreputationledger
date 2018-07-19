@@ -1,26 +1,26 @@
 /*
 Created by Valerio Mattioli @ HES-SO (valeriomattioli580@gmail.com
- */
+*/
 package assets
 
 import (
-	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 
 	"github.com/hyperledger/fabric/protos/ledger/queryresult"
 	"github.com/pavva91/servicemarbles/generalcc"
 )
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get everything we need (agents + services)
 //
 // Inputs - none
 //
 // Returns:
 // }
-// ============================================================================================================================
+// =====================================================================================================================
 func ReadEverything(stub shim.ChaincodeStubInterface) pb.Response {
 	type Everything struct {
 		Agents   []Agent   `json:"Agents"`
@@ -77,7 +77,7 @@ func ReadEverything(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(everythingAsBytes)
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get history of service
 //
 // Shows Off GetHistoryForKey() - reading complete history of a key/value
@@ -86,7 +86,7 @@ func ReadEverything(stub shim.ChaincodeStubInterface) pb.Response {
 //  0
 //  id
 //  "m01490985296352SjAyM"
-// ============================================================================================================================
+// =====================================================================================================================
 func GetServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type ServiceHistory struct {
 		TxId  string  `json:"txId"`
@@ -137,7 +137,7 @@ func GetServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	return shim.Success(historyAsBytes)
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get history of agent
 //
 // Shows Off GetHistoryForKey() - reading complete history of a key/value
@@ -146,7 +146,7 @@ func GetServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 //  0
 //  id
 //  "m01490985296352SjAyM"
-// ============================================================================================================================
+// =====================================================================================================================
 func GetAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type AgentHistory struct {
 		TxId     string `json:"txId"`
@@ -195,7 +195,7 @@ func GetAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 	return shim.Success(historyAsBytes)
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get history of ServiceRelationAgent
 //
 // Shows Off GetHistoryForKey() - reading complete history of a key/value
@@ -204,7 +204,7 @@ func GetAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 //  0
 //  id
 //  "m01490985296352SjAyM"
-// ============================================================================================================================
+// =====================================================================================================================
 func GetServiceRelationAgentHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type AuditHistory struct {
 		TxId  string               `json:"txId"`
@@ -251,7 +251,8 @@ func GetServiceRelationAgentHistory(stub shim.ChaincodeStubInterface, args []str
 	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
 	return shim.Success(historyAsBytes)
 }
-// ============================================================================================================================
+
+// =====================================================================================================================
 // Get history of a general asset
 //
 // Shows Off GetHistoryForKey() - reading complete history of a key/value
@@ -260,7 +261,7 @@ func GetServiceRelationAgentHistory(stub shim.ChaincodeStubInterface, args []str
 //  0
 //  id
 //  "m01490985296352SjAyM"
-// ============================================================================================================================
+// =====================================================================================================================
 func GetServiceHistory2(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	var history []queryresult.KeyModification

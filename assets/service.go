@@ -88,26 +88,6 @@ func CreateAndIndexService(serviceId string, serviceName string, serviceDescript
 }
 
 // =====================================================================================================================
-// Get Service - get the service asset from ledger - return (nil,nil) if not found
-// =====================================================================================================================
-func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, error) {
-	var service Service
-	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
-	if err != nil {                                 //this seems to always succeed, even if key didn't exist
-		return service, errors.New("Error in finding service: " + error.Error(err))
-	}
-	fmt.Println(serviceAsBytes)
-	fmt.Println(service)
-
-	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
-
-	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
-
-	fmt.Println(service)
-	return service, nil
-}
-
-// =====================================================================================================================
 // Get Service Not Found Error - get the service asset from ledger -
 // throws error if not found (error!=nil ---> key not found)
 // =====================================================================================================================
@@ -123,6 +103,28 @@ func GetServiceNotFoundError(stub shim.ChaincodeStubInterface, serviceId string)
 	if serviceAsBytes == nil {
 		return service, errors.New("Service non found, ServiceId: " + serviceId)
 	}
+
+	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
+
+	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
+
+	fmt.Println(service)
+	return service, nil
+}
+// =====================================================================================================================
+// Get Service - get the service asset from ledger - return (nil,nil) if not found
+// =====================================================================================================================
+
+func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, error) {
+	var service Service
+	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
+	if err != nil {                                 //this seems to always succeed, even if key didn't exist
+		return service, errors.New("Error in finding service: " + error.Error(err))
+	}
+	fmt.Println(serviceAsBytes)
+	fmt.Println(service)
+
+
 	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
@@ -222,7 +224,7 @@ func DeleteAllServiceAgentRelations(serviceId string, stub shim.ChaincodeStubInt
 		}
 
 		// remove the service index
-		err = deleteServiceIndex(stub, objectType, serviceId, agentId, relationId) //remove the key from chaincode state
+		err = DeleteServiceIndex(stub, objectType, serviceId, agentId, relationId) //remove the key from chaincode state
 		if err != nil {
 			return err
 		}

@@ -42,18 +42,24 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "Read", "Args":["idagent1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetValue", "Args":["idagent2"]}' -v 0
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "ReadEverything", "Args":[]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "AllLedger", "Args":[]}' //TODO: ALL STATE WORLD
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "AllStateDB", "Args":[]}'
 
 // ==== CREATE ASSET FUNCTIONS ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitService", "Args":["idservice5","service1","description1asdfasdf"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent1","2","6","8"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitServiceAndServiceAgentRelation", "Args":["idservice10", "service10","description10","idagent2","2","6","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateService", "Args":["idservice5","service1","description1asdfasdf"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateAgent", "Args":["idagent10","agent10","address10"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAgentRelation", "Args":["idservice1","idagent1","2","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelation", "Args":["idservice10", "service10","description10","idagent2","2","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceEvaluation", "Args":["idagent3","idagent3", "idagent3","idservice1","asdfasCIAOfasdfa","asdfasdfas","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent5","idservice4", "DEMANDER","6"]}'
+
 
 // ==== GET ASSET ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetService", "Args":["idservice1"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgent", "Args":["idagent10"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceNotFoundError", "Args":["idservice1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgentNotFoundError", "Args":["idagent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceEvaluation", "Args":["idagent3idagent3idagent3asdfasfasdfa"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputation", "Args":["idagent5idservice4EXECUTER"]}'
+
 
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
@@ -64,6 +70,16 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgent", "Args":["idAgent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgentsByService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getServicesByAgent", "Args":["idagent1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "byExecutedServiceTxId", "Args":["asdfasfasdfa"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "byDemanderExecuter", "Args":["idagent3","idagent3"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetEvaluationsByServiceTxId", "Args":["asdfasfasdfa"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetEvaluationsByDemanderExecuter", "Args":["idagent3","idagent3"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgentServiceRole", "Args":["idagent5","idservice4","EXECUTER"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputationsByAgentServiceRole", "Args":["idagent5","idservice4","DEMANDER"]}'
+
+
+
+
 
 // ==== DELETE ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteService", "Args":["idservice1"]}'
@@ -76,13 +92,13 @@ import (
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceHistory2", "Args":["service5"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitService", "Args":["idservice10","service10","description10"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetService", "Args":["idservice1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetAgent", "Args":["idagent1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceNotFoundError", "Args":["idservice1"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetAgentNotFoundError", "Args":["idagent1"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent2","3","5","7"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetAgentsByService", "Args":["CIAO"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "byAgent", "Args":["a1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetService", "Args":["idservice5"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceNotFoundError", "Args":["idservice5"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "DeleteService", "Args":["idservice5"]}'
 
 // SimpleChaincode example simple Chaincode implementation
@@ -111,37 +127,38 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 // Invoke - Our entry point for Invocations
 // ============================================================================================================================
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	// TODO: General Refactor the "Not found asset" from throwing error to get back null payload
 	function, args := stub.GetFunctionAndParameters()
-	fmt.Println(" ")
-	fmt.Println("starting invoke, for - " + function)
 
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	switch function {
+	// AGENT, SERVICE, AGENT SERVICE RELATION INVOKES
+
+		// CREATE:
 	case "InitLedger":
 		response := a.InitLedger(stub)
 		return response
-	case "InitService":
-		return invoke.InitService(stub, args)
-	case "InitAgent":
-		return invoke.InitAgent(stub, args)
-	case "InitServiceAgentRelation":
+	case "CreateService":
+		return invoke.CreateService(stub, args)
+	case "CreateAgent":
+		return invoke.CreateAgent(stub, args)
+	case "CreateServiceAgentRelation":
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
-		return invoke.InitServiceAgentRelation(stub, args)
-	case "InitServiceAndServiceAgentRelation":
+		return invoke.CreateServiceAgentRelation(stub, args)
+	case "CreateServiceAndServiceAgentRelation":
 		// If service doesn't exist it will create
-		return invoke.InitServiceAndServiceAgentRelation(stub, args)
-	case "GetHistory":
-		// TODO: Refacoring GetServiceHistory2 da generalcc
-		return gen.GetGeneralHistory(stub, args)
+		return invoke.CreateServiceAndServiceAgentRelation(stub, args)
+
+		// GET:
 	case "GetServiceHistory":
 		return a.GetServiceHistory(stub, args)
-	case "GetService":
+	case "GetServiceNotFoundError":
 		return invoke.QueryService(stub, args)
-	case "GetAgent":
+	case "GetAgentNotFoundError":
 		return invoke.QueryAgent(stub, args)
 	case "GetServiceRelationAgent":
 		return invoke.QueryServiceRelationAgent(stub, args)
+
+		// RANGE QUERY:
 	case "byService":
 		return invoke.QueryByServiceAgentRelation(stub, args)
 	case "byAgent":
@@ -152,21 +169,64 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "GetServicesByAgent":
 		// also with only one record result return always a JSONArray
 		return invoke.GetServiceRelationAgentByAgentWithCostAndTime(stub, args)
+
+		// DELETE:
 	case "DeleteService":
 		return a.DeleteService(stub, args)
 	case "DeleteAgent":
 		return a.DeleteAgent(stub, args)
+
+
+
+	// SERVICE EVALUATION INVOKES
+		// CREATE:
+	case "CreateServiceEvaluation":
+		return invoke.CreateServiceEvaluation(stub, args)
+		// GET:
+	case "GetServiceEvaluation":
+		return invoke.QueryServiceEvaluation(stub, args)
+		// RANGE QUERY:
+	case "byExecutedServiceTxId":
+		return invoke.QueryByExecutedServiceTx(stub, args)
+	case "byDemanderExecuter":
+		return invoke.QueryByDemanderExecuter(stub, args)
+	case "GetEvaluationsByServiceTxId":
+		// also with only one record result return always a JSONArray
+		return invoke.GetServiceEvaluationsByExecutedServiceTxId(stub, args)
+	case "GetEvaluationsByDemanderExecuter":
+		// also with only one record result return always a JSONArray
+		return invoke.GetServiceEvaluationsByDemanderExecuter(stub, args)
+
+	// REPUTATION INVOKES
+		// CREATE:
+	case "CreateReputation":
+		return invoke.CreateReputation(stub, args)
+		// GET:
+	case "GetReputation":
+		return invoke.QueryReputation(stub, args)
+		// RANGE QUERY:
+	case "byAgentServiceRole":
+		return invoke.QueryByAgentServiceRole(stub, args)
+	case "GetReputationsByAgentServiceRole":
+		// also with only one record result return always a JSONArray
+		return invoke.GetReputationsByAgentServiceRole(stub, args)
+
+		// GENERAL INVOKES
 	case "Write":
 		return gen.Write(stub, args)
 	case "Read":
 		return gen.Read(stub, args)
 	case "ReadEverything":
 		return a.ReadEverything(stub)
-	case "AllLedger":
-		return gen.ReadAllLedger(stub)
+	case "GetHistory":
+		// Get Chain Transaction Log of that assetId
+		return gen.GetHistory(stub, args)
+	case "AllStateDB":
+		return gen.ReadAllStateDB(stub)
 	case "GetValue":
 		return gen.GetValue(stub, args)
-	case "HelloWorld":
+
+		case "HelloWorld":
 		fmt.Println("Ciao")
 		// in := []byte(`{"Hello":"HelloWorld"}`)
 		// var raw map[string]interface{}

@@ -31,6 +31,7 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 		Agent{AgentId: "idagent5", Name: "agent5", Address: "address5"},
 	}
 
+
 	// non funziona ( come chiamare, si può fare?)
 	// InitServiceAgentRelation(stub, []string{"idservice1idagent1", "idservice1", "idagent1", "5", "3", "9"})
 	// InitServiceAgentRelation(stub, []string{"idservice1idagent2", "idservice1", "idagent2", "6", "2", "8"})
