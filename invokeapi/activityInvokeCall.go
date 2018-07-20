@@ -15,12 +15,12 @@ import (
 )
 
 /*
-For now we want that the ServiceEvaluation assets can only be added on the ledger (NO MODIFY, NO DELETE)
+For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
  */
 // ========================================================================================================================
 // Create Executed Service Evaluation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
 // ========================================================================================================================
-func CreateServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                   2                     3                   4                        5         6
 	// "WriterAgentId", "DemanderAgentId", "ExecuterAgentId", "ExecutedServiceId", "ExecutedServiceTxId", "Timestamp", "Value"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 7)
@@ -90,7 +90,7 @@ func CreateServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb
 	}
 
 	// ==== Actual creation of Service Evaluation  ====
-	serviceEvaluation, err := a.CreateServiceEvaluation(evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value, stub)
+	serviceEvaluation, err := a.CreateActivity(evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value, stub)
 	if err != nil {
 		return shim.Error("Failed to create executedService demanderAgent relation of executedService " + executedService.Name + " with demanderAgent " + demanderAgent.Name)
 	}
@@ -133,7 +133,7 @@ func CreateServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb
 // ============================================================================================================================
 // Query ServiceRelationAgent - wrapper of GetService called from the chaincode invoke
 // ============================================================================================================================
-func QueryServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func QueryActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
 	// "evaluationId"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
@@ -151,7 +151,7 @@ func QueryServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb.
 	evaluationId := args[0]
 
 	// ==== get the serviceEvaluation ====
-	serviceEvaluation, err := a.GetServiceEvaluationNotFoundError(stub, evaluationId)
+	serviceEvaluation, err := a.GetActivityNotFoundError(stub, evaluationId)
 	if err != nil {
 		fmt.Println("Failed to find serviceEvaluation by id " + evaluationId)
 		return shim.Error(err.Error())
@@ -241,11 +241,11 @@ func QueryByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb
 }
 
 // =====================================================================================================================
-// GetServiceEvaluationsByExecutedServiceTxId - wrapper of GetByExecutedServiceTxId called from chiancode's Invoke,
+// GetActivitiesByExecutedServiceTxId - wrapper of GetByExecutedServiceTxId called from chiancode's Invoke,
 // for looking for serviceEvaluations of a certain executedServiceTxId
 // return: ServiceEvaluations As JSON
 // =====================================================================================================================
-func GetServiceEvaluationsByExecutedServiceTxId(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func GetActivitiesByExecutedServiceTxId(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
 	// "ExecutedServiceTxId"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
@@ -270,7 +270,7 @@ func GetServiceEvaluationsByExecutedServiceTxId(stub shim.ChaincodeStubInterface
 	}
 
 	// ==== Get the Agents for the byServiceTxId query result ====
-	serviceEvaluations, err := a.GetServiceEvaluationSliceFromServiceTxIdRangeQuery(byServiceQuery, stub)
+	serviceEvaluations, err := a.GetActivitySliceFromServiceTxIdRangeQuery(byServiceQuery, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -285,11 +285,11 @@ func GetServiceEvaluationsByExecutedServiceTxId(stub shim.ChaincodeStubInterface
 }
 
 // =====================================================================================================================
-// GetServiceEvaluationsByDemanderExecuter - wrapper of GetByDemanderExecuter called from chiancode's Invoke,
+// GetActivitiesByDemanderExecuter - wrapper of GetByDemanderExecuter called from chiancode's Invoke,
 // for looking for serviceEvaluations of a certain Demander-Executer couple
 // return: ServiceEvaluations As JSON
 // =====================================================================================================================
-func GetServiceEvaluationsByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func GetActivitiesByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0          1
 	// "Demander", "Executer"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
@@ -315,7 +315,7 @@ func GetServiceEvaluationsByDemanderExecuter(stub shim.ChaincodeStubInterface, a
 	}
 
 	// ==== Get the ServiceEvaluations for the byDemanderExecuter query result ====
-	serviceEvaluations, err := a.GetServiceEvaluationSliceFromDemanderExecuterRangeQuery(byExecutedServiceTxIdQuery, stub)
+	serviceEvaluations, err := a.GetActivitySliceFromDemanderExecuterRangeQuery(byExecutedServiceTxIdQuery, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}

@@ -47,3 +47,16 @@ func Write(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("- end simpleWrite")
 	return shim.Success(nil)
 }
+
+// ============================================================================================================================
+// Create UnivocalCompositeKey - create the real id of the asset
+// STANDARD: keyPrefix is UPPERCASE string of 3 letters (i.e: "AGN", "SRV", "ACT", "REL", "REP" is: agent, service, activity, serviceRelationAgent, reputation)
+// ============================================================================================================================
+func CreateUnivocalCompositeKey(keyPrefix string, number string, stub shim.ChaincodeStubInterface) (univocalCompositeKey string, err error) {
+	univocalCompositeKey = keyPrefix+number
+	if err != nil {
+		return univocalCompositeKey, err
+	}
+	fmt.Println(len(univocalCompositeKey))
+	return univocalCompositeKey, nil
+}

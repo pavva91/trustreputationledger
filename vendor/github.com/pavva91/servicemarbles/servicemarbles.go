@@ -45,25 +45,44 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "AllStateDB", "Args":[]}'
 
 // ==== CREATE ASSET FUNCTIONS ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitService", "Args":["idservice5","service1","description1asdfasdf"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent1","2","6","8"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitServiceAndServiceAgentRelation", "Args":["idservice10", "service10","description10","idagent2","2","6","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateService", "Args":["idservice5","service1","description1asdfasdf"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateAgent", "Args":["idagent10","agent10","address10"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAgentRelation", "Args":["idservice1","idagent1","2","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelationWithStandardValue", "Args":["idservice10", "service10","description10","idagent2","2","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateActivity", "Args":["idagent3","idagent3", "idagent3","idservice1","asdfasCIAOfasdfa","asdfasdfas","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent5","idservice4", "DEMANDER","6"]}'
+
+// ==== MODIFY ASSET FUNCTIONS ==================
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "ModifyReputationValue", "Args":["idservice1idagent1EXECUTER","8"]}'
+
 
 // ==== GET ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceNotFoundError", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgentNotFoundError", "Args":["idagent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetActivity", "Args":["idagent3idagent3idagent3asdfasfasdfa"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputation", "Args":["idagent5idservice4EXECUTER"]}'
+
 
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idservice10"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idservice1idagent1EXECUTER"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgent", "Args":["idAgent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgentsByService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "getServicesByAgent", "Args":["idagent1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "byExecutedServiceTxId", "Args":["asdfasfasdfa"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "byDemanderExecuter", "Args":["idagent3","idagent3"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetEvaluationsByServiceTxId", "Args":["asdfasfasdfa"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetEvaluationsByDemanderExecuter", "Args":["idagent3","idagent3"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgentServiceRole", "Args":["idagent5","idservice4","EXECUTER"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputationsByAgentServiceRole", "Args":["idagent5","idservice4","DEMANDER"]}'
+
+
+
+
 
 // ==== DELETE ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteService", "Args":["idservice1"]}'
@@ -111,13 +130,13 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 // Invoke - Our entry point for Invocations
 // ============================================================================================================================
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	// TODO: General Refactor the "Not found asset" from throwing error to get back null payload
 	function, args := stub.GetFunctionAndParameters()
-	fmt.Println(" ")
-	fmt.Println("starting invoke, for - " + function)
 
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	switch function {
+	// AGENT, SERVICE, AGENT SERVICE RELATION INVOKES
+
+		// CREATE:
 	case "InitLedger":
 		response := a.InitLedger(stub)
 		return response
@@ -128,12 +147,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "CreateServiceAgentRelation":
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
 		return invoke.CreateServiceAgentRelation(stub, args)
-	case "CreateServiceAndServiceAgentRelation":
+	case "CreateServiceAndServiceAgentRelationWithStandardValue":
 		// If service doesn't exist it will create
 		return invoke.CreateServiceAndServiceAgentRelationWithStandardValue(stub, args)
-	case "GetHistory":
-		// Get Chain Transaction Log of that assetId
-		return gen.GetHistory(stub, args)
+
+		// GET:
 	case "GetServiceHistory":
 		return a.GetServiceHistory(stub, args)
 	case "GetServiceNotFoundError":
@@ -142,6 +160,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return invoke.QueryAgent(stub, args)
 	case "GetServiceRelationAgent":
 		return invoke.QueryServiceRelationAgent(stub, args)
+
+		// RANGE QUERY:
 	case "byService":
 		return invoke.QueryByServiceAgentRelation(stub, args)
 	case "byAgent":
@@ -152,19 +172,64 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "GetServicesByAgent":
 		// also with only one record result return always a JSONArray
 		return invoke.GetServiceRelationAgentByAgentWithCostAndTime(stub, args)
+
+		// DELETE:
 	case "DeleteService":
 		return a.DeleteService(stub, args)
 	case "DeleteAgent":
 		return a.DeleteAgent(stub, args)
+
+
+
+	// SERVICE EVALUATION INVOKES
+		// CREATE:
+	case "CreateActivity":
+		return invoke.CreateActivity(stub, args)
+		// GET:
+	case "GetActivity":
+		return invoke.QueryActivity(stub, args)
+		// RANGE QUERY:
+	case "byExecutedServiceTxId":
+		return invoke.QueryByExecutedServiceTx(stub, args)
+	case "byDemanderExecuter":
+		return invoke.QueryByDemanderExecuter(stub, args)
+	case "GetEvaluationsByServiceTxId":
+		// also with only one record result return always a JSONArray
+		return invoke.GetActivitiesByExecutedServiceTxId(stub, args)
+	case "GetEvaluationsByDemanderExecuter":
+		// also with only one record result return always a JSONArray
+		return invoke.GetActivitiesByDemanderExecuter(stub, args)
+
+	// REPUTATION INVOKES
+		// CREATE:
+	case "CreateReputation":
+		return invoke.CreateReputation(stub, args)
+		// MODIFTY:
+	case "ModifyReputationValue":
+		return invoke.ModifyReputationValue(stub,args)
+
+		// GET:
+	case "GetReputation":
+		return invoke.QueryReputation(stub, args)
+		// RANGE QUERY:
+	case "byAgentServiceRole":
+		return invoke.QueryByAgentServiceRole(stub, args)
+	case "GetReputationsByAgentServiceRole":
+		// also with only one record result return always a JSONArray
+		return invoke.GetReputationsByAgentServiceRole(stub, args)
+
+		// GENERAL INVOKES
 	case "Write":
 		return gen.Write(stub, args)
 	case "Read":
 		return gen.Read(stub, args)
 	case "ReadEverything":
 		return a.ReadEverything(stub)
+	case "GetHistory":
+		// Get Chain Transaction Log of that assetId
+		return gen.GetHistory(stub, args)
 	case "AllStateDB":
 		return gen.ReadAllStateDB(stub)
-		// TODO: AllChain function
 	case "GetValue":
 		return gen.GetValue(stub, args)
 

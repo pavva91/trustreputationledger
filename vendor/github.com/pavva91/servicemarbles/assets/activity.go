@@ -24,7 +24,7 @@ import (
 // - Value
 // - IsFinalEvaluation
 // UNIVOCAL: WriterAgentId, DemanderAgentId, ExecuterAgentId, ExecutedServiceTxId
-type ServiceEvaluation struct {
+type Activity struct {
 	EvaluationId        string `json:"EvaluationId"`
 	WriterAgentId       string `json:"WriterAgentId"`// WriterAgentId = DemanderAgentId || ExecuterAgentId
 	DemanderAgentId     string `json:"DemanderAgentId"`
@@ -40,9 +40,9 @@ type ServiceEvaluation struct {
 // ============================================================
 // Create Service Evaluation - create a new service evaluation
 // ============================================================
-func CreateServiceEvaluation(evaluationId string, writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string, stub shim.ChaincodeStubInterface) (*ServiceEvaluation, error) {
+func CreateActivity(evaluationId string, writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string, stub shim.ChaincodeStubInterface) (*Activity, error) {
 	// ==== Create marble object and marshal to JSON ====
-	serviceEvaluation := &ServiceEvaluation{evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId,timestamp,value}
+	serviceEvaluation := &Activity{evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId,timestamp,value}
 	serviceEvaluationJSONAsBytes, _ := json.Marshal(serviceEvaluation)
 
 	// === Save Service Evaluation to state ===
@@ -51,10 +51,12 @@ func CreateServiceEvaluation(evaluationId string, writerAgentId string, demander
 	return serviceEvaluation, nil
 }
 
+
+
 // ============================================================================================================================
 // Create Executed Service Transaction(Tx) Index - to do query based on Executed Service Tx Id
 // ============================================================================================================================
-func CreateServiceTxIndex(serviceEvaluation *ServiceEvaluation, stub shim.ChaincodeStubInterface) (serviceTxIndexKey string, err error) {
+func CreateServiceTxIndex(serviceEvaluation *Activity, stub shim.ChaincodeStubInterface) (serviceTxIndexKey string, err error) {
 	indexName := "serviceTx~evaluation"
 	serviceTxIndexKey, err = stub.CreateCompositeKey(indexName, []string{serviceEvaluation.ExecutedServiceTxid, serviceEvaluation.EvaluationId})
 	if err != nil {
@@ -66,7 +68,7 @@ func CreateServiceTxIndex(serviceEvaluation *ServiceEvaluation, stub shim.Chainc
 // ============================================================================================================================
 // Create Demander Agent - Executer Agent - Evaluation Id Index - to do query based on Demander-Executer Evaluations
 // ============================================================================================================================
-func CreateDemanderExecuterIndex(serviceEvaluation *ServiceEvaluation, stub shim.ChaincodeStubInterface) (agentServiceIndex string, err error) {
+func CreateDemanderExecuterIndex(serviceEvaluation *Activity, stub shim.ChaincodeStubInterface) (agentServiceIndex string, err error) {
 	indexName := "demander~executer~evaluation"
 	agentServiceIndex, err = stub.CreateCompositeKey(indexName, []string{serviceEvaluation.DemanderAgentId, serviceEvaluation.ExecuterAgentId, serviceEvaluation.EvaluationId})
 	if err != nil {
@@ -75,7 +77,7 @@ func CreateDemanderExecuterIndex(serviceEvaluation *ServiceEvaluation, stub shim
 	return agentServiceIndex, nil
 }
 
-func CheckingCreatingIndexingServiceEvaluation(writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string,stub shim.ChaincodeStubInterface)(*ServiceEvaluation,error){
+func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string,stub shim.ChaincodeStubInterface)(*Activity,error){
 	// ==== Check if serviceEvaluation already exists ====
 	// TODO: Definire come creare evaluationId, per ora è composto dai due ID (writerAgentId + demanderAgentId + executerAgentId + ExecutedServiceTxId)
 	evaluationId := writerAgentId + demanderAgentId + executerAgentId + executedServiceTxId
@@ -88,7 +90,7 @@ func CheckingCreatingIndexingServiceEvaluation(writerAgentId string, demanderAge
 	}
 
 	// ==== Actual creation of Service Evaluation  ====
-	serviceEvaluation, err := CreateServiceEvaluation(evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value, stub)
+	serviceEvaluation, err := CreateActivity(evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value, stub)
 	if err != nil {
 		return nil,errors.New("Failed to create executedService demanderAgent relation of executedService " + executedServiceId + " with demanderAgent " + executedServiceId)
 	}
@@ -128,8 +130,8 @@ func CheckingCreatingIndexingServiceEvaluation(writerAgentId string, demanderAge
 // ============================================================================================================================
 // Get Service Agent Relation - get the service agent relation asset from ledger - return (nil,nil) if not found
 // ============================================================================================================================
-func GetServiceEvaluation(stub shim.ChaincodeStubInterface, evaluationId string) (ServiceEvaluation, error) {
-	var serviceRelationAgent ServiceEvaluation
+func GetActivity(stub shim.ChaincodeStubInterface, evaluationId string) (Activity, error) {
+	var serviceRelationAgent Activity
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
 		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
@@ -137,7 +139,7 @@ func GetServiceEvaluation(stub shim.ChaincodeStubInterface, evaluationId string)
 
 	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) //un stringify it aka JSON.parse()
 
-	// TODO: Inserire controllo di tipo (Verificare sia di tipo ServiceEvaluation?)
+	// TODO: Inserire controllo di tipo (Verificare sia di tipo Activity?)
 
 	return serviceRelationAgent, nil
 }
@@ -145,19 +147,19 @@ func GetServiceEvaluation(stub shim.ChaincodeStubInterface, evaluationId string)
 // ============================================================================================================================
 // Get Service Agent Relation Not Found Error - get the service agent relation asset from ledger - throws error if not found (error!=nil ---> key not found)
 // ============================================================================================================================
-func GetServiceEvaluationNotFoundError(stub shim.ChaincodeStubInterface, evaluationId string) (ServiceEvaluation, error) {
-	var serviceRelationAgent ServiceEvaluation
+func GetActivityNotFoundError(stub shim.ChaincodeStubInterface, evaluationId string) (Activity, error) {
+	var serviceRelationAgent Activity
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
 		return serviceRelationAgent, errors.New("Error in finding service evaluation: " + error.Error(err))
 	}
 
 	if serviceRelationAgentAsBytes == nil {
-		return ServiceEvaluation{}, errors.New("Service Evaluation non found, EvaluationId: " + evaluationId)
+		return Activity{}, errors.New("Service Evaluation non found, EvaluationId: " + evaluationId)
 	}
 	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) //un stringify it aka JSON.parse()
 
-	// TODO: Inserire controllo di tipo (Verificare sia di tipo ServiceEvaluation)
+	// TODO: Inserire controllo di tipo (Verificare sia di tipo Activity)
 
 	return serviceRelationAgent, nil
 }
@@ -239,10 +241,10 @@ func DeleteDemanderExecuterIndex(stub shim.ChaincodeStubInterface, demanderAgent
 }
 
 // ============================================================================================================================
-// GetServiceRelationSliceFromServiceTxRangeQuery - Get the ServiceEvaluation Slices from the result of query "GetByExecutedServiceTx"
+// GetServiceRelationSliceFromServiceTxRangeQuery - Get the Activity Slices from the result of query "GetByExecutedServiceTx"
 // ============================================================================================================================
-func GetServiceEvaluationSliceFromServiceTxIdRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceEvaluation, error) {
-	var serviceEvaluations []ServiceEvaluation
+func GetActivitySliceFromServiceTxIdRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Activity, error) {
+	var serviceEvaluations []Activity
 	defer queryIterator.Close()
 
 	for i := 0; queryIterator.HasNext(); i++ {
@@ -254,7 +256,7 @@ func GetServiceEvaluationSliceFromServiceTxIdRangeQuery(queryIterator shim.State
 
 		evaluationId := compositeKeyParts[1]
 
-		iserviceRelationAgent, err := GetServiceEvaluation(stub, evaluationId)
+		iserviceRelationAgent, err := GetActivity(stub, evaluationId)
 		serviceEvaluations = append(serviceEvaluations, iserviceRelationAgent)
 		if err != nil {
 			return nil, err
@@ -265,10 +267,10 @@ func GetServiceEvaluationSliceFromServiceTxIdRangeQuery(queryIterator shim.State
 }
 
 // ============================================================================================================================
-// GetServiceEvaluationSliceFromDemanderExecuterRangeQuery - Get the Agent and ServiceEvaluation Slices from the result of query "GetByDemanderExecuter"
+// GetActivitySliceFromDemanderExecuterRangeQuery - Get the Agent and Activity Slices from the result of query "GetByDemanderExecuter"
 // ============================================================================================================================
-func GetServiceEvaluationSliceFromDemanderExecuterRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceEvaluation, error) {
-	var serviceEvaluations []ServiceEvaluation
+func GetActivitySliceFromDemanderExecuterRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Activity, error) {
+	var serviceEvaluations []Activity
 	// USE DEFER BECAUSE it will close also in case of error throwing (premature return)
 	defer queryIterator.Close()
 
@@ -281,7 +283,7 @@ func GetServiceEvaluationSliceFromDemanderExecuterRangeQuery(queryIterator shim.
 
 		evaluationId := compositeKeyParts[2]
 
-		iserviceRelationAgent, err := GetServiceEvaluation(stub, evaluationId)
+		iserviceRelationAgent, err := GetActivity(stub, evaluationId)
 		serviceEvaluations = append(serviceEvaluations, iserviceRelationAgent)
 		if err != nil {
 			return nil, err

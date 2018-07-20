@@ -28,7 +28,16 @@ type Agent struct {
 // CreateAgent - create a new agent and return the created agent
 // =====================================================================================================================
 func CreateAgent(agentId string, agentName string, agentAddress string, stub shim.ChaincodeStubInterface) *Agent {
-	// ==== Create marble object and marshal to JSON ====
+	// ==== Create the composite key ====
+	// TODO: Integrare creazione key id
+	// univocalCompositeKey,err:=generalcc.CreateUnivocalCompositeKey("AGN",agentId,stub)
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	return nil
+	// }
+
+	// ==== Create agent object and marshal to JSON ====
+
 	agent := &Agent{AgentId: agentId, Name: agentName, Address: agentAddress}
 	agentJSONAsBytes, _ := json.Marshal(agent)
 

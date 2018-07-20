@@ -15,7 +15,7 @@ import (
 )
 
 /*
-For now we want that the ServiceEvaluation assets can only be added on the ledger (NO MODIFY, NO DELETE)
+For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
  */
 // ========================================================================================================================
 // Create Executed Service Evaluation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
