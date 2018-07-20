@@ -36,6 +36,37 @@ func CreateAgent(agentId string, agentName string, agentAddress string, stub shi
 	stub.PutState(agent.AgentId, agentJSONAsBytes)
 	return agent
 }
+
+// =====================================================================================================================
+// modifyAgentName - Modify the agent name of the asset passed as parameter
+// =====================================================================================================================
+func ModifyAgentName(agent Agent, newAgentName string, stub shim.ChaincodeStubInterface) (error) {
+
+	agent.Name = newAgentName
+
+	agentAsBytes, _ := json.Marshal(agent)
+	putStateError := stub.PutState(agent.AgentId, agentAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+	return nil
+}
+
+// =====================================================================================================================
+// modifyAgentAddress - Modify the agent address of the asset passed as parameter
+// =====================================================================================================================
+func ModifyAgentAddress(agent Agent, newAgentAddress string, stub shim.ChaincodeStubInterface) (error) {
+
+	agent.Address = newAgentAddress
+
+	agentAsBytes, _ := json.Marshal(agent)
+	putStateError := stub.PutState(agent.AgentId, agentAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+	return nil
+}
+
 // =====================================================================================================================
 // Get Agent Not Found Error - get an agent asset from ledger- throws error if not found (error!=nil ---> key not found)
 // =====================================================================================================================

@@ -23,8 +23,6 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
 
-	fmt.Println("- start init serviceRelationAgent")
-
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
 	if sanitizeError != nil {
@@ -32,15 +30,11 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
+	// ==== Set Variables from Passed Arguments ====
 	serviceId := args[0]
 	agentId := args[1]
 	cost := args[2]
 	time := args[3]
-
-	fmt.Println(serviceId)
-	fmt.Println(agentId)
-	fmt.Println(cost)
-	fmt.Println(time)
 
 	// ==== Check if already existing service ====
 	service, errS := a.GetServiceNotFoundError(stub, serviceId)
@@ -57,73 +51,33 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
 	}
 
-	// ==== Check if serviceRelationAgent already exists ====
-	// TODO: Definire come creare relationId, per ora è composto dai due ID (serviceId + agentId)
-	serviceRelationAgentId := serviceId + agentId
-	agent2AsBytes, err := stub.GetState(serviceRelationAgentId)
-	if err != nil {
-		return shim.Error("Failed to get service agent relation: " + err.Error())
-	} else if agent2AsBytes != nil {
-		fmt.Println("This service agent relation already exists with relationId: " + serviceRelationAgentId)
-		return shim.Error("This service agent relation already exists with relationId: " + serviceRelationAgentId)
-	}
+	// ==== Check, Create, Indexing ServiceRelationAgent ====
 
-	// ==== Actual creation of serviceRelationAgent  ====
-	relationId := serviceId + agentId
-	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, stub)
-	if err != nil {
-		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
-	}
+	serviceRelationAgent, serviceRelationError := a.CheckingCreatingIndexingServiceRelationAgent(serviceId, agentId, cost, time, stub)
+	if serviceRelationError != nil {
+		return shim.Error("Error saving ServiceRelationAgent: " + serviceRelationError.Error())
 
-	// ==== Indexing of serviceRelationAgent by Service ====
-
-	// index create
-	serviceAgentIndexKey, serviceIndexError := a.CreateServiceIndex(serviceRelationAgent, stub)
-	if serviceIndexError != nil {
-		return shim.Error(serviceIndexError.Error())
-	}
-	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
-	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
-	emptyValue := []byte{0x00}
-	// index save
-	putStateError := stub.PutState(serviceAgentIndexKey, emptyValue)
-	if putStateError != nil {
-		return shim.Error("Error  saving Service index: " + putStateError.Error())
-	}
-
-	// ==== Indexing of serviceRelationAgent by Agent ====
-
-	// index create
-	agentServiceIndexKey, agentIndexError := a.CreateAgentIndex(serviceRelationAgent, stub)
-	if agentIndexError != nil {
-		return shim.Error(agentIndexError.Error())
-	}
-	// index save
-	putStateAgentIndexError := stub.PutState(agentServiceIndexKey, emptyValue)
-	if putStateAgentIndexError != nil {
-		return shim.Error("Error  saving Agent index: " + putStateAgentIndexError.Error())
 	}
 
 	// ==== Check, Create, Indexing Reputation ====
 	initReputationValue := "6"
-	reputation,reputationError := a.CheckCreateIndexReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " nella relazione con reputazione iniziale: "+ reputation.Value)
+	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " al costo: " + serviceRelationAgent.Cost + " e tempo: " + serviceRelationAgent.Time + " nella relazione con reputazione iniziale: "+ reputation.Value)
 	return shim.Success(nil)
 }
 
 // ========================================================================================================================
-// Init Service And Service Agent Relation - Same as InitServiceAgentRelation, but if the service doesn't exist
-// it will create the service (and relative indexes) first
+// Modify Service Relation Agent Cost - wrapper of ModifyServiceRelationAgentCost called from chiancode's Invoke
 // ========================================================================================================================
-func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	//   0            1             2                     3         4       5
-	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time"
-	argumentSizeError := arglib.ArgumentSizeVerification(args, 6)
+func ModifyServiceRelationAgentCost(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "relationId", "newRelationCost"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
@@ -135,94 +89,61 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
-	serviceId := args[0]
-	serviceName := args[1]
-	serviceDescription := args[2]
-	agentId := args[3]
-	cost := args[4]
-	time := args[5]
+	relationId := args[0]
+	newRelationCost := args[1]
 
-	fmt.Println(serviceId)
-	fmt.Println(serviceName)
-	fmt.Println(serviceDescription)
-	fmt.Println(agentId)
-	fmt.Println(cost)
-	fmt.Println(time)
-
-	// ==== Check if already existing agent ====
-	agent, errA := a.GetAgentNotFoundError(stub, agentId)
-	if errA != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
-		return shim.Error("Failed to find agent by id: " + errA.Error())
+	// ==== get the serviceRelationAgent ====
+	serviceRelationAgent, getError := a.GetServiceRelationAgentNotFoundError(stub, relationId)
+	if getError != nil {
+		fmt.Println("Failed to find serviceRelationAgent by id " + relationId)
+		return shim.Error(getError.Error())
 	}
 
-	// ==== Check if already existing service ====
-	service, errS := a.GetServiceNotFoundError(stub, serviceId)
-	if errS != nil {
-		// se il servizio non esiste lo creo
-		fmt.Println("Failed to find service by id " + serviceId)
-		errorCreateAndIndex := a.CreateAndIndexService(serviceId, serviceName, serviceDescription, stub)
-		if errorCreateAndIndex != nil {
-			return shim.Error("Error in creating and indexing service: " + errorCreateAndIndex.Error())
-		}
+	// ==== modify the serviceRelationAgent ====
+	modifyError := a.ModifyServiceRelationAgentCost(serviceRelationAgent, newRelationCost, stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the serviceRelationAgent cost: " + newRelationCost)
+		return shim.Error(modifyError.Error())
 	}
 
-	// ==== Check if serviceRelationAgent already exists ====
-	// TODO: Definire come creare relationId, per ora è composto dai due ID (serviceId + agentId)
-	serviceRelationAgentId := serviceId + agentId
-	agent2AsBytes, err := stub.GetState(serviceRelationAgentId)
-	if err != nil {
-		return shim.Error("Failed to get service agent relation: " + err.Error())
-	} else if agent2AsBytes != nil {
-		fmt.Println("This service agent relation already exists with relationId: " + serviceRelationAgentId)
-		return shim.Error("This service agent relation already exists with relationId: " + serviceRelationAgentId)
+	return shim.Success(nil)
+}
+
+// ========================================================================================================================
+// Modify Service Relation Agent Time - wrapper of ModifyServiceRelationAgentTime called from chiancode's Invoke
+// ========================================================================================================================
+func ModifyServiceRelationAgentTime(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "relationId", "newRelationTime"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
 
-	// ==== Actual creation of serviceRelationAgent  ====
-	relationId := serviceId + agentId
-	serviceRelationAgent, err := a.CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, stub)
-	if err != nil {
-		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
-	// ==== Indexing of serviceRelationAgent by Service ====
+	relationId := args[0]
+	newRelationTime := args[1]
 
-	// index create
-	serviceAgentIndexKey, serviceIndexError := a.CreateServiceIndex(serviceRelationAgent, stub)
-	if serviceIndexError != nil {
-		return shim.Error(serviceIndexError.Error())
-	}
-	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
-	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
-	emptyValue := []byte{0x00}
-	// index save
-	putStateError := stub.PutState(serviceAgentIndexKey, emptyValue)
-	if putStateError != nil {
-		return shim.Error("Error  saving Service index: " + putStateError.Error())
+	// ==== get the serviceRelationAgent ====
+	serviceRelationAgent, getError := a.GetServiceRelationAgentNotFoundError(stub, relationId)
+	if getError != nil {
+		fmt.Println("Failed to find serviceRelationAgent by id " + relationId)
+		return shim.Error(getError.Error())
 	}
 
-	// ==== Indexing of serviceRelationAgent by Agent ====
-
-	// index create
-	agentServiceIndexKey, agentIndexError := a.CreateAgentIndex(serviceRelationAgent, stub)
-	if agentIndexError != nil {
-		return shim.Error(agentIndexError.Error())
-	}
-	// index save
-	putStateAgentIndexError := stub.PutState(agentServiceIndexKey, emptyValue)
-	if putStateAgentIndexError != nil {
-		return shim.Error("Error  saving Agent index: " + putStateAgentIndexError.Error())
+	// ==== modify the serviceRelationAgent ====
+	modifyError := a.ModifyServiceRelationAgentTime(serviceRelationAgent, newRelationTime, stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the serviceRelationAgent cost: " + newRelationTime)
+		return shim.Error(modifyError.Error())
 	}
 
-	// ==== Check, Create, Indexing Reputation ====
-	initReputationValue := "6"
-	reputation,reputationError := a.CheckCreateIndexReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
-	if reputationError != nil {
-		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
-	}
-
-	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " nella relazione con reputazione: "+ reputation.Value)
 	return shim.Success(nil)
 }
 

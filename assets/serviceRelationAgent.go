@@ -67,6 +67,93 @@ func CreateAgentIndex(serviceRelationAgent *ServiceRelationAgent, stub shim.Chai
 	return agentServiceIndex, nil
 }
 
+// =====================================================================================================================
+// CheckingCreatingIndexingServiceRelationAgent - Incapsulate the three tasks:
+// 1. CHECKING
+// 2. CREATING
+// 3. INDEXING
+// =====================================================================================================================
+func CheckingCreatingIndexingServiceRelationAgent(serviceId string, agentId string, cost string, time string, stub shim.ChaincodeStubInterface) (*ServiceRelationAgent, error){
+
+	// ==== Check if serviceRelationAgent already exists ====
+	// TODO: Definire come creare relationId, per ora è composto dai due ID (serviceId + agentId)
+	relationId := serviceId + agentId
+	agent2AsBytes, err := stub.GetState(relationId)
+	if err != nil {
+		return nil,errors.New("Failed to get service agent relation: " + err.Error())
+	} else if agent2AsBytes != nil {
+		fmt.Println("This service agent relation already exists with relationId: " + relationId)
+		return nil,errors.New("This service agent relation already exists with relationId: " + relationId)
+	}
+
+	// ==== Actual creation of serviceRelationAgent  ====
+	serviceRelationAgent, err := CreateServiceAgentRelation(relationId, serviceId, agentId, cost, time, stub)
+	if err != nil {
+		return nil,errors.New("Failed to create service agent relation of service " + serviceId + " with agent " + agentId)
+	}
+
+	// ==== Indexing of serviceRelationAgent by Service ====
+
+	// index create
+	serviceAgentIndexKey, serviceIndexError := CreateServiceIndex(serviceRelationAgent, stub)
+	if serviceIndexError != nil {
+		return nil,errors.New(serviceIndexError.Error())
+	}
+	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
+	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
+	emptyValue := []byte{0x00}
+	// index save
+	putStateError := stub.PutState(serviceAgentIndexKey, emptyValue)
+	if putStateError != nil {
+		return nil,errors.New("Error  saving Service index: " + putStateError.Error())
+	}
+
+	// ==== Indexing of serviceRelationAgent by Agent ====
+
+	// index create
+	agentServiceIndexKey, agentIndexError := CreateAgentIndex(serviceRelationAgent, stub)
+	if agentIndexError != nil {
+		return nil,errors.New(agentIndexError.Error())
+	}
+	// index save
+	putStateAgentIndexError := stub.PutState(agentServiceIndexKey, emptyValue)
+	if putStateAgentIndexError != nil {
+		return nil,errors.New("Error  saving Agent index: " + putStateAgentIndexError.Error())
+	}
+
+	return serviceRelationAgent,nil
+}
+
+// =====================================================================================================================
+// ModifyServiceRelationAgentCost - Modify the serviceRelationAgent cost of the asset passed as parameter
+// =====================================================================================================================
+func ModifyServiceRelationAgentCost(serviceRelationAgent ServiceRelationAgent, newRelationCost string, stub shim.ChaincodeStubInterface) (error) {
+
+	serviceRelationAgent.Cost = newRelationCost
+
+	serviceRelationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
+	putStateError := stub.PutState(serviceRelationAgent.RelationId, serviceRelationAgentAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+	return nil
+}
+
+// =====================================================================================================================
+// ModifyServiceRelationAgentTime - Modify the serviceRelationAgent time of the asset passed as parameter
+// =====================================================================================================================
+func ModifyServiceRelationAgentTime(serviceRelationAgent ServiceRelationAgent, newRelationTime string, stub shim.ChaincodeStubInterface) (error) {
+
+	serviceRelationAgent.Cost = newRelationTime
+
+	serviceRelationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
+	putStateError := stub.PutState(serviceRelationAgent.RelationId, serviceRelationAgentAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+	return nil
+}
+
 // ============================================================================================================================
 // Get Service Agent Relation - get the service agent relation asset from ledger - return (nil,nil) if not found
 // ============================================================================================================================

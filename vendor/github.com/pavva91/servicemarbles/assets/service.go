@@ -88,6 +88,37 @@ func CreateAndIndexService(serviceId string, serviceName string, serviceDescript
 }
 
 // =====================================================================================================================
+// ModifyServiceName - Modify the service name of the asset passed as parameter
+// TODO: Give the permission of changing the service name?
+// =====================================================================================================================
+func ModifyServiceName(service Service, newServiceName string, stub shim.ChaincodeStubInterface) (error) {
+
+	service.Name = newServiceName
+
+	serviceAsBytes, _ := json.Marshal(service)
+	putStateError := stub.PutState(service.ServiceId, serviceAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+	return nil
+}
+
+// =====================================================================================================================
+// ModifyServiceDescription - Modify the service description of the asset passed as parameter
+// =====================================================================================================================
+func ModifyServiceDescription(service Service, newServiceDescription string, stub shim.ChaincodeStubInterface) (error) {
+
+	service.Description = newServiceDescription
+
+	serviceAsBytes, _ := json.Marshal(service)
+	putStateError := stub.PutState(service.ServiceId, serviceAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+	return nil
+}
+
+// =====================================================================================================================
 // Get Service Not Found Error - get the service asset from ledger -
 // throws error if not found (error!=nil ---> key not found)
 // =====================================================================================================================

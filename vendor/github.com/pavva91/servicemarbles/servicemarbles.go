@@ -130,7 +130,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return invoke.CreateServiceAgentRelation(stub, args)
 	case "CreateServiceAndServiceAgentRelation":
 		// If service doesn't exist it will create
-		return invoke.CreateServiceAndServiceAgentRelation(stub, args)
+		return invoke.CreateServiceAndServiceAgentRelationWithStandardValue(stub, args)
 	case "GetHistory":
 		// Get Chain Transaction Log of that assetId
 		return gen.GetHistory(stub, args)

@@ -97,6 +97,44 @@ func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 	return shim.Success(nil)
 }
 
+// ========================================================================================================================
+// Create Executed Service Evaluation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
+// ========================================================================================================================
+func ModifyReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "reputationId", "newReputationValue"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	reputationId := args[0]
+	newReputationValue := args[1]
+
+	// ==== get the reputation ====
+	reputation, getError := a.GetReputationNotFoundError(stub, reputationId)
+	if getError != nil {
+		fmt.Println("Failed to find reputation by id " + reputationId)
+		return shim.Error(getError.Error())
+	}
+
+	// ==== modify the reputation ====
+	modifyError := a.ModifyReputationValue(reputation,newReputationValue,stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the reputation value: " + newReputationValue)
+		return shim.Error(modifyError.Error())
+	}
+
+	return shim.Success(nil)
+}
+
 
 // ============================================================================================================================
 // Query Reputation - wrapper of GetReputation called from the chaincode invoke
@@ -243,225 +281,3 @@ func GetReputationsByAgentServiceRole(stub shim.ChaincodeStubInterface, args []s
 
 	return shim.Success(serviceEvaluationsAsJSON)
 }
-
-// // ========================================================================================================================
-// // GetServiceRelationAgentByServiceWithCostAndTime - wrapper of GetByService called from chiancode's Invoke, for looking for agents that provide certain service
-// // ========================================================================================================================
-// func GetServiceRelationAgentByServiceWithCostAndTime(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-// 	//   0
-// 	// "ServiceId"
-// 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
-// 	if argumentSizeError != nil {
-// 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
-// 	}
-//
-// 	fmt.Println("- start init serviceRelationAgent")
-//
-// 	// ==== Input sanitation ====
-// 	sanitizeError := arglib.SanitizeArguments(args)
-// 	if sanitizeError != nil {
-// 		fmt.Print(sanitizeError)
-// 		return shim.Error("Sanitize error: " + sanitizeError.Error())
-// 	}
-//
-// 	serviceId := args[0]
-//
-// 	// ==== Check if already existing service ====
-// 	service, err := a.GetService(stub, serviceId)
-// 	if err != nil {
-// 		fmt.Println("The service doesn't exist " + serviceId)
-// 		return shim.Error("The service doesn't exist: " + err.Error())
-// 	}
-//
-// 	// ==== Run the byService query ====
-// 	byServiceQueryIterator, err := a.GetByService(serviceId, stub)
-// 	// byServiceQueryIterator, err := stub.GetStateByPartialCompositeKey("service~agent~relation", []string{serviceId})
-// 	defer byServiceQueryIterator.Close()
-//
-// 	if err != nil {
-// 		fmt.Println("The service " + service.Name + " is not mapped with any agent " + serviceId)
-// 		return shim.Error(err.Error())
-// 	}
-// 	if byServiceQueryIterator != nil {
-// 		fmt.Println(&byServiceQueryIterator)
-// 	}
-//
-// 	// ==== Get the Agents for the byService query result ====
-// 	serviceRelationSlice, err := a.GetServiceRelationSliceFromRangeQuery(byServiceQueryIterator, stub)
-// 	if err != nil {
-// 		return shim.Error(err.Error())
-// 	}
-//
-// 	byServiceQueryIterator.Close()
-// 	// ==== Marshal the byService query result ====
-// 	fmt.Print(serviceRelationSlice)
-// 	agentsByServiceAsBytes, err := json.Marshal(serviceRelationSlice)
-// 	if err != nil {
-// 		return shim.Error(err.Error())
-// 	}
-// 	fmt.Println(agentsByServiceAsBytes)
-//
-// 	stringOut := string(agentsByServiceAsBytes)
-// 	fmt.Println(stringOut)
-// 	if stringOut == "null" {
-// 		fmt.Println("Service exists but has no existing relationships with agents")
-// 		return shim.Error("Service exists but has no existing relationships with agents")
-// 	}
-//
-// 	// ==== AgentServiceRelation saved & indexed. Return success with payload ====
-// 	return shim.Success(agentsByServiceAsBytes)
-// }
-//
-// // ========================================================================================================================
-// // GetServiceRelationAgentByServiceWithCostAndTime - wrapper of GetByService called from chiancode's Invoke, for looking for agents that provide certain service
-// // ========================================================================================================================
-// func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-// 	//   0
-// 	// "AgentId"
-//
-// 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
-// 	if argumentSizeError != nil {
-// 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
-// 	}
-//
-// 	fmt.Println("- start init serviceRelationAgent")
-//
-// 	// ==== Input sanitation ====
-// 	sanitizeError := arglib.SanitizeArguments(args)
-// 	if sanitizeError != nil {
-// 		fmt.Print(sanitizeError)
-// 		return shim.Error("Sanitize error: " + sanitizeError.Error())
-// 	}
-//
-// 	agentId := args[0]
-//
-// 	// ==== Check if already existing agent ====
-// 	agent, err := a.GetAgent(stub, agentId)
-// 	if err != nil {
-// 		fmt.Println("The agent doesn't exist " + agentId)
-// 		return shim.Error("The agent doesn't exist: " + err.Error())
-// 	}
-//
-// 	// ==== Run the byService query ====
-// 	byAgentQueryIterator, err := a.GetByAgent(agentId, stub)
-// 	defer byAgentQueryIterator.Close()
-//
-// 	if err != nil {
-// 		fmt.Println("The agent " + agent.Name + " is not mapped with any service " + agentId)
-// 		return shim.Error(err.Error())
-// 	}
-// 	if byAgentQueryIterator != nil {
-// 		fmt.Println(&byAgentQueryIterator)
-// 	}
-//
-// 	// ==== Get the Agents for the byService query result ====
-// 	serviceRelationSlice, err := a.GetServiceRelationSliceFromRangeQuery(byAgentQueryIterator, stub)
-// 	if err != nil {
-// 		return shim.Error(err.Error())
-// 	}
-//
-// 	byAgentQueryIterator.Close()
-// 	// ==== Marshal the byService query result ====
-// 	fmt.Print(serviceRelationSlice)
-// 	servicesByAgentAsBytes, err := json.Marshal(serviceRelationSlice)
-// 	if err != nil {
-// 		return shim.Error(err.Error())
-// 	}
-// 	fmt.Println(servicesByAgentAsBytes)
-//
-// 	stringOut := string(servicesByAgentAsBytes)
-// 	fmt.Println(stringOut)
-// 	if stringOut == "null" {
-// 		fmt.Println("Service exists but has no existing relationships with agents")
-// 		return shim.Error("Service exists but has no existing relationships with agents")
-// 	}
-//
-// 	// ==== AgentServiceRelation saved & indexed. Return success with payload ====
-// 	return shim.Success(servicesByAgentAsBytes)
-// }
-//
-// // ========================================================================================================================
-// // Query by Agent Service Relation - wrapper of GetByAgent called from chiancode's Invoke
-// // ========================================================================================================================
-// func QueryByAgentServiceRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-// 	//   0
-// 	// "AgentId"
-// 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
-// 	if argumentSizeError != nil {
-// 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
-// 	}
-//
-// 	// ==== Input sanitation ====
-// 	sanitizeError := arglib.SanitizeArguments(args)
-// 	if sanitizeError != nil {
-// 		fmt.Print(sanitizeError)
-// 		return shim.Error("Sanitize error: " + sanitizeError.Error())
-// 	}
-//
-// 	agentId := args[0]
-//
-// 	// ==== Check if already existing agent ====
-// 	agent, err := a.GetAgent(stub, agentId)
-// 	if err != nil {
-// 		fmt.Println("Failed to find agent  by id " + agentId)
-// 		return shim.Error(err.Error())
-// 	}
-//
-// 	// ==== Run the byAgent query ====
-// 	byAgentQuery, err := a.GetByAgent(agentId, stub)
-// 	if err != nil {
-// 		fmt.Println("Failed to get agent relation " + agentId)
-// 		return shim.Error(err.Error())
-// 	}
-//
-// 	fmt.Printf("The agent %s expose the services:\n", agent.Name)
-//
-// 	// ==== Print the byService query result ====
-// 	printError := a.PrintByAgentResultsIterator(byAgentQuery, stub)
-// 	if printError != nil {
-// 		return shim.Error(printError.Error())
-// 	}
-//
-// 	// ==== AgentServiceRelation saved & indexed. Return success ====
-// 	return shim.Success(nil)
-// }
-//
-// // ============================================================================================================================
-// // Remove Service Agent Relation - wrapper of DeleteServiceAgentRelation a marble from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
-// // UNSAFE function, TODO: you have to remove also the indexes
-// // ============================================================================================================================
-// func RemoveServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-// 	fmt.Println("starting delete serviceRelationAgent agent relation")
-//
-// 	//   0
-// 	// "RelationId"
-// 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
-// 	if argumentSizeError != nil {
-// 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
-// 	}
-//
-// 	// input sanitation
-// 	err := arglib.SanitizeArguments(args)
-// 	if err != nil {
-// 		return shim.Error(err.Error())
-// 	}
-//
-// 	relationId := args[0]
-//
-// 	// get the serviceRelationAgent
-// 	serviceRelationAgent, err := a.GetServiceRelationAgent(stub, relationId)
-// 	if err != nil {
-// 		fmt.Println("Failed to find serviceRelationAgent by relationId " + relationId)
-// 		return shim.Error(err.Error())
-// 	}
-//
-// 	// remove the serviceRelationAgent
-// 	err = a.DeleteServiceAgentRelation(stub, relationId) //remove the key from chaincode state
-// 	if err != nil {
-// 		return shim.Error("Failed to delete state")
-// 	}
-//
-// 	fmt.Printf("Deleted serviceRelationAgent that maps ServiceId: %s, with AgentId: %s of Cost: %s, Time: %s, Agent reputation: %s\n", serviceRelationAgent.ServiceId, serviceRelationAgent.AgentId, serviceRelationAgent.Cost, serviceRelationAgent.Time,
-// 		strconv.FormatFloat(serviceRelationAgent.AgentReputation, 'f', 6, 64))
-// 	return shim.Success(nil)
-// }

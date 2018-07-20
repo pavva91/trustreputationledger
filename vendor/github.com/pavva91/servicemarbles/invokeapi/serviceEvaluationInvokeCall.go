@@ -48,21 +48,18 @@ func CreateServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb
 	var writerAgent a.Agent
 
 
-	// TODO: Check if already existing DemanderAgent
 	// ==== Check if already existing demanderAgent ====
 	demanderAgent, errA := a.GetAgentNotFoundError(stub, demanderAgentId)
 	if errA != nil {
 		fmt.Println("Failed to find demanderAgent by id " + demanderAgentId)
 		return shim.Error("Failed to find demanderAgent by id: " + errA.Error())
 	}
-	// TODO: Check if already existing ExecuterAgent
 	// ==== Check if already existing executerAgent ====
 	executerAgent, errA := a.GetAgentNotFoundError(stub, executerAgentId)
 	if errA != nil {
 		fmt.Println("Failed to find executerAgent by id " + executerAgentId)
 		return shim.Error("Failed to find executerAgent by id: " + errA.Error())
 	}
-	// TODO: Check if WriterAgent == DemanderAgent || ExecuterAgent
 	// ==== Check if WriterAgent == DemanderAgent || ExecuterAgent ====
 	switch true {
 	case demanderAgentId==writerAgentId:
@@ -72,16 +69,14 @@ func CreateServiceEvaluation(stub shim.ChaincodeStubInterface, args []string) pb
 	default:
 		return shim.Error("Wrong Writer Agent Id: " + writerAgentId)
 	}
-	// TODO: Check if already existing ExecutedServiceId
+
+	// TODO: Da levare in teoria
 	// ==== Check if already existing executedService ====
 	executedService, errS := a.GetServiceNotFoundError(stub, executedServiceId)
 	if errS != nil {
 		fmt.Println("Failed to find executedService by id " + executedServiceId)
 		return shim.Error("Failed to find executedService by id " + errS.Error())
 	}
-
-	fmt.Println("Service ok")
-
 
 	// ==== Check if serviceEvaluation already exists ====
 	// TODO: Definire come creare evaluationId, per ora è composto dai due ID (writerAgentId + demanderAgentId + executerAgentId + ExecutedServiceTxId)

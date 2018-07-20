@@ -73,6 +73,82 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	return shim.Success(nil)
 }
 
+// ========================================================================================================================
+// Modify Service Name - wrapper of ModifyAgentAddress called from chiancode's Invoke
+// ========================================================================================================================
+func ModifyServiceName(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "serviceId", "newServiceName"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	serviceId := args[0]
+	newServiceName := args[1]
+
+	// ==== get the service ====
+	service, getError := a.GetServiceNotFoundError(stub, serviceId)
+	if getError != nil {
+		fmt.Println("Failed to find service by id " + serviceId)
+		return shim.Error(getError.Error())
+	}
+
+	// ==== modify the service ====
+	modifyError := a.ModifyServiceName(service, newServiceName, stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the service name: " + newServiceName)
+		return shim.Error(modifyError.Error())
+	}
+
+	return shim.Success(nil)
+}
+
+// ========================================================================================================================
+// Modify Service Description - wrapper of ModifyAgentAddress called from chiancode's Invoke
+// ========================================================================================================================
+func ModifyServiceDescription(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "serviceId", "newServiceDescription"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	serviceId := args[0]
+	newServiceDescription := args[1]
+
+	// ==== get the service ====
+	service, getError := a.GetServiceNotFoundError(stub, serviceId)
+	if getError != nil {
+		fmt.Println("Failed to find service by id " + serviceId)
+		return shim.Error(getError.Error())
+	}
+
+	// ==== modify the service ====
+	modifyError := a.ModifyServiceDescription(service, newServiceDescription, stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the service description: " + newServiceDescription)
+		return shim.Error(modifyError.Error())
+	}
+
+	return shim.Success(nil)
+}
+
 // =====================================================================================================================
 // Query Service - wrapper of GetServiceNotFoundError called from the chaincode invoke
 // =====================================================================================================================

@@ -64,7 +64,13 @@ func CreateAgentServiceRoleIndex(reputation *Reputation, stub shim.ChaincodeStub
 	return agentServiceRoleIndex, nil
 }
 
-func CheckCreateIndexReputation(agentId string, serviceId string,agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error){
+// =====================================================================================================================
+// CheckingCreatingIndexingReputation - Incapsulate the three tasks:
+// 1. CHECKING
+// 2. CREATING
+// 3. INDEXING
+// =====================================================================================================================
+func CheckingCreatingIndexingReputation(agentId string, serviceId string,agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error){
 	// ==== Check if AgentRole == Demander || Executer ====
 	if ("DEMANDER"!=agentRole && "EXECUTER"!=agentRole){
 		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \"DEMANDER\"or \"EXECUTER\"")
@@ -107,45 +113,56 @@ func CheckCreateIndexReputation(agentId string, serviceId string,agentRole strin
 }
 
 // =====================================================================================================================
+// modifyReputationValue - Modify the reputation value of the asset passed as parameter
+// =====================================================================================================================
+func ModifyReputationValue(reputation Reputation, newReputationValue string, stub shim.ChaincodeStubInterface) (error) {
+
+	reputation.Value = newReputationValue
+
+	reputationAsBytes, _ := json.Marshal(reputation)
+	putStateError := stub.PutState(reputation.ReputationId, reputationAsBytes)
+	if putStateError != nil {
+		return errors.New(putStateError.Error())
+	}
+
+	return nil
+}
+
+// =====================================================================================================================
 // Get Reputation - get the reputation asset from ledger - return (nil,nil) if not found
 // =====================================================================================================================
 func GetReputation(stub shim.ChaincodeStubInterface, reputationId string) (Reputation, error) {
-	var serviceRelationAgent Reputation
-	serviceRelationAgentAsBytes, err := stub.GetState(reputationId) //getState retreives a key/value from the ledger
+	var reputation Reputation
+	reputationAsBytes, err := stub.GetState(reputationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
-		return serviceRelationAgent, errors.New("Error in finding the reputation of the agent: " + error.Error(err))
+		return reputation, errors.New("Error in finding the reputation of the agent: " + error.Error(err))
 	}
 
-	// TODO: Levare trigger error ma gestire il payload null
-	if serviceRelationAgentAsBytes == nil {
-		return Reputation{}, errors.New("Reputation not found, ReputationId: " + reputationId)
-	}
-	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) //un stringify it aka JSON.parse()
+	json.Unmarshal(reputationAsBytes, &reputation) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo ServiceRelationAgent)
 
-	return serviceRelationAgent, nil
+	return reputation, nil
 }
 
 // =====================================================================================================================
 // Get Reputation Not Found Error - get the reputation asset from ledger - throws error if not found (error!=nil ---> key not found)
 // =====================================================================================================================
 func GetReputationNotFoundError(stub shim.ChaincodeStubInterface, reputationId string) (Reputation, error) {
-	var serviceRelationAgent Reputation
+	var reputation Reputation
 	serviceRelationAgentAsBytes, err := stub.GetState(reputationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
-		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
+		return reputation, errors.New("Error in finding service relation with agent: " + error.Error(err))
 	}
 
-	// TODO: Levare trigger error ma gestire il payload null
 	if serviceRelationAgentAsBytes == nil {
 		return Reputation{}, errors.New("Service non found, ServiceId: " + reputationId)
 	}
-	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) //un stringify it aka JSON.parse()
+	json.Unmarshal(serviceRelationAgentAsBytes, &reputation) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo ServiceRelationAgent)
 
-	return serviceRelationAgent, nil
+	return reputation, nil
 }
 
 // =====================================================================================================================

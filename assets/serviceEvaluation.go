@@ -75,6 +75,56 @@ func CreateDemanderExecuterIndex(serviceEvaluation *ServiceEvaluation, stub shim
 	return agentServiceIndex, nil
 }
 
+func CheckingCreatingIndexingServiceEvaluation(writerAgentId string, demanderAgentId string, executerAgentId string, executedServiceId string, executedServiceTxId string, timestamp string, value string,stub shim.ChaincodeStubInterface)(*ServiceEvaluation,error){
+	// ==== Check if serviceEvaluation already exists ====
+	// TODO: Definire come creare evaluationId, per ora è composto dai due ID (writerAgentId + demanderAgentId + executerAgentId + ExecutedServiceTxId)
+	evaluationId := writerAgentId + demanderAgentId + executerAgentId + executedServiceTxId
+	serviceEvaluationAsBytes, err := stub.GetState(evaluationId)
+	if err != nil {
+		return nil,errors.New("Failed to get executedService demanderAgent relation: " + err.Error())
+	} else if serviceEvaluationAsBytes != nil {
+		fmt.Println("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
+		return nil,errors.New("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
+	}
+
+	// ==== Actual creation of Service Evaluation  ====
+	serviceEvaluation, err := CreateServiceEvaluation(evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value, stub)
+	if err != nil {
+		return nil,errors.New("Failed to create executedService demanderAgent relation of executedService " + executedServiceId + " with demanderAgent " + executedServiceId)
+	}
+
+	// ==== Indexing of serviceEvaluation by Service Tx Id ====
+
+	// index create
+	serviceTxIndexKey, serviceIndexError := CreateServiceTxIndex(serviceEvaluation, stub)
+	if serviceIndexError != nil {
+		return nil,errors.New(serviceIndexError.Error())
+	}
+	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
+	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
+	emptyValue := []byte{0x00}
+	// index save
+	putStateError := stub.PutState(serviceTxIndexKey, emptyValue)
+	if putStateError != nil {
+		return nil,errors.New("Error  saving Service index: " + putStateError.Error())
+	}
+
+	// ==== Indexing of serviceEvaluation by Agent ====
+
+	// index create
+	demanderExecuterIndexKey, agentIndexError := CreateDemanderExecuterIndex(serviceEvaluation, stub)
+	if agentIndexError != nil {
+		return nil,errors.New(agentIndexError.Error())
+	}
+	// index save
+	putStateDemanderExecuterIndexError := stub.PutState(demanderExecuterIndexKey, emptyValue)
+	if putStateDemanderExecuterIndexError != nil {
+		return nil,errors.New("Error  saving Agent index: " + putStateDemanderExecuterIndexError.Error())
+	}
+
+	return serviceEvaluation,nil
+}
+
 // ============================================================================================================================
 // Get Service Agent Relation - get the service agent relation asset from ledger - return (nil,nil) if not found
 // ============================================================================================================================

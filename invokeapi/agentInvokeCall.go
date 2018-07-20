@@ -56,6 +56,82 @@ func CreateAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(nil)
 }
 
+// ========================================================================================================================
+// Modify Agent Name - wrapper of ModifyAgentName called from chiancode's Invoke
+// ========================================================================================================================
+func ModifyAgentName(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "agentId", "newAgentName"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	agentId := args[0]
+	newAgentName := args[1]
+
+	// ==== get the agent ====
+	agent, getError := a.GetAgentNotFoundError(stub, agentId)
+	if getError != nil {
+		fmt.Println("Failed to find agent by id " + agentId)
+		return shim.Error(getError.Error())
+	}
+
+	// ==== modify the agent ====
+	modifyError := a.ModifyAgentName(agent, newAgentName, stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the agent name: " + newAgentName)
+		return shim.Error(modifyError.Error())
+	}
+
+	return shim.Success(nil)
+}
+
+// ========================================================================================================================
+// Modify Agent Address - wrapper of ModifyAgentAddress called from chiancode's Invoke
+// ========================================================================================================================
+func ModifyAgentAddress(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0            1
+	// "agentId", "newAgentAddress"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	agentId := args[0]
+	newAgentAddress := args[1]
+
+	// ==== get the agent ====
+	agent, getError := a.GetAgentNotFoundError(stub, agentId)
+	if getError != nil {
+		fmt.Println("Failed to find agent by id " + agentId)
+		return shim.Error(getError.Error())
+	}
+
+	// ==== modify the agent ====
+	modifyError := a.ModifyAgentAddress(agent, newAgentAddress, stub)
+	if modifyError != nil {
+		fmt.Println("Failed to modify the agent address: " + newAgentAddress)
+		return shim.Error(modifyError.Error())
+	}
+
+	return shim.Success(nil)
+}
+
 // =====================================================================================================================
 // Query Agent - wrapper of GetAgentNotFoundError called from the chaincode invoke
 // =====================================================================================================================

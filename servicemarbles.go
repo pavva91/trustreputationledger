@@ -48,9 +48,12 @@ import (
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateService", "Args":["idservice5","service1","description1asdfasdf"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAgentRelation", "Args":["idservice1","idagent1","2","6"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelation", "Args":["idservice10", "service10","description10","idagent2","2","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelationWithStandardValue", "Args":["idservice10", "service10","description10","idagent2","2","6"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceEvaluation", "Args":["idagent3","idagent3", "idagent3","idservice1","asdfasCIAOfasdfa","asdfasdfas","6"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent5","idservice4", "DEMANDER","6"]}'
+
+// ==== MODIFY ASSET FUNCTIONS ==================
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "ModifyReputationValue", "Args":["idservice1idagent1EXECUTER","8"]}'
 
 
 // ==== GET ASSET ==================
@@ -63,7 +66,7 @@ import (
 
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idservice10"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idservice1idagent1EXECUTER"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byService", "Args":["idservice1"]}'
@@ -144,9 +147,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "CreateServiceAgentRelation":
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
 		return invoke.CreateServiceAgentRelation(stub, args)
-	case "CreateServiceAndServiceAgentRelation":
+	case "CreateServiceAndServiceAgentRelationWithStandardValue":
 		// If service doesn't exist it will create
-		return invoke.CreateServiceAndServiceAgentRelation(stub, args)
+		return invoke.CreateServiceAndServiceAgentRelationWithStandardValue(stub, args)
 
 		// GET:
 	case "GetServiceHistory":
@@ -201,6 +204,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		// CREATE:
 	case "CreateReputation":
 		return invoke.CreateReputation(stub, args)
+		// MODIFTY:
+	case "ModifyReputationValue":
+		return invoke.ModifyReputationValue(stub,args)
+
 		// GET:
 	case "GetReputation":
 		return invoke.QueryReputation(stub, args)

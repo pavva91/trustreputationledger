@@ -2,34 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e17f17fd-6e42-45a0-9144-4d0344a5aa27" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/servicemarbles.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/servicemarbles.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/agent.go" beforeDir="false" afterPath="$PROJECT_DIR$/assets/agent.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/reputation.go" beforeDir="false" afterPath="$PROJECT_DIR$/assets/reputation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/assets/service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/serviceEvaluation.go" beforeDir="false" afterPath="$PROJECT_DIR$/assets/serviceEvaluation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/writeUtils.go" beforeDir="false" afterPath="$PROJECT_DIR$/assets/writeUtils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generalcc/read_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/generalcc/read_ledger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generalcc/write_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/generalcc/write_ledger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/invokeapi/agentInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/invokeapi/agentInvokeCall.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/invokeapi/serviceInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/invokeapi/serviceInvokeCall.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/invokeapi/serviceEvaluationInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/invokeapi/serviceEvaluationInvokeCall.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/invokeapi/serviceRelationAgentInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/invokeapi/serviceRelationAgentInvokeCall.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servicemarbles" beforeDir="false" afterPath="$PROJECT_DIR$/servicemarbles" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/servicemarbles.go" beforeDir="false" afterPath="$PROJECT_DIR$/servicemarbles.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/readUtils.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/readUtils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceEvaluation.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceEvaluation.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/writeUtils.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/writeUtils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/generalcc/read_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/generalcc/read_ledger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/generalcc/write_ledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/generalcc/write_ledger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceInvokeCall.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/servicemarbles" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/servicemarbles" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/servicemarbles.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/servicemarbles.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/vendor.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/vendor.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -43,17 +32,29 @@
       <file leaf-file-name="serviceRelationAgent.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="128" column="47" lean-forward="true" selection-start-line="128" selection-start-column="47" selection-end-line="128" selection-end-column="47" />
+            <state relative-caret-position="225">
+              <caret line="134" column="67" lean-forward="true" selection-start-line="134" selection-start-column="67" selection-end-line="134" selection-end-column="67" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serviceRelationAgentInvokeCall.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="service.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1189">
+              <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serviceRelationAgentInvokeCall.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1005">
-              <caret line="114" column="129" selection-start-line="114" selection-start-column="129" selection-end-line="114" selection-end-column="129" />
+            <state relative-caret-position="600">
+              <caret line="40" column="20" lean-forward="true" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="20" />
+              <folding>
+                <element signature="e#92#302#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -61,35 +62,32 @@
       <file leaf-file-name="agent.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="41" column="5" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
+            <state relative-caret-position="345">
+              <caret line="57" column="14" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="servicemarbles.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/servicemarbles.go">
+      <file leaf-file-name="complexInteractions.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/complexInteractions.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="220" column="22" lean-forward="true" selection-start-line="220" selection-start-column="22" selection-end-line="220" selection-end-column="22" />
+            <state relative-caret-position="1290">
+              <caret line="104" column="49" selection-start-line="104" selection-start-column="49" selection-end-line="104" selection-end-column="49" />
+              <folding>
+                <element signature="e#19#213#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="reputation.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go">
+      <file leaf-file-name="agentInvokeCall.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="183" column="35" selection-start-line="183" selection-start-column="35" selection-end-line="183" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="lib.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
+            <state relative-caret-position="1012">
+              <caret line="152" column="22" lean-forward="true" selection-start-line="152" selection-start-column="22" selection-end-line="152" selection-end-column="22" />
+              <folding>
+                <element signature="e#311#522#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -97,8 +95,26 @@
       <file leaf-file-name="serviceEvaluationInvokeCall.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-142">
-              <caret line="214" column="43" selection-start-line="214" selection-start-column="43" selection-end-line="214" selection-end-column="43" />
+            <state relative-caret-position="390">
+              <caret line="89" column="5" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serviceInvokeCall.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceInvokeCall.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="158">
+              <caret line="75" selection-start-line="75" selection-end-line="111" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="reputation.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="345">
+              <caret line="117" column="59" selection-start-line="117" selection-start-column="59" selection-end-line="117" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -106,26 +122,8 @@
       <file leaf-file-name="reputationInvokeCall.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="647">
-              <caret line="182" column="9" lean-forward="true" selection-start-line="182" selection-start-column="9" selection-end-line="182" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="interfaces_stable.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="122" column="4" selection-start-line="122" selection-start-column="4" selection-end-line="122" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="serviceEvaluation.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceEvaluation.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2010">
-              <caret line="139" column="47" lean-forward="true" selection-start-line="139" selection-start-column="47" selection-end-line="139" selection-end-column="47" />
+            <state relative-caret-position="114">
+              <caret line="99" selection-start-line="99" selection-end-line="135" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -150,9 +148,9 @@
       <find>model</find>
       <find>gethistory</find>
       <find>getservice</find>
-      <find>reputation</find>
       <find>REP</find>
       <find>AgentReputation</find>
+      <find>reputation</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
@@ -162,7 +160,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/ServiceAgentRelation.go" />
         <option value="$PROJECT_DIR$/serviceAgentRelation.go" />
         <option value="$PROJECT_DIR$/lib.go" />
         <option value="$PROJECT_DIR$/cclib/lib.go" />
@@ -189,8 +186,6 @@
         <option value="$PROJECT_DIR$/invokeapi/serviceInvokeCall.go" />
         <option value="$PROJECT_DIR$/invokeapi/serviceRelationAgentInvokeCall.go" />
         <option value="$PROJECT_DIR$/invokeapi/agentInvokeCall.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go" />
         <option value="$PROJECT_DIR$/assets/service.go" />
         <option value="$PROJECT_DIR$/assets/reputation.go" />
         <option value="$PROJECT_DIR$/assets/serviceEvaluation.go" />
@@ -200,16 +195,22 @@
         <option value="$PROJECT_DIR$/generalcc/read_ledger.go" />
         <option value="$PROJECT_DIR$/generalcc/write_ledger.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/writeUtils.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/generalcc/write_ledger.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceEvaluation.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go" />
         <option value="$PROJECT_DIR$/servicemarbles.go" />
+        <option value="$PROJECT_DIR$/invokeapi/complexInteractions.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/complexInteractions.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/complexInteractions.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceInvokeCall.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go" />
       </list>
     </option>
   </component>
@@ -246,12 +247,12 @@
             <path>
               <item name="servicemarbles" type="b2602c69:ProjectViewProjectNode" />
               <item name="servicemarbles" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="arglib" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="servicemarbles" type="b2602c69:ProjectViewProjectNode" />
               <item name="servicemarbles" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="generalcc" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="servicemarbles" type="b2602c69:ProjectViewProjectNode" />
@@ -280,16 +281,16 @@
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/invokeapi" />
+      <recent name="$PROJECT_DIR$/assets" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/invokeapi" />
       <recent name="$PROJECT_DIR$/model/utils" />
       <recent name="$PROJECT_DIR$/" />
       <recent name="$PROJECT_DIR$/model" />
       <recent name="$PROJECT_DIR$/generalcc" />
-      <recent name="$PROJECT_DIR$/invokeapi" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/invokeapi" />
-      <recent name="$PROJECT_DIR$/assets" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -352,7 +353,7 @@
     <frame x="67" y="25" width="1613" height="1025" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24054557" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24054557" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.055737704" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
@@ -374,19 +375,19 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.06757595" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3293348" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -404,21 +405,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/cclib/lib.go" />
-    <entry file="file://$PROJECT_DIR$/assets/service.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3075">
-          <caret line="211" selection-start-line="211" selection-end-line="221" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="98" column="79" lean-forward="true" selection-start-line="98" selection-start-column="79" selection-end-line="98" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/assets/agent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2610">
@@ -540,9 +526,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1335">
           <caret line="96" column="27" selection-start-line="96" selection-start-column="27" selection-end-line="96" selection-end-column="27" />
-          <folding>
-            <element signature="e#347#557#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -560,16 +543,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/invokeapi/serviceRelationAgentInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2138">
-          <caret line="397" column="5" selection-start-line="397" selection-start-column="5" selection-end-line="397" selection-end-column="5" />
-          <folding>
-            <element signature="e#92#314#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/prova/asdf.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -581,13 +554,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="24" column="25" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="65" column="28" selection-start-line="65" selection-start-column="28" selection-end-line="65" selection-end-column="28" />
         </state>
       </provider>
     </entry>
@@ -616,9 +582,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="21" column="14" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
-          <folding>
-            <element signature="e#1877#1996#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -650,62 +613,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="39" selection-start-line="15" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="639">
-          <caret line="226" column="14" selection-start-line="226" selection-start-column="14" selection-end-line="226" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-142">
-          <caret line="214" column="43" selection-start-line="214" selection-start-column="43" selection-end-line="214" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceEvaluation.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2010">
-          <caret line="139" column="47" lean-forward="true" selection-start-line="139" selection-start-column="47" selection-end-line="139" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="122" column="4" selection-start-line="122" selection-start-column="4" selection-end-line="122" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="41" column="5" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1005">
-          <caret line="114" column="129" selection-start-line="114" selection-start-column="129" selection-end-line="114" selection-end-column="129" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="128" column="47" lean-forward="true" selection-start-line="128" selection-start-column="47" selection-end-line="128" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -713,24 +620,127 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go">
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceEvaluation.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="183" column="35" selection-start-line="183" selection-start-column="35" selection-end-line="183" selection-end-column="35" />
+        <state relative-caret-position="1080">
+          <caret line="77" column="10" selection-start-line="77" selection-start-column="10" selection-end-line="77" selection-end-column="10" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go">
+    <entry file="file://$PROJECT_DIR$/invokeapi/serviceRelationAgentInvokeCall.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="647">
-          <caret line="182" column="9" lean-forward="true" selection-start-line="182" selection-start-column="9" selection-end-line="182" selection-end-column="9" />
+        <state relative-caret-position="1200">
+          <caret line="108" column="36" selection-start-line="108" selection-start-column="36" selection-end-line="108" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="94" column="4" selection-start-line="94" selection-start-column="4" selection-end-line="94" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/servicemarbles.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="220" column="22" lean-forward="true" selection-start-line="220" selection-start-column="22" selection-end-line="220" selection-end-column="22" />
+        <state relative-caret-position="390">
+          <caret line="154" column="29" lean-forward="true" selection-start-line="154" selection-start-column="29" selection-end-line="154" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/complexInteractions.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/invokeapi/complexInteractions.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="35" column="19" lean-forward="true" selection-end-line="140" />
+          <folding>
+            <element signature="e#19#118#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/complexInteractions.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1290">
+          <caret line="104" column="49" selection-start-line="104" selection-start-column="49" selection-end-line="104" selection-end-column="49" />
+          <folding>
+            <element signature="e#19#213#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="89" column="5" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="134" column="67" lean-forward="true" selection-start-line="134" selection-start-column="67" selection-end-line="134" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="117" column="59" selection-start-line="117" selection-start-column="59" selection-end-line="117" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/reputationInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="99" selection-start-line="99" selection-end-line="135" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/agent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="57" column="14" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/agentInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1012">
+          <caret line="152" column="22" lean-forward="true" selection-start-line="152" selection-start-column="22" selection-end-line="152" selection-end-column="22" />
+          <folding>
+            <element signature="e#311#522#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1189">
+          <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="75" selection-start-line="75" selection-end-line="111" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceRelationAgentInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="40" column="20" lean-forward="true" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="20" />
+          <folding>
+            <element signature="e#92#302#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
