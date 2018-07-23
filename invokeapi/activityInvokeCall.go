@@ -22,7 +22,7 @@ For now we want that the Activity assets can only be added on the ledger (NO MOD
 // ========================================================================================================================
 func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                   2                     3                   4                        5         6
-	// "WriterAgentId", "DemanderAgentId", "ExecuterAgentId", "ExecutedServiceId", "ExecutedServiceTxId", "Timestamp", "Value"
+	// "WriterAgentId", "DemanderAgentId", "ExecuterAgentId", "ExecutedServiceId", "ExecutedServiceTxId", "ExecutedServiceTimestamp", "Value"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 7)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
@@ -114,7 +114,7 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	// ==== Indexing of serviceEvaluation by Agent ====
 
 	// index create
-	demanderExecuterIndexKey, agentIndexError := a.CreateDemanderExecuterIndex(serviceEvaluation, stub)
+	demanderExecuterIndexKey, agentIndexError := a.CreateDemanderExecuterTimestampIndex(serviceEvaluation, stub)
 	if agentIndexError != nil {
 		return shim.Error(agentIndexError.Error())
 	}
@@ -156,7 +156,7 @@ func QueryActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 		fmt.Println("Failed to find serviceEvaluation by id " + evaluationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Evaluation ID: " + serviceEvaluation.EvaluationId + ", Writer Agent: " + serviceEvaluation.WriterAgentId + ", Demander Agent: " + serviceEvaluation.DemanderAgentId + ", Executer Agent: " + serviceEvaluation.ExecuterAgentId + ", of the Service: " + serviceEvaluation.ExecutedServiceId + ", with Timestamp: " + serviceEvaluation.Timestamp + ", with Evaluation: " + serviceEvaluation.Value)
+		fmt.Println("Evaluation ID: " + serviceEvaluation.EvaluationId + ", Writer Agent: " + serviceEvaluation.WriterAgentId + ", Demander Agent: " + serviceEvaluation.DemanderAgentId + ", Executer Agent: " + serviceEvaluation.ExecuterAgentId + ", of the Service: " + serviceEvaluation.ExecutedServiceId + ", with ExecutedServiceTimestamp: " + serviceEvaluation.ExecutedServiceTimestamp + ", with Evaluation: " + serviceEvaluation.Value)
 		// ==== Marshal the Get Service Evaluation query result ====
 		evaluationAsJSON, err := json.Marshal(serviceEvaluation)
 		if err != nil {
@@ -203,12 +203,12 @@ func QueryByExecutedServiceTx(stub shim.ChaincodeStubInterface, args []string) p
 }
 
 // ========================================================================================================================
-// Query by Demander Executer - wrapper of GetByDemanderExecuter called from chiancode's Invoke
+// Query by Demander Executer Timestamp - wrapper of GetByDemanderExecuterTimestamp called from chiancode's Invoke
 // ========================================================================================================================
 func QueryByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	//   0                1
-	// "demanderAgentId", "executerAgentId"
-	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+	//   0                1                   2
+	// "demanderAgentId", "executerAgentId","Timestamp"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 3)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
@@ -222,17 +222,18 @@ func QueryByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb
 
 	demanderAgentId := args[0]
 	executerAgentId := args[1]
+	timestamp := args[2]
 
 
 	// ==== Run the byExecutedServiceTx query ====
-	byExecutedServiceTxIdQuery, err := a.GetByDemanderExecuter(demanderAgentId, executerAgentId, stub)
+	byExecutedServiceTxIdQuery, err := a.GetByDemanderExecuterTimestamp(demanderAgentId, executerAgentId, timestamp, stub)
 	if err != nil {
 		fmt.Println("Failed to get service evaluation for this demander: " + demanderAgentId + " and executer: " + executerAgentId)
 		return shim.Error(err.Error())
 	}
 
 	// ==== Print the byService query result ====
-	err = a.PrintByDemanderExecuterResultsIterator(byExecutedServiceTxIdQuery, stub)
+	err = a.PrintByDemanderExecuterTimestampResultsIterator(byExecutedServiceTxIdQuery, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -285,14 +286,14 @@ func GetActivitiesByExecutedServiceTxId(stub shim.ChaincodeStubInterface, args [
 }
 
 // =====================================================================================================================
-// GetActivitiesByDemanderExecuter - wrapper of GetByDemanderExecuter called from chiancode's Invoke,
+// GetActivitiesByDemanderExecuterTimestamp - wrapper of GetByDemanderExecuterTimestamp called from chiancode's Invoke,
 // for looking for serviceEvaluations of a certain Demander-Executer couple
 // return: ServiceEvaluations As JSON
 // =====================================================================================================================
-func GetActivitiesByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	//   0          1
-	// "Demander", "Executer"
-	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
+func GetActivitiesByDemanderExecuterTimestamp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0          1         2
+	// "Demander", "Executer","Timestamp"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 3)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
@@ -306,16 +307,17 @@ func GetActivitiesByDemanderExecuter(stub shim.ChaincodeStubInterface, args []st
 
 	demanderAgentId := args[0]
 	executerAgentId := args[1]
+	timestamp := args[2]
 
 	// ==== Run the ByDemanderExecuter query ====
-	byExecutedServiceTxIdQuery, err := a.GetByDemanderExecuter(demanderAgentId, executerAgentId, stub)
+	byExecutedServiceTxIdQuery, err := a.GetByDemanderExecuterTimestamp(demanderAgentId, executerAgentId, timestamp, stub)
 	if err != nil {
 		fmt.Println("Failed to get service evaluation for this demander: " + demanderAgentId + " and executer: " + executerAgentId)
 		return shim.Error(err.Error())
 	}
 
 	// ==== Get the ServiceEvaluations for the byDemanderExecuter query result ====
-	serviceEvaluations, err := a.GetActivitySliceFromDemanderExecuterRangeQuery(byExecutedServiceTxIdQuery, stub)
+	serviceEvaluations, err := a.GetActivitySliceFromDemanderExecuterTimestampRangeQuery(byExecutedServiceTxIdQuery, stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}

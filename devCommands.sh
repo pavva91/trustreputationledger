@@ -31,7 +31,7 @@
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAgentRelation", "Args":["idservice1","idagent1","2","6"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelationWithStandardValue", "Args":["idservice10","service10","description10","idagent2","2","6"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateActivity", "Args":["idagent3","idagent3", "idagent3","idservice1","asdfasCIAOfasdfa","asdfasdfas","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateActivity", "Args":["idagent4","idagent4", "idagent1","idservice1","asdfCIAOsfasdfa","2018-07-23 16:51:01.2","2"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent5","idservice4", "DEMANDER","6"]}'
 
 // ==== MODIFY ASSET FUNCTIONS ==================
@@ -58,17 +58,16 @@
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byExecutedServiceTxId", "Args":["asdfasfasdfa"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byDemanderExecuter", "Args":["idagent3","idagent3"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetEvaluationsByServiceTxId", "Args":["asdfasfasdfa"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetEvaluationsByDemanderExecuter", "Args":["idagent3","idagent3"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetActivitiesByDemanderExecuterTimestamp", "Args":["idagent4","idagent1","2018-07-23 16:51:01.2"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byAgentServiceRole", "Args":["idagent5","idservice4","EXECUTER"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputationsByAgentServiceRole", "Args":["idagent5","idservice4","DEMANDER"]}'
-
-
-
-
 
 // ==== DELETE ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteAgent", "Args":["idagent1"]}'
+
+
+
 
 // ==== CALLS IN THE REAL PROJECT ====
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "helloWorld", "Args":[]}'
@@ -85,3 +84,5 @@
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "byAgent", "Args":["a1"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceNotFoundError", "Args":["idservice5"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "DeleteService", "Args":["idservice5"]}'
+// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetActivitiesByDemanderExecuterTimestamp", "Args":["a3","a1","2018-07-23 16:51:01.2"]}'
+

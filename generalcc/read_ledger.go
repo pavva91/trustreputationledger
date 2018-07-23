@@ -18,9 +18,9 @@ import (
 	"strconv"
 )
 
-// ===============================================
+// =====================================================================================================================
 // GetValue - get a generic variable from ledger
-// ===============================================
+// =====================================================================================================================
 func GetValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var agentId, jsonResp string
 	var err error
@@ -42,7 +42,7 @@ func GetValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(valAsbytes)
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Read - Read a generic variable from ledger
 //
 // Shows Off GetState() - reading a key/value from the ledger
@@ -55,7 +55,7 @@ func GetValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Returns Payload:
 // SUCCESS (found key value): shim.Success(json.RawMessage)
 // FAIL (not found key-value): shim.Error
-// ============================================================================================================================
+// =====================================================================================================================
 func Read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, jsonResp string
 	var err error
@@ -216,7 +216,7 @@ func GetHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 func PrettyPrintHistory(history []queryresult.KeyModification) {
 	for i := 0; i < len(history); i++ {
 		fmt.Printf("Value version: %s:\n", strconv.Itoa(i))
-		fmt.Println("Timestamp: " + history[i].Timestamp.String())
+		fmt.Println("ExecutedServiceTimestamp: " + history[i].Timestamp.String())
 		fmt.Println("Value: " + string(history[i].Value))
 		fmt.Println("TxId: " + history[i].TxId)
 		fmt.Println("IsDelete: " + strconv.FormatBool(history[i].IsDelete))
@@ -224,9 +224,9 @@ func PrettyPrintHistory(history []queryresult.KeyModification) {
 	}
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Print Results Iterator - Print on screen the general iterator of the composite index query result
-// ============================================================================================================================
+// =====================================================================================================================
 func PrintResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
 	// USE DEFER BECAUSE it will close also in case of error throwing (premature return)
 	defer queryIterator.Close()
@@ -246,4 +246,27 @@ func PrintResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub s
 		}
 	}
 	return nil
+}
+
+func GetNextIncrementalKey(keyPrefix string, stub shim.ChaincodeStubInterface)(string, error ){
+	// TODO: Levare nextIncrementalKey prefix di 3 lettere in testa
+
+	startKey := keyPrefix+""
+	endKey := keyPrefix+""
+	i:=0
+
+	//i need to get the last IncrementalKey on the ledger
+	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return "",err
+	}
+	defer resultsIterator.Close()
+
+	for resultsIterator.HasNext() {
+		resultsIterator.Next()
+		i=i+1
+	}
+
+	nextIncrementalKey := keyPrefix + strconv.Itoa(i)
+	return nextIncrementalKey,nil
 }

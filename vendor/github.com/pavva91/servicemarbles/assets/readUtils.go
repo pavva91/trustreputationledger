@@ -91,7 +91,7 @@ func GetServiceHistory(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	type ServiceHistory struct {
 		TxId  string  `json:"txId"`
 		Value Service `json:"value"`
-		// Timestamp *google_protobuf.Timestamp
+		// ExecutedServiceTimestamp *google_protobuf.ExecutedServiceTimestamp
 		IsDelete bool `json:"isDelete"`
 	}
 	var history []ServiceHistory

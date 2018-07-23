@@ -216,7 +216,7 @@ func GetHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 func PrettyPrintHistory(history []queryresult.KeyModification) {
 	for i := 0; i < len(history); i++ {
 		fmt.Printf("Value version: %s:\n", strconv.Itoa(i))
-		fmt.Println("Timestamp: " + history[i].Timestamp.String())
+		fmt.Println("ExecutedServiceTimestamp: " + history[i].Timestamp.String())
 		fmt.Println("Value: " + string(history[i].Value))
 		fmt.Println("TxId: " + history[i].TxId)
 		fmt.Println("IsDelete: " + strconv.FormatBool(history[i].IsDelete))

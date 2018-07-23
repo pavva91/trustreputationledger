@@ -19,20 +19,20 @@ import (
 // - AgentRole
 // - ExecutedServiceId
 // - ExecutedServiceTxId
-// - Timestamp
+// - ExecutedServiceTimestamp
 // - Outcome
 // - Value
 // - IsFinalEvaluation
 // UNIVOCAL: WriterAgentId, DemanderAgentId, ExecuterAgentId, ExecutedServiceTxId
 type Activity struct {
-	EvaluationId        string `json:"EvaluationId"`
-	WriterAgentId       string `json:"WriterAgentId"`// WriterAgentId = DemanderAgentId || ExecuterAgentId
-	DemanderAgentId     string `json:"DemanderAgentId"`
-	ExecuterAgentId     string `json:"ExecuterAgentId"`
-	ExecutedServiceId   string `json:"ExecutedServiceId"`
-	ExecutedServiceTxid string `json:"ExecutedServiceTxid"` //Relativo all'esecuzione del servizio
-	Timestamp           string `json:"Timestamp"`
-	Value               string `json:"Value"`
+	EvaluationId             string `json:"EvaluationId"`
+	WriterAgentId            string `json:"WriterAgentId"`// WriterAgentId = DemanderAgentId || ExecuterAgentId
+	DemanderAgentId          string `json:"DemanderAgentId"`
+	ExecuterAgentId          string `json:"ExecuterAgentId"`
+	ExecutedServiceId        string `json:"ExecutedServiceId"`
+	ExecutedServiceTxid      string `json:"ExecutedServiceTxid"` //Relativo all'esecuzione del servizio
+	ExecutedServiceTimestamp string `json:"ExecutedServiceTimestamp"`
+	Value                    string `json:"Value"`
 	// Outcome             string `json:"Outcome"` // TODO: Da levare
 	// IsFinalEvaluation   string `json:"IsFinalEvaluation"` // TODO: Da levare
 }
@@ -51,14 +51,12 @@ func CreateActivity(evaluationId string, writerAgentId string, demanderAgentId s
 	return serviceEvaluation, nil
 }
 
-
-
 // ============================================================================================================================
 // Create Executed Service Transaction(Tx) Index - to do query based on Executed Service Tx Id
 // ============================================================================================================================
-func CreateServiceTxIndex(serviceEvaluation *Activity, stub shim.ChaincodeStubInterface) (serviceTxIndexKey string, err error) {
+func CreateServiceTxIndex(activity *Activity, stub shim.ChaincodeStubInterface) (serviceTxIndexKey string, err error) {
 	indexName := "serviceTx~evaluation"
-	serviceTxIndexKey, err = stub.CreateCompositeKey(indexName, []string{serviceEvaluation.ExecutedServiceTxid, serviceEvaluation.EvaluationId})
+	serviceTxIndexKey, err = stub.CreateCompositeKey(indexName, []string{activity.ExecutedServiceTxid, activity.EvaluationId})
 	if err != nil {
 		return serviceTxIndexKey, err
 	}
@@ -66,11 +64,11 @@ func CreateServiceTxIndex(serviceEvaluation *Activity, stub shim.ChaincodeStubIn
 }
 
 // ============================================================================================================================
-// Create Demander Agent - Executer Agent - Evaluation Id Index - to do query based on Demander-Executer Evaluations
+// Create Demander Agent - Executer Agent - Timestamp - Evaluation Id Index - to do query based on Demander-Executer-Timestamp Evaluations
 // ============================================================================================================================
-func CreateDemanderExecuterIndex(serviceEvaluation *Activity, stub shim.ChaincodeStubInterface) (agentServiceIndex string, err error) {
-	indexName := "demander~executer~evaluation"
-	agentServiceIndex, err = stub.CreateCompositeKey(indexName, []string{serviceEvaluation.DemanderAgentId, serviceEvaluation.ExecuterAgentId, serviceEvaluation.EvaluationId})
+func CreateDemanderExecuterTimestampIndex(activity *Activity, stub shim.ChaincodeStubInterface) (agentServiceIndex string, err error) {
+	indexName := "demander~executer~timestamp~evaluation"
+	agentServiceIndex, err = stub.CreateCompositeKey(indexName, []string{activity.DemanderAgentId, activity.ExecuterAgentId, activity.ExecutedServiceTimestamp, activity.EvaluationId})
 	if err != nil {
 		return agentServiceIndex, err
 	}
@@ -114,7 +112,7 @@ func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId stri
 	// ==== Indexing of serviceEvaluation by Agent ====
 
 	// index create
-	demanderExecuterIndexKey, agentIndexError := CreateDemanderExecuterIndex(serviceEvaluation, stub)
+	demanderExecuterIndexKey, agentIndexError := CreateDemanderExecuterTimestampIndex(serviceEvaluation, stub)
 	if agentIndexError != nil {
 		return nil,errors.New(agentIndexError.Error())
 	}
@@ -181,11 +179,11 @@ func GetByExecutedServiceTx(executedServiceTxId string, stub shim.ChaincodeStubI
 // ============================================================================================================================
 // Get the agent query on ServiceRelationAgent - Execute the query based on agent composite index
 // ============================================================================================================================
-func GetByDemanderExecuter(demanderAgentId string, executerAgentId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
+func GetByDemanderExecuterTimestamp(demanderAgentId string, executerAgentId string, timestamp string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
 	// Query the service~agent~relation index by service
 	// This will execute a key range query on all keys starting with 'service'
-	indexName := "demander~executer~evaluation"
-	demanderExecuterResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{demanderAgentId, executerAgentId})
+	indexName := "demander~executer~timestamp~evaluation"
+	demanderExecuterResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{demanderAgentId, executerAgentId, timestamp})
 	if err != nil {
 		return demanderExecuterResultsIterator, err
 	}
@@ -267,9 +265,9 @@ func GetActivitySliceFromServiceTxIdRangeQuery(queryIterator shim.StateQueryIter
 }
 
 // ============================================================================================================================
-// GetActivitySliceFromDemanderExecuterRangeQuery - Get the Agent and Activity Slices from the result of query "GetByDemanderExecuter"
+// GetActivitySliceFromDemanderExecuterTimestampRangeQuery - Get the Agent and Activity Slices from the result of query "GetByDemanderExecuterTimestamp"
 // ============================================================================================================================
-func GetActivitySliceFromDemanderExecuterRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Activity, error) {
+func GetActivitySliceFromDemanderExecuterTimestampRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Activity, error) {
 	var serviceEvaluations []Activity
 	// USE DEFER BECAUSE it will close also in case of error throwing (premature return)
 	defer queryIterator.Close()
@@ -281,14 +279,14 @@ func GetActivitySliceFromDemanderExecuterRangeQuery(queryIterator shim.StateQuer
 		}
 		_, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
 
-		evaluationId := compositeKeyParts[2]
+		evaluationId := compositeKeyParts[3]
 
 		iserviceRelationAgent, err := GetActivity(stub, evaluationId)
 		serviceEvaluations = append(serviceEvaluations, iserviceRelationAgent)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("- found a relation EVALUATION ID: %s \n", evaluationId)
+		fmt.Printf("- found a relation EVALUATION ID: %s , VALUE: %s\n", iserviceRelationAgent.EvaluationId,iserviceRelationAgent.Value)
 	}
 	return serviceEvaluations, nil
 }
@@ -321,7 +319,7 @@ func PrintByExecutedServiceTxIdResultsIterator(queryIterator shim.StateQueryIter
 // ============================================================================================================================
 // Print Demander Executer Results Iterator - Print on screen the general iterator of the demander executer index query result
 // ============================================================================================================================
-func PrintByDemanderExecuterResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
+func PrintByDemanderExecuterTimestampResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
 	defer queryIterator.Close()
 	for i := 0; queryIterator.HasNext(); i++ {
 		responseRange, err := queryIterator.Next()
@@ -332,7 +330,7 @@ func PrintByDemanderExecuterResultsIterator(queryIterator shim.StateQueryIterato
 
 		demanderAgentId := compositeKeyParts[0]
 		executerAgentId := compositeKeyParts[1]
-		evaluationId := compositeKeyParts[2]
+		evaluationId := compositeKeyParts[3]
 
 		if err != nil {
 			return err

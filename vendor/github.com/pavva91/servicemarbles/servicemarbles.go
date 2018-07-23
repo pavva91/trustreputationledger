@@ -198,7 +198,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return invoke.GetActivitiesByExecutedServiceTxId(stub, args)
 	case "GetEvaluationsByDemanderExecuter":
 		// also with only one record result return always a JSONArray
-		return invoke.GetActivitiesByDemanderExecuter(stub, args)
+		return invoke.GetActivitiesByDemanderExecuterTimestamp(stub, args)
 
 	// REPUTATION INVOKES
 		// CREATE:
