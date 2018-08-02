@@ -9,7 +9,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
-	a "github.com/pavva91/servicemarbles/assets"
+	a "github.com/pavva91/trustreputationledger/assets"
 )
 
 // ========================================================================================================================
@@ -53,7 +53,7 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 
 	// ==== Check, Create, Indexing ServiceRelationAgent ====
 
-	serviceRelationAgent, serviceRelationError := a.CheckingCreatingIndexingServiceRelationAgent(serviceId, agentId, cost, time, stub)
+	serviceRelationAgent, serviceRelationError := a.CheckingCreatingIndexingServiceRelationAgent(serviceId,agentId, cost, time, stub)
 	if serviceRelationError != nil {
 		return shim.Error("Error saving ServiceRelationAgent: " + serviceRelationError.Error())
 
@@ -61,7 +61,7 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 
 	// ==== Check, Create, Indexing Reputation ====
 	initReputationValue := "6"
-	reputation,reputationError := a.CheckingCreatingIndexingReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,"EXECUTER",initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}

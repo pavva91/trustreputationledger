@@ -16,7 +16,7 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
 	"strconv"
-)
+	)
 
 // =====================================================================================================================
 // GetValue - get a generic variable from ledger
@@ -154,6 +154,8 @@ func ReadAllStateDB(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(buffer.Bytes())
 }
 
+
+
 // TODO: Trovare il modo di generalizzare senza usare assets.Service
 // =====================================================================================================================
 // Get history of a general asset in the Chain - The chain is a transaction log, structured as hash-linked blocks
@@ -167,6 +169,11 @@ func ReadAllStateDB(stub shim.ChaincodeStubInterface) pb.Response {
 //  "m01490985296352SjAyM"
 // =====================================================================================================================
 func GetHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	type KeyModificationWrapper struct {
+		RealValue interface{} `json:"InterfaceValue"`
+		Tx        queryresult.KeyModification
+	}
+	var sliceReal []KeyModificationWrapper
 
 	var history []queryresult.KeyModification
 	var value interface{}
@@ -191,26 +198,31 @@ func GetHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 			return shim.Error(err.Error())
 		}
 
+		var singleReal KeyModificationWrapper
 		var tx queryresult.KeyModification
-		tx.TxId = historyData.TxId                //copy transaction id over
+		singleReal.Tx.TxId = historyData.TxId     //copy transaction id over
 		json.Unmarshal(historyData.Value, &value) //un stringify it aka JSON.parse()
 		if historyData.Value == nil {             //value has been deleted
 			var emptyBytes []byte
-			tx.Value = emptyBytes //copy nil value
+			singleReal.Tx.Value = emptyBytes //copy nil value
 		} else {
 			json.Unmarshal(historyData.Value, &value) //un stringify it aka JSON.parse()
-			tx.Value = historyData.Value              //copy value over
-			tx.Timestamp = historyData.Timestamp
-			tx.IsDelete = historyData.IsDelete
+			singleReal.Tx.Value = historyData.Value   //copy value over
+			singleReal.Tx.Timestamp = historyData.Timestamp
+			singleReal.Tx.IsDelete = historyData.IsDelete
+			singleReal.RealValue = value
 		}
-		history = append(history, tx) //add this tx to the list
+		history = append(history, tx) //add this Tx to the list
+		sliceReal = append(sliceReal, singleReal)
 	}
 	// fmt.Printf("- getHistoryForService returning:\n%s", history)
 	PrettyPrintHistory(history)
 
 	//change to array of bytes
-	historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
-	return shim.Success(historyAsBytes)
+	// historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
+
+	realAsBytes, _ := json.Marshal(sliceReal)
+	return shim.Success(realAsBytes)
 }
 
 func PrettyPrintHistory(history []queryresult.KeyModification) {

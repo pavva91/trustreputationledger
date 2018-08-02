@@ -30,11 +30,9 @@ type Activity struct {
 	DemanderAgentId          string `json:"DemanderAgentId"`
 	ExecuterAgentId          string `json:"ExecuterAgentId"`
 	ExecutedServiceId        string `json:"ExecutedServiceId"`
-	ExecutedServiceTxid      string `json:"ExecutedServiceTxid"` //Relativo all'esecuzione del servizio
+	ExecutedServiceTxid      string `json:"ExecutedServiceTxid"` //Relativo all'esecuzione del servizio (TODO: a cosa serve?)
 	ExecutedServiceTimestamp string `json:"ExecutedServiceTimestamp"`
 	Value                    string `json:"Value"`
-	// Outcome             string `json:"Outcome"` // TODO: Da levare
-	// IsFinalEvaluation   string `json:"IsFinalEvaluation"` // TODO: Da levare
 }
 
 // ============================================================

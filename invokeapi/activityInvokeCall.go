@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"encoding/json"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	a "github.com/pavva91/servicemarbles/assets"
+	a "github.com/pavva91/trustreputationledger/assets"
 
 
 )

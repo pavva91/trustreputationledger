@@ -10,7 +10,7 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 
 	"github.com/hyperledger/fabric/protos/ledger/queryresult"
-	"github.com/pavva91/servicemarbles/generalcc"
+	"github.com/pavva91/trustreputationledger/generalcc"
 )
 
 // =====================================================================================================================

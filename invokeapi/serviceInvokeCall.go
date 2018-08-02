@@ -14,7 +14,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
-	a "github.com/pavva91/servicemarbles/assets"
+	a "github.com/pavva91/trustreputationledger/assets"
 )
 
 // =====================================================================================================================

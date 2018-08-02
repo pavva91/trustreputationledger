@@ -9,10 +9,9 @@ import (
 	"fmt"
 	"encoding/json"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	a "github.com/pavva91/servicemarbles/assets"
+	a "github.com/pavva91/trustreputationledger/assets"
 
-
-)
+	)
 
 /*
 For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
@@ -54,42 +53,10 @@ func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 		return shim.Error("Failed to find service by id " + errS.Error())
 	}
 
-	// ==== Check if AgentRole == Demander || Executer ====
-	if ("DEMANDER"!=agentRole && "EXECUTER"!=agentRole){
-		return shim.Error("Wrong Agent Role: " + agentRole + ", use \"DEMANDER\"or \"EXECUTER\"")
-	}
-
-	// ==== Check if reputation already exists ====
-	// TODO: Definire come creare reputationId, per ora è composto dai tre ID (agentId + serviceId + agentRole)
-	reputationId := agentId + serviceId + agentRole
-	reputationAsBytes, err := stub.GetState(reputationId)
+	// ==== Actual checking, creation and indexing of Reputation  ====
+	reputation, err := a.CheckingCreatingIndexingReputation(agentId,serviceId,agentRole,value,stub)
 	if err != nil {
-		return shim.Error("Failed to get service agent reputation: " + err.Error())
-	} else if reputationAsBytes != nil {
-		fmt.Println("This service agent reputation already exists with reputationId: " + reputationId)
-		return shim.Error("This service agent reputation already exists with reputationId: " + reputationId)
-	}
-
-	// ==== Actual creation of Reputation  ====
-	reputation, err := a.CreateReputation(reputationId, agentId, serviceId, agentRole, value, stub)
-	if err != nil {
-		return shim.Error("Failed to create service agent relation of service " + service.Name + " with agent " + agent.Name)
-	}
-
-	// ==== Indexing of reputation by Service Tx Id ====
-
-	// index create
-	agentReputationIndex, serviceIndexError := a.CreateAgentServiceRoleIndex(reputation, stub)
-	if serviceIndexError != nil {
-		return shim.Error(serviceIndexError.Error())
-	}
-	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
-	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
-	emptyValue := []byte{0x00}
-	// index save
-	putStateError := stub.PutState(agentReputationIndex, emptyValue)
-	if putStateError != nil {
-		return shim.Error("Error saving Agent Reputation index: " + putStateError.Error())
+		return shim.Error("Failed to create reputation of agent " + agent.Name + " of service: " + service.Name + " with agent role: " + agentRole + ": " + err.Error())
 	}
 
 	// ==== Reputation saved & indexed. Return success ====
@@ -98,7 +65,60 @@ func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 }
 
 // ========================================================================================================================
-// Create Executed Service Evaluation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
+// Modify reputation value (if not exist, create it)
+// ========================================================================================================================
+func ModifyOrCreateReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0         1            2             3
+	// "AgentId", "ServiceId", "AgentRole", "Value"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 4)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	agentId := args[0]
+	serviceId := args[1]
+	agentRole := args[2]
+	value := args[3]
+
+	// ==== Check if already existing agent ====
+	agent, errA := a.GetAgentNotFoundError(stub, agentId)
+	if errA != nil {
+		fmt.Println("Failed to find Agent by id " + agentId)
+		return shim.Error("Failed to find Agent by id: " + errA.Error())
+	}
+
+	// ==== Check if already existing service ====
+	service, errS := a.GetServiceNotFoundError(stub, serviceId)
+	if errS != nil {
+		fmt.Println("Failed to find service by id " + serviceId)
+		return shim.Error("Failed to find service by id " + errS.Error())
+	}
+
+	// ==== Actual checking, modify (or creation and indexing if not exist before) of Reputation  ====
+	reputation, err := a.CheckingUpdatingOrCreatingIndexingReputation(agentId,serviceId,agentRole,value,stub)
+	if err != nil {
+		return shim.Error("Failed to modify reputation of agent " + agent.Name + " of service: " + service.Name + " with agent role: " + agentRole + ": " + err.Error())
+	}
+
+	// ==== Reputation modified (or saved & indexed). Return success ====
+	fmt.Println("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
+	return shim.Success(nil)
+
+
+	// ==== Reputation saved & indexed. Return success ====
+	fmt.Println("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
+	return shim.Success(nil)
+}
+
+// ========================================================================================================================
+// Modify reputation value (if not exist, throw error)
 // ========================================================================================================================
 func ModifyReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0            1
@@ -280,4 +300,59 @@ func GetReputationsByAgentServiceRole(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	return shim.Success(serviceEvaluationsAsJSON)
+}
+
+// TODO: Trovare il modo di generalizzare senza usare assets.Service
+// =====================================================================================================================
+// Get history of a general asset in the Chain - The chain is a transaction log, structured as hash-linked blocks
+// (https://hyperledger-fabric.readthedocs.io/en/release-1.1/ledger.html)
+//
+// Shows Off GetHistoryForKey() - reading complete history of a key/value
+//
+// Inputs - Array of strings
+//  0
+//  id
+//  "m01490985296352SjAyM"
+// =====================================================================================================================
+func GetReputationHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var reputationHistory []a.Reputation
+
+	var value a.Reputation
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	key := args[0]
+	fmt.Printf("- start GetHistory: %s\n", key)
+
+	// Get History
+	resultsIterator, err := stub.GetHistoryForKey(key)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	for resultsIterator.HasNext() {
+		historyData, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		var singleReputation a.Reputation
+		json.Unmarshal(historyData.Value, &value)   //un stringify it aka JSON.parse()
+		if historyData.Value == nil {             //value has been deleted
+		} else {
+			json.Unmarshal(historyData.Value, &value) //un stringify it aka JSON.parse()
+			singleReputation = value
+		}
+		reputationHistory = append(reputationHistory, singleReputation)
+	}
+
+
+	//change to array of bytes
+	// historyAsBytes, _ := json.Marshal(history) //convert to array of bytes
+
+	realAsBytes, _ := json.Marshal(reputationHistory)
+	return shim.Success(realAsBytes)
 }

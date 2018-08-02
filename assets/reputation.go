@@ -21,10 +21,11 @@ import (
 // UNIVOCAL: AgentId, ServiceId, AgentRole
 
 type Reputation struct {
+	// reputationId = agentId + serviceId + agentRole
 	ReputationId        string `json:"ReputationId"`
 	AgentId             string `json:"AgentId"`
 	ServiceId           string `json:"ServiceId"`
-	AgentRole           string `json:"AgentRole"` // TODO:Available roles: Executer, Demander
+	AgentRole           string `json:"AgentRole"` // "DEMANDER" || "EXECUTER"
 	Value               string `json:"Value"`  // Value of Reputation of the agent
 }
 
@@ -110,6 +111,68 @@ func CheckingCreatingIndexingReputation(agentId string, serviceId string,agentRo
 	}
 
 	return reputation,nil
+}
+
+// =====================================================================================================================
+// CheckingCreatingIndexingReputation - Incapsulate the three tasks:
+// 1. CHECKING
+// 2. UPDATING || CREATING
+// 3. INDEXING
+// =====================================================================================================================
+func CheckingUpdatingOrCreatingIndexingReputation(agentId string, serviceId string,agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error){
+	// ==== Check if AgentRole == Demander || Executer ====
+	if ("DEMANDER"!=agentRole && "EXECUTER"!=agentRole){
+		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \"DEMANDER\"or \"EXECUTER\"")
+	}
+
+	var reputation Reputation
+
+	// ==== Check if reputation already exists ====
+	// TODO: Definire come creare reputationId, per ora è composto dai tre ID (agentId + serviceId + agentRole)
+	reputationId := agentId + serviceId + agentRole
+	reputationAsBytes, err := stub.GetState(reputationId)
+
+	if err != nil {
+		return nil,errors.New("Failed to get service agent reputation: " + err.Error())
+	} else if reputationAsBytes != nil {
+		// ==== Reputation Already exist, modify it  ====
+		error:=json.Unmarshal(reputationAsBytes, &reputation)
+		if error != nil {
+			return nil, errors.New(error.Error())
+		}
+
+		modifyError := ModifyReputationValue(reputation,value,stub)
+		if modifyError != nil {
+			return nil, errors.New("Error modifying reputation: " + modifyError.Error())
+		}
+	}else{
+
+		// ==== Actual creation of Reputation  ====
+		reputation, err := CreateReputation(reputationId, agentId, serviceId, agentRole, value, stub)
+		if err != nil {
+			return nil,errors.New("Failed to create reputation of  agent  "+ agentId + " relation of service " + serviceId)
+		}
+
+		// ==== Indexing of reputation by Service Tx Id ====
+
+		// index create
+		agentReputationIndex, serviceIndexError := CreateAgentServiceRoleIndex(reputation, stub)
+		if serviceIndexError != nil {
+			return nil,errors.New(serviceIndexError.Error())
+		}
+		//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
+		//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
+		emptyValue := []byte{0x00}
+		// index save
+		putStateError := stub.PutState(agentReputationIndex, emptyValue)
+		if putStateError != nil {
+			return nil,errors.New("Error saving Agent Reputation index: " + putStateError.Error())
+		}
+	}
+
+
+
+	return &reputation,nil
 }
 
 // =====================================================================================================================

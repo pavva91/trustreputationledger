@@ -5,7 +5,7 @@ import (
 	"github.com/pavva91/arglib"
 	"fmt"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	a "github.com/pavva91/servicemarbles/assets"
+	a "github.com/pavva91/trustreputationledger/assets"
 
 )
 
@@ -92,7 +92,7 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
-	initReputationValue := "6"
+	initReputationValue := "6.0"
 
 	serviceId := args[0]
 	serviceName := args[1]
@@ -129,7 +129,7 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 
 	// ==== Check, Create, Indexing Reputation ====
 
-	reputation,reputationError := a.CheckingCreatingIndexingReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,"EXECUTER",initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}

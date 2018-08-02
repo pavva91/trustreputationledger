@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 // ==== CHAINCODE RUN (CHAINCODE CONTAINER) ==================
 
 // CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=scc:0 ./servicemarbles
@@ -30,12 +31,13 @@
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateService", "Args":["idservice5","service1","description1asdfasdf"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAgentRelation", "Args":["idservice1","idagent1","2","6"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelationWithStandardValue", "Args":["idservice10","service10","description10","idagent2","2","6"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateActivity", "Args":["idagent4","idagent4", "idagent1","idservice1","asdfCIAOsfasdfa","2018-07-23 16:51:01.2","2"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelationWithStandardValue", "Args":["idservice1","service1","description1","idagent1","2","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateActivity", "Args":["idagent1","idagent4", "idagent1","idservice1","asdfCIAOsfasdfa","2018-07-23 16:51:01.2","2"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent5","idservice4", "DEMANDER","6"]}'
 
 // ==== MODIFY ASSET FUNCTIONS ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "ModifyReputationValue", "Args":["idservice1idagent1EXECUTER","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "ModifyReputationValue", "Args":["idagent1idservice1EXECUTER","8"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "ModifyOrCreateReputationValue", "Args":["idagent1","idservice1","EXECUTER","1.0"]}'
 
 
 // ==== GET ASSET ==================
@@ -43,12 +45,13 @@
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetAgentNotFoundError", "Args":["idagent10"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetActivity", "Args":["idagent3idagent3idagent3asdfasfasdfa"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputation", "Args":["idagent5idservice4EXECUTER"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputationNotFoundError", "Args":["idagent1idservice1EXECUTER"]}'
 
 
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idservice1idagent1EXECUTER"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idagent1idservice1EXECUTER"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputationHistory", "Args":["idagent1idservice1EXECUTER"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "byService", "Args":["idservice1"]}'

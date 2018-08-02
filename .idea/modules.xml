@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../servicemarbles/.idea/servicemarbles.iml" filepath="$PROJECT_DIR$/../servicemarbles/.idea/servicemarbles.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/trustreputationledger.iml" filepath="$PROJECT_DIR$/.idea/trustreputationledger.iml" />
     </modules>
   </component>
 </project>
