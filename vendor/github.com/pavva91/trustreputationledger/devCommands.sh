@@ -75,7 +75,7 @@
 // ==== CALLS IN THE REAL PROJECT ====
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "helloWorld", "Args":[]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitLedger", "Args":[]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "AllStateDB", "Args":[]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "AllStateDB", "Args":[]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceHistory2", "Args":["service5"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitService", "Args":["idservice10","service10","description10"]}'

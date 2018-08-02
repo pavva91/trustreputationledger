@@ -436,12 +436,6 @@
 			"revisionTime": "2018-07-16T15:27:25Z"
 		},
 		{
-			"checksumSHA1": "b++RcvyZSRUqMlHDqfKlhDFuQYo=",
-			"path": "github.com/pavva91/trustreputationledger",
-			"revision": "9de23e603493a4a5b36edf9d2ac9ce80c1dbf9d7",
-			"revisionTime": "2018-07-23T16:21:12Z"
-		},
-		{
 			"checksumSHA1": "rJab1YdNhQooDiBWNnt7TLWPyBU=",
 			"origin": "github.com/hyperledger/fabric/vendor/github.com/pkg/errors",
 			"path": "github.com/pkg/errors",
@@ -659,5 +653,5 @@
 			"revisionTime": "2018-06-21T16:16:11Z"
 		}
 	],
-	"rootPath": "github.com/pavva91/trustreputationledger"
+	"rootPath": "github.com/pavva91/servicemarbles"
 }

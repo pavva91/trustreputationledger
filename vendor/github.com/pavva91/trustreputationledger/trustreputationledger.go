@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	a "github.com/pavva91/servicemarbles/assets"
+	a "github.com/pavva91/trustreputationledger/assets"
 	gen "github.com/pavva91/trustreputationledger/generalcc"
 	in "github.com/pavva91/trustreputationledger/invokeapi"
 )
