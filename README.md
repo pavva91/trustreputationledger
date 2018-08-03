@@ -8,4 +8,4 @@
 
 # Trust Reputation Ledger Setup
 
-I developed this system thanks to this [huge tutorial] (https://github.com/IBM-Blockchain/marbles)
+I developed this system thanks to this [IBM tutorial](https://github.com/IBM-Blockchain/marbles)
