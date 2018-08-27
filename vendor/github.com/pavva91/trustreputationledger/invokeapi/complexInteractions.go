@@ -5,7 +5,8 @@ import (
 	"github.com/pavva91/arglib"
 	"fmt"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	a "github.com/pavva91/trustreputationledger/assets"
+	// a "github.com/pavva91/trustreputationledger/assets"
+	a "github.com/pavva91/assets"
 
 )
 

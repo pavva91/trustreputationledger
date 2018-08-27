@@ -406,6 +406,16 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "Kr/sF9v8Wd9G5z4+0noG6pkvVlQ=",
+			"path": "github.com/pavva91/assets",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "/ysOebQy2clA3YKeVond/v1aWGw=",
+			"path": "github.com/pavva91/generalcc",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "zE2MTpKb0HdwlbpKLcrhW7sBq2M=",
 			"path": "github.com/pavva91/servicemarbles",
 			"revision": "9de23e603493a4a5b36edf9d2ac9ce80c1dbf9d7",
@@ -434,6 +444,12 @@
 			"path": "github.com/pavva91/servicemarbles/model",
 			"revision": "84b17a194242a3a5f55d2cc31cd52af009a66595",
 			"revisionTime": "2018-07-16T15:27:25Z"
+		},
+		{
+			"checksumSHA1": "WSzgjfYURbaCnI7w5AD2DgT7TYo=",
+			"path": "github.com/pavva91/trustreputationledger/invokeapi",
+			"revision": "44499170f97d4244a3a570a469f7ce93ce0e467d",
+			"revisionTime": "2018-08-03T09:15:05Z"
 		},
 		{
 			"checksumSHA1": "rJab1YdNhQooDiBWNnt7TLWPyBU=",
@@ -653,5 +669,5 @@
 			"revisionTime": "2018-06-21T16:16:11Z"
 		}
 	],
-	"rootPath": "github.com/pavva91/servicemarbles"
+	"rootPath": "github.com/pavva91/trustreputationledger"
 }

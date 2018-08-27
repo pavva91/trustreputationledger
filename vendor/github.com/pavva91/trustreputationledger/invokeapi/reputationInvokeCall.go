@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"encoding/json"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	a "github.com/pavva91/trustreputationledger/assets"
-
+	// a "github.com/pavva91/trustreputationledger/assets"
+	a "github.com/pavva91/assets"
 	)
 
 /*

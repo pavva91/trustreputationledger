@@ -9,3 +9,21 @@
 # Trust Reputation Ledger Setup
 
 I developed this system thanks to this [IBM tutorial](https://github.com/IBM-Blockchain/marbles)
+
+
+# System Architecture
+
+Let’s look at how I structued the assets of the blockchain
+
+__/assets/reputation.go__
+
+```go
+    type Reputation struct {
+	// reputationId = agentId + serviceId + agentRole
+	ReputationId        string `json:"ReputationId"`
+	AgentId             string `json:"AgentId"`
+	ServiceId           string `json:"ServiceId"`
+	AgentRole           string `json:"AgentRole"` // "DEMANDER" || "EXECUTER"
+	Value               string `json:"Value"`  // Value of Reputation of the agent
+}
+```

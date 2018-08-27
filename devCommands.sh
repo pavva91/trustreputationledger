@@ -1,25 +1,26 @@
 #!/usr/bin/env bash
 // ==== CHAINCODE RUN (CHAINCODE CONTAINER) ==================
 
-// CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=scc:0 ./servicemarbles
+// CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=tcc:0 ./servicemarbles
+// CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=trustreputationledger:0 ./trustreputationledger
 
 // ==== IMPORT PACKAGE (CLI) ==================
 // go get github.com/hyperledger/fabric/protos/ledger/queryresult
 
 // ==== CHAINCODE INSTALLATION (CLI) ==================
 
-// peer chaincode install -p chaincodedev/chaincode/servicemarbles -n scc -v 0
+// peer chaincode install -p chaincodedev/chaincode/trustreputationledger -n trustreputationledger -v 0
 
 // ==== CHAINCODE INSTANTIATION (CLI) ==================
 
-// peer chaincode instantiate -n scc -v 0 -c '{"Args":[]}' -C ch2
+// peer chaincode instantiate -n trustreputationledger -v 0 -c '{"Args":[]}' -C ch2
 
 // ==== CHAINCODE EXECUTION SAMPLES (CLI) ==================
 
 // ==== Invoke servicemarbles ====
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "HelloWorld", "Args":[]}'
+// peer chaincode invoke -C ch2 -n trustreputationledger -c '{"function": "HelloWorld", "Args":[]}'
 // ==== INITIALIZATION FUNCTIONS ==================
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "InitLedger", "Args":[]}'
+// peer chaincode invoke -C ch2 -n trustreputationledger -c '{"function": "InitLedger", "Args":[]}'
 
 // ==== GENERAL FUNCTIONS ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "Read", "Args":["idagent1"]}'
@@ -33,7 +34,7 @@
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAgentRelation", "Args":["idservice1","idagent1","2","6"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateServiceAndServiceAgentRelationWithStandardValue", "Args":["idservice1","service1","description1","idagent1","2","6"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateActivity", "Args":["idagent1","idagent4", "idagent1","idservice1","asdfCIAOsfasdfa","2018-07-23 16:51:01.2","2"]}'
-// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent5","idservice4", "DEMANDER","6"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "CreateReputation", "Args":["idagent1","idservice1", "DEMANDER","6"]}'
 
 // ==== MODIFY ASSET FUNCTIONS ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "ModifyReputationValue", "Args":["idagent1idservice1EXECUTER","8"]}'
@@ -51,6 +52,7 @@
 // ==== GET HISTORY ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetServiceHistory2", "Args":["idagent2"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idagent1idservice1EXECUTER"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "GetHistory", "Args":["idagent1idservice1DEMANDER"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "GetReputationHistory", "Args":["idagent1idservice1EXECUTER"]}'
 
 // ==== RANGE QUERY (USING COMPOSITE INDEX) ==================
@@ -73,19 +75,21 @@
 
 
 // ==== CALLS IN THE REAL PROJECT ====
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "helloWorld", "Args":[]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitLedger", "Args":[]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "AllStateDB", "Args":[]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceHistory2", "Args":["service5"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitService", "Args":["idservice10","service10","description10"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceNotFoundError", "Args":["idservice1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetAgentNotFoundError", "Args":["idagent1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent2","3","5","7"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetAgentsByService", "Args":["CIAO"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "byAgent", "Args":["a1"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetServiceNotFoundError", "Args":["idservice5"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "DeleteService", "Args":["idservice5"]}'
-// peer chaincode invoke -C servicech -n servicemarbles -c '{"function": "GetActivitiesByDemanderExecuterTimestamp", "Args":["a3","a1","2018-07-23 16:51:01.2"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "helloWorld", "Args":[]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitLedger", "Args":[]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "AllStateDB", "Args":[]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetHistory", "Args":["S1"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetReputationHistory", "Args":["a1S1EXECUTER"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetReputationHistory", "Args":["a2S1DEMANDER"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitService", "Args":["idservice10","service10","description10"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServiceNotFoundError", "Args":["idservice1"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetAgentNotFoundError", "Args":["idagent1"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent2","3","5","7"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetAgentsByService", "Args":["CIAO"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "byAgent", "Args":["a1"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServiceNotFoundError", "Args":["idservice5"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "DeleteService", "Args":["idservice5"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetActivitiesByDemanderExecuterTimestamp", "Args":["a3","a1","2018-07-23 16:51:01.2"]}'
 
