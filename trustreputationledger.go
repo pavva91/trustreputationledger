@@ -11,34 +11,78 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	a "github.com/pavva91/assets"
+	gen "github.com/pavva91/generalcc"
 	// a "github.com/pavva91/trustreputationledger/assets"
 	// gen "github.com/pavva91/trustreputationledger/generalcc"
 	in "github.com/pavva91/trustreputationledger/invokeapi"
-
-	a "github.com/pavva91/assets"
-	gen "github.com/pavva91/generalcc"
 )
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
+	testMode bool
 }
 
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
 func main() {
-	err := shim.Start(new(SimpleChaincode))
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = false
+	err := shim.Start(simpleChaincode)
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode - %s", err)
 	}
 }
 
-// Init initialize the chaincode
-// The Init method is called when the Smart Contract "fabcar" is instantiated by the blockchain network
+// ============================================================================================================================
+// Init - initialize the chaincode
+// ============================================================================================================================
+// The Init method is called when the Smart Contract "trustreputationledger" is instantiated by the blockchain network
 // Best practice is to have any Ledger initialization in separate function -- see InitLedger()
-//======================================================================================================
+// ============================================================================================================================
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+
+
+	if t.testMode {
+		a.InitLedger(stub)
+	}
 	return shim.Success(nil)
+
+
+	// tried to imitate the demo of the book handson
+
+	// _, args := stub.GetFunctionAndParameters()
+	//
+	// // Upgrade Mode 1: leave ledger state as it was
+	// argumentSizeError := arglib.ArgumentSizeLimitVerification(args, 0)
+	// if argumentSizeError != nil {
+	// 	return shim.Success(nil)
+	// }else{
+	// 	return shim.Error(argumentSizeError.Error())
+	// }
+	//
+
+	// Upgrade mode 2: change all the names and account balances
+	//   0               1                 2
+	// "ServiceId", "serviceName", "serviceDescription"
+// 	argumentSizeError = arglib.ArgumentSizeLimitVerification(args, 3)
+// 	if argumentSizeError != nil {
+// 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+// 	}
+// 	if len(args) != 8 {
+// 		err := errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 8: {" +
+// 			"Exporter, " +
+// 			"Exporter's Bank, " +
+// 			"Exporter's Account Balance, " +
+// 			"Importer, " +
+// 			"Importer's Bank, " +
+// 			"Importer's Account Balance, " +
+// 			"Carrier, " +
+// 			"Regulatory Authority" +
+// 			"}. Found %d", len(args)))
+// 		return shim.Error(err.Error())
+// 	}
 }
 
 // ============================================================================================================================
@@ -51,7 +95,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	switch function {
 	// AGENT, SERVICE, AGENT SERVICE RELATION INVOKES
 
-		// CREATE:
+	// CREATE:
 	case "InitLedger":
 		response := a.InitLedger(stub)
 		return response
@@ -63,8 +107,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
 		return in.CreateServiceAgentRelation(stub, args)
 	case "CreateServiceAndServiceAgentRelationWithStandardValue":
-		// If service doesn't exist it will create
+		// If service doesn't exist it will create with a standard value of reputation defined inside the function
 		return in.CreateServiceAndServiceAgentRelationWithStandardValue(stub, args)
+	case "CreateServiceAndServiceAgentRelation":
+		// If service doesn't exist it will create
+		return in.CreateServiceAndServiceAgentRelation(stub, args)
 
 		// GET:
 	case "GetServiceHistory":
@@ -94,10 +141,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "DeleteAgent":
 		return a.DeleteAgent(stub, args)
 
-
-
 	// ACTIVITY INVOKES
-		// CREATE:
+	// CREATE:
 	case "CreateActivity":
 		return in.CreateActivity(stub, args)
 		// GET:
@@ -116,14 +161,14 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return in.GetActivitiesByDemanderExecuterTimestamp(stub, args)
 
 	// REPUTATION INVOKES
-		// CREATE:
+	// CREATE:
 	case "CreateReputation":
 		return in.CreateReputation(stub, args)
 		// MODIFTY:
 	case "ModifyReputationValue":
-		return in.ModifyReputationValue(stub,args)
+		return in.ModifyReputationValue(stub, args)
 	case "ModifyOrCreateReputationValue":
-		return in.ModifyOrCreateReputationValue(stub,args)
+		return in.ModifyOrCreateReputationValue(stub, args)
 
 		// GET:
 	case "GetReputationNotFoundError":

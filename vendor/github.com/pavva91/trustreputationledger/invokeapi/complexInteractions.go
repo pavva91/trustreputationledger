@@ -64,7 +64,7 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 	}
 
 	// ==== Check, Create, Indexing Reputation ====
-	reputation,reputationError := a.CheckingCreatingIndexingReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,"EXECUTER",initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}

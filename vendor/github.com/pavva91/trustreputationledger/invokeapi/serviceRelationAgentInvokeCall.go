@@ -175,7 +175,7 @@ func QueryServiceRelationAgent(stub shim.ChaincodeStubInterface, args []string) 
 		fmt.Println("Failed to find serviceRelationAgent by id " + relationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Service ID: " + serviceRelationAgent.ServiceId + ", Agent: " + serviceRelationAgent.AgentId + ", with Cost: " + serviceRelationAgent.Cost + ", with Time: " + serviceRelationAgent.Time + ", with Reputation: ")
+		fmt.Println("Service ID: " + serviceRelationAgent.ServiceId + ", Agent: " + serviceRelationAgent.AgentId + ", with Cost: " + serviceRelationAgent.Cost + ", with Time: " + serviceRelationAgent.Time)
 		// ==== Marshal the byService query result ====
 		serviceAsJSON, err := json.Marshal(serviceRelationAgent)
 		if err != nil {

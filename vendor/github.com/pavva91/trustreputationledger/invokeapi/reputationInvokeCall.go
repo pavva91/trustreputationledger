@@ -121,7 +121,7 @@ func ModifyOrCreateReputationValue(stub shim.ChaincodeStubInterface, args []stri
 // Modify reputation value (if not exist, throw error)
 // ========================================================================================================================
 func ModifyReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	//   0            1
+	//   0              1
 	// "reputationId", "newReputationValue"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
 	if argumentSizeError != nil {
