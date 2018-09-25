@@ -2,6 +2,9 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/arglib" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/assets" />
+    <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/invokeapi" />
     <content url="file://$MODULE_DIR$/vendor/github.com/pavva91/trustreputationledger" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

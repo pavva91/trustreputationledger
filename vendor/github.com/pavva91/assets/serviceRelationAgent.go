@@ -19,9 +19,9 @@ type ServiceRelationAgent struct {
 	// AgentReputation float64 `json:"AgentReputation"` //TODO: Se uso Reputation lo devo levare
 }
 
-// ============================================================
+// =====================================================================================================================
 // createServiceAgentMapping - create a new mapping service agent
-// ============================================================
+// =====================================================================================================================
 func CreateServiceAgentRelation(relationId string, serviceId string, agentId string, cost string, time string,  stub shim.ChaincodeStubInterface) (*ServiceRelationAgent, error) {
 	// ==== Create marble object and marshal to JSON ====
 	serviceRelationAgent := &ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
@@ -33,9 +33,9 @@ func CreateServiceAgentRelation(relationId string, serviceId string, agentId str
 	return serviceRelationAgent, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Create Service Based Index - to do query based on Service
-// ============================================================================================================================
+// =====================================================================================================================
 func CreateServiceIndex(serviceRelationAgent *ServiceRelationAgent, stub shim.ChaincodeStubInterface) (serviceAgentIndexKey string, err error) {
 	//  ==== Index the serviceAgentRelation to enable service-based range queries, e.g. return all x services ====
 	//  An 'index' is a normal key/value entry in state.
@@ -50,9 +50,9 @@ func CreateServiceIndex(serviceRelationAgent *ServiceRelationAgent, stub shim.Ch
 	return serviceAgentIndexKey, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Create Agent Based Index - to do query based on Agent
-// ============================================================================================================================
+// =====================================================================================================================
 func CreateAgentIndex(serviceRelationAgent *ServiceRelationAgent, stub shim.ChaincodeStubInterface) (agentServiceIndex string, err error) {
 	//  ==== Index the serviceAgentRelation to enable service-based range queries, e.g. return all x agents ====
 	//  An 'index' is a normal key/value entry in state.
@@ -171,9 +171,9 @@ func GetServiceRelationAgent(stub shim.ChaincodeStubInterface, relationId string
 	return serviceRelationAgent, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get Service Agent Relation Not Found Error - get the service agent relation asset from ledger - throws error if not found (error!=nil ---> key not found)
-// ============================================================================================================================
+// =====================================================================================================================
 func GetServiceRelationAgentNotFoundError(stub shim.ChaincodeStubInterface, relationId string) (ServiceRelationAgent, error) {
 	var serviceRelationAgent ServiceRelationAgent
 	serviceRelationAgentAsBytes, err := stub.GetState(relationId) //getState retreives a key/value from the ledger
@@ -191,9 +191,9 @@ func GetServiceRelationAgentNotFoundError(stub shim.ChaincodeStubInterface, rela
 	return serviceRelationAgent, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get the service query on ServiceRelationAgent - Execute the query based on service composite index
-// ============================================================================================================================
+// =====================================================================================================================
 func GetByService(serviceId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
 	// Query the service~agent~relation index by service
 	// This will execute a key range query on all keys starting with 'service'
@@ -205,9 +205,9 @@ func GetByService(serviceId string, stub shim.ChaincodeStubInterface) (shim.Stat
 	return serviceAgentResultsIterator, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Get the agent query on ServiceRelationAgent - Execute the query based on agent composite index
-// ============================================================================================================================
+// =====================================================================================================================
 func GetByAgent(serviceId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
 	// Query the service~agent~relation index by service
 	// This will execute a key range query on all keys starting with 'service'
@@ -219,9 +219,9 @@ func GetByAgent(serviceId string, stub shim.ChaincodeStubInterface) (shim.StateQ
 	return agentServiceResultsIterator, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Delete Service Agent Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
-// ============================================================================================================================
+// =====================================================================================================================
 func DeleteServiceAgentRelation(stub shim.ChaincodeStubInterface, relationId string) error {
 	// remove the serviceRelationAgent
 	err := stub.DelState(relationId) //remove the key from chaincode state
@@ -231,9 +231,9 @@ func DeleteServiceAgentRelation(stub shim.ChaincodeStubInterface, relationId str
 	return nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Delete Service Agent Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
-// ============================================================================================================================
+// =====================================================================================================================
 func DeleteServiceIndex(stub shim.ChaincodeStubInterface, indexName string, serviceId string, agentId string, relationId string) error {
 	// remove the serviceRelationAgent
 	// TODO: Capire come funziona, perché prima crea la composite key?
@@ -248,9 +248,9 @@ func DeleteServiceIndex(stub shim.ChaincodeStubInterface, indexName string, serv
 	return nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Delete Agent Service Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
-// ============================================================================================================================
+// =====================================================================================================================
 func DeleteAgentIndex(stub shim.ChaincodeStubInterface, indexName string, agentId string, serviceId string, relationId string) error {
 	// remove the serviceRelationAgent
 	agentServiceIndex, err := stub.CreateCompositeKey(indexName, []string{agentId, serviceId, relationId})
@@ -264,9 +264,9 @@ func DeleteAgentIndex(stub shim.ChaincodeStubInterface, indexName string, agentI
 	return nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // GetAgentSliceFromByServiceQuery - Get the Agent and ServiceRelationAgent Slices from the result of query "byService"
-// ============================================================================================================================
+// =====================================================================================================================
 func GetServiceRelationSliceFromRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]ServiceRelationAgent, error) {
 	var serviceRelationAgentSlice []ServiceRelationAgent
 	// get the service agent relation from service~agent~relation composite key
@@ -294,9 +294,9 @@ func GetServiceRelationSliceFromRangeQuery(queryIterator shim.StateQueryIterator
 	return serviceRelationAgentSlice, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // GetAgentSliceFromByServiceQuery - Get the Agent Slice from the result of query "byService"
-// ============================================================================================================================
+// =====================================================================================================================
 func GetAgentSliceFromByServiceQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Agent, error) {
 	var agentSlice []Agent
 	for i := 0; queryIterator.HasNext(); i++ {
@@ -321,9 +321,9 @@ func GetAgentSliceFromByServiceQuery(queryIterator shim.StateQueryIteratorInterf
 	return agentSlice, nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Print Results Iterator - Print on screen the general iterator of the composite index query result
-// ============================================================================================================================
+// =====================================================================================================================
 func PrintByServiceResultsIterator(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
 	for i := 0; queryIterator.HasNext(); i++ {
 		// Note that we don't get the value (2nd return variable), we'll just get the marble Name from the composite key
@@ -346,9 +346,9 @@ func PrintByServiceResultsIterator(queryIterator shim.StateQueryIteratorInterfac
 	return nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Print Results Iterator - Print on screen the general iterator of the composite index query result
-// ============================================================================================================================
+// =====================================================================================================================
 func PrintByAgentResultsIterator(iteratorInterface shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
 	for i := 0; iteratorInterface.HasNext(); i++ {
 		// Note that we don't get the value (2nd return variable), we'll just get the marble Name from the composite key
@@ -371,9 +371,9 @@ func PrintByAgentResultsIterator(iteratorInterface shim.StateQueryIteratorInterf
 	return nil
 }
 
-// ============================================================================================================================
+// =====================================================================================================================
 // Print Results Iterator - Print on screen the general iterator of the composite index query result
-// ============================================================================================================================
+// =====================================================================================================================
 func PrintResultsIterator(iteratorInterface shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) error {
 	for i := 0; iteratorInterface.HasNext(); i++ {
 		// Note that we don't get the value (2nd return variable), we'll just get the marble Name from the composite key

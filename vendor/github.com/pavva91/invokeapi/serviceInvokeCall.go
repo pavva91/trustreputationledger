@@ -20,7 +20,7 @@ import (
 )
 
 // =====================================================================================================================
-// Init Service - wrapper of CreateService called from the chaincode invoke
+// Create Service - wrapper of CreateService called from the chaincode invoke
 // =====================================================================================================================
 func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                 2
@@ -29,7 +29,7 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
-	fmt.Println("- start init service")
+	fmt.Println("- start create service")
 
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
@@ -47,8 +47,8 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	if err != nil {
 		return shim.Error("Failed to get service: " + err.Error())
 	} else if serviceAsBytes != nil {
-		fmt.Println("This service already exists: " + serviceName)
-		return shim.Error("This service already exists: " + serviceName)
+		fmt.Println("This service already exists: " + serviceId)
+		return shim.Error("This service already exists: " + serviceId)
 	}
 
 	service, err := a.CreateService(serviceId, serviceName, serviceDescription, stub)
@@ -71,7 +71,10 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	}
 
 	// ==== Service saved and indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " creato - end init service")
+	fmt.Println("Service: " + service.Name + " created - end create service")
+	eventPayload:="Created Service: " + serviceId
+	payloadAsBytes := []byte(eventPayload)
+	stub.SetEvent("Service Created",payloadAsBytes)
 	return shim.Success(nil)
 }
 
@@ -109,6 +112,7 @@ func ModifyServiceName(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 		fmt.Println("Failed to modify the service name: " + newServiceName)
 		return shim.Error(modifyError.Error())
 	}
+	fmt.Println("Service: " + service.Name + " modified - end modify service")
 
 	return shim.Success(nil)
 }

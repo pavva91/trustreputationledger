@@ -64,13 +64,13 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 	}
 
 	// ==== Check, Create, Indexing Reputation ====
-	reputation,reputationError := a.CheckingCreatingIndexingReputation(serviceId,agentId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,a.Executer,initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " al costo: " + serviceRelationAgent.Cost + " e tempo: " + serviceRelationAgent.Time + " nella relazione con reputazione iniziale: "+ reputation.Value)
+	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " at cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " in the relation with initial reputation value of: "+ reputation.Value)
 	return shim.Success(nil)
 }
 
@@ -130,12 +130,12 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 
 	// ==== Check, Create, Indexing Reputation ====
 
-	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,a.Executer,initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " al costo: " + serviceRelationAgent.Cost + " e tempo: " + serviceRelationAgent.Time + " nella relazione con reputazione iniziale: "+ reputation.Value)
+	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " with cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " with initial (standard) reputation value of: "+ reputation.Value)
 	return shim.Success(nil)
 }

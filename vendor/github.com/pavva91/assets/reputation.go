@@ -25,13 +25,17 @@ type Reputation struct {
 	ReputationId        string `json:"ReputationId"`
 	AgentId             string `json:"AgentId"`
 	ServiceId           string `json:"ServiceId"`
-	AgentRole           string `json:"AgentRole"` // "DEMANDER" || "EXECUTER"
+	AgentRole           string `json:"AgentRole"` // "Demander" || "Executer"
 	Value               string `json:"Value"`  // Value of Reputation of the agent
 }
+// AgentRole Values
+const (
+	Demander = "DEMANDER"
+	Executer = "EXECUTER"
+)
 
 
-//TODO: Don't delete reputation of a deleted agent
-//TODO: ADD UPDATE Reputation.Value function
+//TODO: Don't delete reputation of a deleted agent (I don't care because I can use directly the blockchain?)
 
 // =====================================================================================================================
 // createReputation - create a new reputation identified as: service-agent-agentrole (Demander || Executer)
@@ -72,9 +76,9 @@ func CreateAgentServiceRoleIndex(reputation *Reputation, stub shim.ChaincodeStub
 // 3. INDEXING
 // =====================================================================================================================
 func CheckingCreatingIndexingReputation(agentId string, serviceId string,agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error){
-	// ==== Check if AgentRole == Demander || Executer ====
-	if ("DEMANDER"!=agentRole && "EXECUTER"!=agentRole){
-		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \"DEMANDER\"or \"EXECUTER\"")
+	// ==== Check if AgentRole == "DEMANDER" || "EXECUTER" ====
+	if Demander !=agentRole && Executer !=agentRole{
+		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \""+ Demander +"\"or \""+ Executer +"\"")
 	}
 
 	// ==== Check if reputation already exists ====
@@ -121,8 +125,8 @@ func CheckingCreatingIndexingReputation(agentId string, serviceId string,agentRo
 // =====================================================================================================================
 func CheckingUpdatingOrCreatingIndexingReputation(agentId string, serviceId string,agentRole string, value string, stub shim.ChaincodeStubInterface) (*Reputation, error){
 	// ==== Check if AgentRole == Demander || Executer ====
-	if ("DEMANDER"!=agentRole && "EXECUTER"!=agentRole){
-		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \"DEMANDER\"or \"EXECUTER\"")
+	if Demander !=agentRole && Executer !=agentRole{
+		return nil,errors.New("Wrong Agent Role: " + agentRole + ", use \""+ Demander +"\"or \""+ Executer +"\"")
 	}
 
 	var reputation Reputation
@@ -176,7 +180,7 @@ func CheckingUpdatingOrCreatingIndexingReputation(agentId string, serviceId stri
 }
 
 // =====================================================================================================================
-// modifyReputationValue - Modify the reputation value of the asset passed as parameter
+// modifyReputationValue - Modify the reputation value of the asset passed as parameter (aka UPDATE Reputation.Value)
 // =====================================================================================================================
 func ModifyReputationValue(reputation Reputation, newReputationValue string, stub shim.ChaincodeStubInterface) (error) {
 
@@ -294,7 +298,7 @@ func DeleteAgentServiceRoleIndex(stub shim.ChaincodeStubInterface, indexName str
 	if err != nil {
 		return err
 	}
-	err = stub.DelState(agentServiceRoleIndex) //remove the key from chaincode state
+	err = stub.DelState(agentServiceRoleIndex) //remove the keyDEMANDER from chaincode state
 	if err != nil {
 		return err
 	}

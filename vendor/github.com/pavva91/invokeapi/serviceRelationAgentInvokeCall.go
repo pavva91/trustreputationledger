@@ -63,13 +63,13 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 
 	// ==== Check, Create, Indexing Reputation ====
 	initReputationValue := "6"
-	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,"EXECUTER",initReputationValue,stub)
+	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,a.Executer,initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + service.Name + " mappato con l'agente: " + agent.Name + " al costo: " + serviceRelationAgent.Cost + " e tempo: " + serviceRelationAgent.Time + " nella relazione con reputazione iniziale: "+ reputation.Value)
+	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " with cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " nella relazione con reputazione iniziale: "+ reputation.Value)
 	return shim.Success(nil)
 }
 
@@ -175,7 +175,7 @@ func QueryServiceRelationAgent(stub shim.ChaincodeStubInterface, args []string) 
 		fmt.Println("Failed to find serviceRelationAgent by id " + relationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Service ID: " + serviceRelationAgent.ServiceId + ", Agent: " + serviceRelationAgent.AgentId + ", with Cost: " + serviceRelationAgent.Cost + ", with Time: " + serviceRelationAgent.Time + ", with Reputation: ")
+		fmt.Println("Service ID: " + serviceRelationAgent.ServiceId + ", Agent: " + serviceRelationAgent.AgentId + ", with Cost: " + serviceRelationAgent.Cost + ", with Time: " + serviceRelationAgent.Time)
 		// ==== Marshal the byService query result ====
 		serviceAsJSON, err := json.Marshal(serviceRelationAgent)
 		if err != nil {

@@ -11,9 +11,9 @@ import (
 	"errors"
 )
 
-// ============================================================
+// =====================================================================================================================
 // InitLedger - create a batch of new agents and services
-// ============================================================
+// =====================================================================================================================
 func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 	services := []Service{
 		Service{ServiceId: "idservice1", Name: "service1", Description: "service Description 1"},
@@ -58,6 +58,9 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(nil)
 }
 
+// =====================================================================================================================
+// SaveIndex - save the index
+// =====================================================================================================================
 func SaveIndex(indexKey string, stub shim.ChaincodeStubInterface) error {
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
 	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the marble.

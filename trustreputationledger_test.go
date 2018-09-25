@@ -19,35 +19,32 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	a "github.com/pavva91/assets"
-	"testing" /*
-	"strconv"
-	"encoding/json"*/
+	lib "github.com/pavva91/arglib"
+	"testing"
 
-	"github.com/hyperledger/fabric/core/chaincode/shim" /*
-	pb "github.com/hyperledger/fabric/protos/peer"
-	in "github.com/pavva91/trustreputationledger/invokeapi"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
+
 	a "github.com/pavva91/assets"
-	gen "github.com/pavva91/generalcc"*/
 )
 
 const (
-	EXISTING_SERVICE_ID = "idservice1"
-	EXISTING_SERVICE_NAME = "service1"
-	EXISTING_SERVICE_DESCRIPTION = "address1"
-	EXISTING_AGENT_ID = "idagent1"
-	EXISTING_AGENT_NAME = "agent1"
-	EXISTING_AGENT_ADDRESS = "agent1-address1"
-	SERVICE_ID = "idservice6"
-	SERVICE_NAME = "service6"
-	SERVICE_DESCRIPTION = "service Description 6"
-	AGENT_ID = "idagent6"
-	AGENT_NAME = "agent6"
-	AGENT_ADDRESS = "address6"
-	SERVICE_AGENT_SERVICE_ID = "idservice1"
-	SERVICE_AGENT_AGENT_ID = "idagent1"
-	SERVICE_AGENT_COST = "8"
-	SERVICE_AGENT_TIME = "6"
+	ExistingServiceId          = "idservice1"
+	ExistingServiceName        = "service1"
+	ExistingServiceDescription = "service Description 1"
+	ExistingAgentId            = "idagent1"
+	ExistingAgentName          = "agent1"
+	ExistingAgentAddress       = "address1"
+	NewServiceId               = "idservice6"
+	NewServiceName             = "service6"
+	NewServiceDescription      = "service Description 6"
+	NewAgentId                 = "idagent6"
+	NewAgentName               = "agent6"
+	NewAgentAddress            = "address6"
+	ServiceAgentServiceId      = ExistingServiceId
+	ServiceAgentAgentId        = ExistingAgentId
+	ServiceAgentCost           = "8"
+	ServiceAgentTime           = "6"
+	ReputationValue            = "6"
 
 	EXPORTER = "LumberInc"
 	EXPBANK = "LumberBank"
@@ -64,6 +61,9 @@ func checkInit(t *testing.T, stub *shim.MockStub, args [][]byte) {
 	if res.Status != shim.OK {
 		fmt.Println("Init failed", string(res.Message))
 		t.FailNow()
+	}else{
+		fmt.Println("Init OK", string(res.Message))
+
 	}
 }
 
@@ -72,6 +72,8 @@ func checkNoState(t *testing.T, stub *shim.MockStub, name string) {
 	if bytes != nil {
 		fmt.Println("State", name, "should be absent; found value")
 		t.FailNow()
+	}else {
+		fmt.Println("State", name, "is absent as it should be")
 	}
 }
 
@@ -84,6 +86,8 @@ func checkState(t *testing.T, stub *shim.MockStub, name string, value string) {
 	if string(bytes) != value {
 		fmt.Println("State value", name, "was", string(bytes), "and not", value, "as expected")
 		t.FailNow()
+	}else{
+		fmt.Println("State value", name, "is", string(bytes), "as expected")
 	}
 }
 
@@ -92,6 +96,9 @@ func checkBadQuery(t *testing.T, stub *shim.MockStub, function string, name stri
 	if res.Status == shim.OK {
 		fmt.Println("Query", name, "unexpectedly succeeded")
 		t.FailNow()
+	}else {
+		fmt.Println("Query", name, "failed as espected")
+
 	}
 }
 
@@ -109,6 +116,8 @@ func checkQuery(t *testing.T, stub *shim.MockStub, function string, name string,
 	if payload != value {
 		fmt.Println("Query value", name, "was", payload, "and not", value, "as expected")
 		t.FailNow()
+	}else{
+		fmt.Println("Query value", name, "is", payload, "as expected")
 	}
 }
 
@@ -126,22 +135,40 @@ func checkQueryArgs(t *testing.T, stub *shim.MockStub, args [][]byte, value stri
 	if payload != value {
 		fmt.Println("Query value", string(args[1]), "was", payload, "and not", value, "as expected")
 		t.FailNow()
+	}else {
+		fmt.Println("Query value", string(args[1]), "is", payload, "as expected")
+
 	}
 }
 
-func checkBadInvoke(t *testing.T, stub *shim.MockStub, args [][]byte) {
-	res := stub.MockInvoke("1", args)
+func checkBadInvoke(t *testing.T, stub *shim.MockStub, functionAndArgs []string) {
+	functionAndArgsAsBytes := lib.ParseStringSliceToByteSlice(functionAndArgs)
+	res := stub.MockInvoke("1", functionAndArgsAsBytes)
 	if res.Status == shim.OK {
-		fmt.Println("Invoke", args, "unexpectedly succeeded")
+		fmt.Println("Invoke", functionAndArgs, "unexpectedly succeeded")
 		t.FailNow()
+	}else {
+		fmt.Println("Invoke", functionAndArgs, "failed as espected")
 	}
 }
 
-func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte) {
-	res := stub.MockInvoke("1", args)
+// func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte) {
+// 	res := stub.MockInvoke("1", args)
+// 	if res.Status != shim.OK {
+// 		fmt.Println("Invoke", args, "failed", string(res.Message))
+// 		t.FailNow()
+// 	}else {
+// 		fmt.Println("Invoke", args, "successful", string(res.Message))
+// 	}
+// }
+func checkInvoke(t *testing.T, stub *shim.MockStub, functionAndArgs []string) {
+	functionAndArgsAsBytes := lib.ParseStringSliceToByteSlice(functionAndArgs)
+	res := stub.MockInvoke("1", functionAndArgsAsBytes)
 	if res.Status != shim.OK {
-		fmt.Println("Invoke", args, "failed", string(res.Message))
+		fmt.Println("Invoke", functionAndArgs, "failed", string(res.Message))
 		t.FailNow()
+	}else {
+		fmt.Println("Invoke", functionAndArgs, "successful", string(res.Message))
 	}
 }
 
@@ -149,119 +176,372 @@ func getInitArguments() [][]byte {
 	return [][]byte{}
 }
 
-func TestTrustReputation_Init(t *testing.T) {
-	scc := new(SimpleChaincode)
-	scc.testMode = true
-	stub := shim.NewMockStub("Trust Reputation Workflow", scc)
+// =====================================================================================================================
+// TestTrustReputationInit - Test the 'Init' function
+// =====================================================================================================================
+func TestTrustReputationInit(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	stub := shim.NewMockStub("Test Init", simpleChaincode)
 
 	// Init
 	checkInit(t, stub, getInitArguments())
 
+
+
 }
+
+// TEST CREATE:
 
 // =====================================================================================================================
 // TestServiceCreation - Test the 'CreateService' function
 // =====================================================================================================================
 func TestServiceCreation(t *testing.T) {
-	scc := new(SimpleChaincode)
-	scc.testMode = true
-	stub := shim.NewMockStub("Trust Reputation Workflow", scc)
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Service Creation", simpleChaincode)
+
+	var functionAndArgs []string
+	functionName:= CreateService
 
 	// Invoke 'CreateService'
-	serviceId := SERVICE_ID
-	serviceName := SERVICE_NAME
-	serviceDescription := SERVICE_DESCRIPTION
-	checkInvoke(t, stub, [][]byte{[]byte("CreateService"), []byte(serviceId), []byte(serviceName), []byte(serviceDescription)})
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+
+	args := []string{serviceId,serviceName,serviceDescription}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
 
 	service := &a.Service{serviceId, serviceName, serviceDescription}
-	serviceBytes, _ := json.Marshal(service)
-	// tradeKey, _ := stub.CreateCompositeKey("Trade", []string{serviceId})
-	checkState(t, stub, serviceId, string(serviceBytes))
+	serviceAsBytes, _ := json.Marshal(service)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
+	checkState(t, mockStub, serviceId, string(serviceAsBytes))
 
-	expectedResp := "{\"ServiceId\":\""+ SERVICE_ID + "\",\"Name\":\""+ SERVICE_NAME + "\",\"Description\":\""+ SERVICE_DESCRIPTION + "\"}"
-	checkQuery(t, stub, "GetServiceNotFoundError", serviceId, expectedResp)
+	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\"}"
+	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
 }
 // =====================================================================================================================
-// TestServiceCreation - Test the 'CreateService' function
-// TODO: Come verificare errori
+// TestServiceCreation - Test the 'CreateService' function when trying to insert an already existing record
 // =====================================================================================================================
 func TestExistingServiceCreation(t *testing.T) {
-	scc := new(SimpleChaincode)
-	scc.testMode = true
-	stub := shim.NewMockStub("Trust Reputation Workflow", scc)
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Already Existing Service Creation", simpleChaincode)
 
 	// Init
-	checkInit(t, stub, getInitArguments())
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName:= CreateService
 
 	// Invoke 'CreateService'
-	serviceId := "idservice1"
-	serviceName := SERVICE_NAME
-	serviceDescription := SERVICE_DESCRIPTION
-	checkInvoke(t, stub, [][]byte{[]byte("CreateService"), []byte(serviceId), []byte(serviceName), []byte(serviceDescription)})
+	existingServiceId := ExistingServiceId
+	serviceName := ExistingServiceName
+	serviceDescription := ExistingServiceDescription
 
-	service := &a.Service{serviceId, serviceName, serviceDescription}
+	args := []string{existingServiceId,serviceName,serviceDescription}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkBadInvoke(t, mockStub, functionAndArgs)
+
+
+	service := &a.Service{existingServiceId, serviceName, serviceDescription}
 	serviceBytes, _ := json.Marshal(service)
-	// tradeKey, _ := stub.CreateCompositeKey("Trade", []string{serviceId})
-	checkState(t, stub, serviceId, string(serviceBytes))
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{existingServiceId})
+	checkState(t, mockStub, existingServiceId, string(serviceBytes))
 
-	expectedResp := "{\"ServiceId\":\""+ "idservice1" + "\",\"Name\":\""+ SERVICE_NAME + "\",\"Description\":\""+ SERVICE_DESCRIPTION + "\"}"
-	checkQuery(t, stub, "GetServiceNotFoundError", serviceId, expectedResp)
+	expectedResp := "{\"ServiceId\":\""+ existingServiceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\"}"
+	checkQuery(t, mockStub, "GetServiceNotFoundError", existingServiceId, expectedResp)
 }
 
 // =====================================================================================================================
 // TestAgentCreation - Test the 'CreateAgent' function
 // =====================================================================================================================
 func TestAgentCreation(t *testing.T) {
-	scc := new(SimpleChaincode)
-	scc.testMode = true
-	stub := shim.NewMockStub("Trust Reputation Workflow", scc)
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Agent Creation", simpleChaincode)
 
 	// Init
-	// checkInit(t, stub, getInitArguments())
+	// checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName:= CreateAgent
 
 	// Invoke 'CreateAgent'
-	agentId := AGENT_ID
-	agentName := AGENT_NAME
-	agentAddress := AGENT_ADDRESS
-	checkInvoke(t, stub, [][]byte{[]byte("CreateAgent"), []byte(agentId), []byte(agentName), []byte(agentAddress)})
+	agentId := NewAgentId
+	agentName := NewAgentName
+	agentAddress := NewAgentAddress
+
+	args := []string{agentId,agentName,agentAddress}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
 
 	agent := &a.Agent{agentId, agentName, agentAddress}
 	agentAsBytes, _ := json.Marshal(agent)
-	// tradeKey, _ := stub.CreateCompositeKey("Trade", []string{agentId})
-	checkState(t, stub, agentId, string(agentAsBytes))
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{agentId})
+	checkState(t, mockStub, agentId, string(agentAsBytes))
 
-	expectedResp := "{\"AgentId\":\""+ AGENT_ID + "\",\"Name\":\""+ AGENT_NAME + "\",\"Address\":\""+ AGENT_ADDRESS + "\"}"
-	checkQuery(t, stub, "GetAgentNotFoundError", agentId, expectedResp)
+	expectedResp := "{\"AgentId\":\""+ agentId + "\",\"Name\":\""+ agentName + "\",\"Address\":\""+ agentAddress + "\"}"
+	checkQuery(t, mockStub, "GetAgentNotFoundError", agentId, expectedResp)
+
+
+}
+// =====================================================================================================================
+// TestExistingAgentCreation - Test the 'CreateAgent' function when trying to insert an already existing record
+// =====================================================================================================================
+func TestExistingAgentCreation(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Already Existing Agent Creation", simpleChaincode)
+
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName:= CreateAgent
+
+	// Invoke 'CreateAgent'
+	agentId := ExistingAgentId
+	agentName := ExistingAgentName
+	agentAddress := ExistingAgentAddress
+
+	args := []string{agentId,agentName,agentAddress}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkBadInvoke(t, mockStub, functionAndArgs)
+
+	agent := &a.Agent{agentId, agentName, agentAddress}
+	agentAsBytes, _ := json.Marshal(agent)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{agentId})
+	checkState(t, mockStub, agentId, string(agentAsBytes))
+
+	expectedResp := "{\"AgentId\":\""+ agentId + "\",\"Name\":\""+ agentName + "\",\"Address\":\""+ agentAddress + "\"}"
+	checkQuery(t, mockStub, "GetAgentNotFoundError", agentId, expectedResp)
 }
 // =====================================================================================================================
 // TestServiceAgentRelationCreation - Test the 'CreateServiceAgentRelation' function
 // =====================================================================================================================
 func TestServiceAgentRelationCreation(t *testing.T) {
-	scc := new(SimpleChaincode)
-	scc.testMode = true
-	stub := shim.NewMockStub("Trust Reputation Workflow", scc)
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test ServiceAgentRelation Creation", simpleChaincode)
 
 	// Init
-	checkInit(t, stub, getInitArguments())
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName:= CreateServiceAgentRelation
 
 	// Invoke 'CreateServiceAgentRelation'
-	serviceId := SERVICE_AGENT_SERVICE_ID
-	agentId := SERVICE_AGENT_AGENT_ID
-	cost := SERVICE_AGENT_COST
-	time := SERVICE_AGENT_TIME
+	serviceId := ServiceAgentServiceId
+	agentId := ServiceAgentAgentId
+	cost := ServiceAgentCost
+	time := ServiceAgentTime
 
-	checkInvoke(t, stub, [][]byte{[]byte("CreateServiceAgentRelation"), []byte(serviceId), []byte(agentId), []byte(cost),[]byte(time)})
+	args := []string{serviceId,agentId,cost,time}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
 
 	relationId := serviceId + agentId
 
 	serviceRelationAgent := &a.ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
 	serviceRealationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
-	// tradeKey, _ := stub.CreateCompositeKey("Trade", []string{agentId})
-	checkState(t, stub, relationId, string(serviceRealationAgentAsBytes))
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{agentId})
+	checkState(t, mockStub, relationId, string(serviceRealationAgentAsBytes))
 
 
-	expectedResp := "{\"RelationId\":\""+ relationId +"\",\"ServiceId\":\""+ SERVICE_AGENT_SERVICE_ID +"\",\"AgentId\":\""+ SERVICE_AGENT_AGENT_ID + "\",\"Cost\":\""+ SERVICE_AGENT_COST + "\",\"Time\":\""+ SERVICE_AGENT_TIME + "\"}"
-	checkQuery(t, stub, "GetServiceRelationAgent", relationId, expectedResp)
+	expectedResp := "{\"RelationId\":\""+ relationId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentId\":\""+ agentId + "\",\"Cost\":\""+ cost + "\",\"Time\":\""+ time + "\"}"
+	checkQuery(t, mockStub, GetServiceRelationAgent, relationId, expectedResp)
+}
+// =====================================================================================================================
+// TestServiceAndServiceAgentRelationWithStandardValueCreationNewService - Test the 'CreateServiceAndServiceAgentRelationWithStandardValue' function adding a new service
+// =====================================================================================================================
+func TestServiceAndServiceAgentRelationWithStandardValueCreationNewService(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test ServiceAndServiceAgentRelationWithStandardValue Creation of a New Service", simpleChaincode)
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName := CreateServiceAndServiceAgentRelationWithStandardValue
+
+	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time"
+	// Invoke 'CreateServiceAndServiceAgentRelationWithStandardValue'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+	agentId := ExistingAgentId
+	cost := ServiceAgentCost
+	time := ServiceAgentTime
+
+	args := []string{serviceId,serviceName,serviceDescription,agentId,cost,time}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	relationId := serviceId + agentId
+
+	serviceRelationAgent := &a.ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
+	serviceRealationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceName})
+	checkState(t, mockStub, relationId, string(serviceRealationAgentAsBytes))
+
+	expectedResp := "{\"RelationId\":\""+ relationId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentId\":\""+ agentId + "\",\"Cost\":\""+ cost + "\",\"Time\":\""+ time + "\"}"
+	checkQuery(t, mockStub, GetServiceRelationAgent, relationId, expectedResp)
+}
+// =====================================================================================================================
+// TestServiceAndServiceAgentRelationWithStandardValueExistingService - Test the 'CreateServiceAndServiceAgentRelationWithStandardValue' function using an existing service
+// =====================================================================================================================
+func TestServiceAndServiceAgentRelationWithStandardValueExistingService(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test ServiceAndServiceAgentRelationWithStandardValue of an Existing Service", simpleChaincode)
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName := CreateServiceAndServiceAgentRelationWithStandardValue
+
+	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time"
+	// Invoke 'CreateServiceAndServiceAgentRelationWithStandardValue'
+	serviceId := ExistingServiceId
+	serviceName := ExistingServiceName
+	serviceDescription := ExistingServiceDescription
+	agentId := ExistingAgentId
+	cost := ServiceAgentCost
+	time := ServiceAgentTime
+
+	args := []string{serviceId,serviceName,serviceDescription,agentId,cost,time}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	relationId := serviceId + agentId
+
+	serviceRelationAgent := &a.ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
+	serviceRealationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceName})
+	checkState(t, mockStub, relationId, string(serviceRealationAgentAsBytes))
+
+	expectedResp := "{\"RelationId\":\""+ relationId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentId\":\""+ agentId + "\",\"Cost\":\""+ cost + "\",\"Time\":\""+ time + "\"}"
+	checkQuery(t, mockStub, GetServiceRelationAgent, relationId, expectedResp)
+}
+// =====================================================================================================================
+// TestServiceAndServiceAgentRelationWithStandardValueCreationNewService - Test the 'CreateServiceAndServiceAgentRelation' function adding a new service with passed reputation
+// =====================================================================================================================
+func TestServiceAndServiceAgentRelationCreationNewService(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test ServiceAndServiceAgentRelation Creation of a New Service", simpleChaincode)
+
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName:= CreateServiceAndServiceAgentRelation
+
+	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time", "InitReputationValue"
+	// Invoke 'CreateServiceAndServiceAgentRelation'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+	agentId := ExistingAgentId
+	cost := ServiceAgentCost
+	time := ServiceAgentTime
+	initReputationValue := ReputationValue
+
+	args := []string{serviceId,serviceName,serviceDescription,agentId,cost,time,initReputationValue}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	relationId := serviceId + agentId
+
+	serviceRelationAgent := &a.ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
+	serviceRealationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceName})
+	checkState(t, mockStub, relationId, string(serviceRealationAgentAsBytes))
+
+	expectedResp := "{\"RelationId\":\""+ relationId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentId\":\""+ agentId + "\",\"Cost\":\""+ cost + "\",\"Time\":\""+ time + "\"}"
+	checkQuery(t, mockStub, "GetServiceRelationAgent", relationId, expectedResp)
+
+	agentRole := a.Executer
+
+	reputationId := agentId + serviceId + agentRole
+
+	reputation := &a.Reputation{reputationId, agentId, serviceId, agentRole, initReputationValue}
+	reputationAsBytes, _ := json.Marshal(reputation)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceName})
+	checkState(t, mockStub, reputationId, string(reputationAsBytes))
+	expectedResp2 := "{\"ReputationId\":\""+ reputationId +"\",\"AgentId\":\""+ agentId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentRole\":\""+ agentRole +"\",\"Value\":\""+ initReputationValue +"\"}"
+
+	checkQuery(t, mockStub, GetReputationNotFoundError, reputationId, expectedResp2)
+}
+// =====================================================================================================================
+// TestServiceAndServiceAgentRelationExistingService - Test the 'CreateServiceAndServiceAgentRelation' function adding an existing service
+// =====================================================================================================================
+func TestServiceAndServiceAgentRelationExistingService(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test ServiceAndServiceAgentRelation Creation of a New Service", simpleChaincode)
+
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	var functionAndArgs []string
+	functionName:= CreateServiceAndServiceAgentRelation
+
+	// "ServiceId", "ServiceName", "ServiceDescription", "AgentId", "Cost", "Time", "InitReputationValue"
+	// Invoke 'CreateServiceAndServiceAgentRelation'
+	serviceId := ExistingServiceId
+	serviceName := ExistingServiceName
+	serviceDescription := ExistingServiceDescription
+	agentId := ExistingAgentId
+	cost := ServiceAgentCost
+	time := ServiceAgentTime
+	initReputationValue := ReputationValue
+
+	args := []string{serviceId,serviceName,serviceDescription,agentId,cost,time,initReputationValue}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	relationId := serviceId + agentId
+
+	serviceRelationAgent := &a.ServiceRelationAgent{relationId, serviceId, agentId, cost, time}
+	serviceRealationAgentAsBytes, _ := json.Marshal(serviceRelationAgent)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceName})
+	checkState(t, mockStub, relationId, string(serviceRealationAgentAsBytes))
+
+	expectedResp := "{\"RelationId\":\""+ relationId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentId\":\""+ agentId + "\",\"Cost\":\""+ cost + "\",\"Time\":\""+ time + "\"}"
+	checkQuery(t, mockStub, "GetServiceRelationAgent", relationId, expectedResp)
+
+	agentRole := a.Executer
+
+	reputationId := agentId + serviceId + agentRole
+
+	reputation := &a.Reputation{reputationId, agentId, serviceId, agentRole, initReputationValue}
+	reputationAsBytes, _ := json.Marshal(reputation)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceName})
+	checkState(t, mockStub, reputationId, string(reputationAsBytes))
+	expectedResp2 := "{\"ReputationId\":\""+ reputationId +"\",\"AgentId\":\""+ agentId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentRole\":\""+ agentRole +"\",\"Value\":\""+ initReputationValue +"\"}"
+
+	checkQuery(t, mockStub, GetReputationNotFoundError, reputationId, expectedResp2)
 }
 /*
 func TestTradeWorkflow_LetterOfCredit(t *testing.T) {

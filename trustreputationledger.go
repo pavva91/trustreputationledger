@@ -15,8 +15,51 @@ import (
 	gen "github.com/pavva91/generalcc"
 	// a "github.com/pavva91/trustreputationledger/assets"
 	// gen "github.com/pavva91/trustreputationledger/generalcc"
-	in "github.com/pavva91/trustreputationledger/invokeapi"
+	// in "github.com/pavva91/trustreputationledger/invokeapi"
+	in "github.com/pavva91/invokeapi"
 )
+
+const(
+	InitLedger    = "InitLedger"
+	CreateService = "CreateService"
+	CreateAgent   = "CreateAgent"
+	CreateServiceAgentRelation = "CreateServiceAgentRelation"
+	CreateServiceAndServiceAgentRelationWithStandardValue = "CreateServiceAndServiceAgentRelationWithStandardValue"
+	CreateServiceAndServiceAgentRelation = "CreateServiceAndServiceAgentRelation"
+	GetServiceHistory = "GetServiceHistory"
+	GetServiceNotFoundError = "GetServiceNotFoundError"
+	GetAgentNotFoundError = "GetAgentNotFoundError"
+	GetServiceRelationAgent = "GetServiceRelationAgent"
+	ByService = "byService"
+	ByAgent = "byAgent"
+	GetAgentsByService = "GetAgentsByService"
+	GetServicesByAgent = "GetServicesByAgent"
+	DeleteService = "DeleteService"
+	DeleteAgent = "DeleteAgent"
+	CreateActivity = "CreateActivity"
+	GetActivity = "GetActivity"
+	ByExecutedServiceTxId = "byExecutedServiceTxId"
+	ByDemanderExecuter = "byDemanderExecuter"
+	GetActivitiesByServiceTxId = "GetActivitiesByServiceTxId"
+	GetActivitiesByDemanderExecuterTimestamp = "GetActivitiesByDemanderExecuterTimestamp"
+	CreateReputation = "CreateReputation"
+	ModifyReputationValue = "ModifyReputationValue"
+	ModifyOrCreateReputationValue = "ModifyOrCreateReputationValue"
+	GetReputationNotFoundError = "GetReputationNotFoundError"
+	ByAgentServiceRole = "byAgentServiceRole"
+	GetReputationsByAgentServiceRole = "GetReputationsByAgentServiceRole"
+	Write = "Write"
+	Read = "Read"
+	ReadEverything = "ReadEverything"
+	GetHistory = "GetHistory"
+	GetReputationHistory = "GetReputationHistory"
+	AllStateDB = "AllStateDB"
+	GetValue = "GetValue"
+	HelloWorld = "HelloWorld"
+
+)
+
+
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
@@ -42,47 +85,12 @@ func main() {
 // Best practice is to have any Ledger initialization in separate function -- see InitLedger()
 // ============================================================================================================================
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
-
-
+	// TEST BEHAVIOUR
 	if t.testMode {
 		a.InitLedger(stub)
 	}
+	// NORMAL BEHAVIOUR
 	return shim.Success(nil)
-
-
-	// tried to imitate the demo of the book handson
-
-	// _, args := stub.GetFunctionAndParameters()
-	//
-	// // Upgrade Mode 1: leave ledger state as it was
-	// argumentSizeError := arglib.ArgumentSizeLimitVerification(args, 0)
-	// if argumentSizeError != nil {
-	// 	return shim.Success(nil)
-	// }else{
-	// 	return shim.Error(argumentSizeError.Error())
-	// }
-	//
-
-	// Upgrade mode 2: change all the names and account balances
-	//   0               1                 2
-	// "ServiceId", "serviceName", "serviceDescription"
-// 	argumentSizeError = arglib.ArgumentSizeLimitVerification(args, 3)
-// 	if argumentSizeError != nil {
-// 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
-// 	}
-// 	if len(args) != 8 {
-// 		err := errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 8: {" +
-// 			"Exporter, " +
-// 			"Exporter's Bank, " +
-// 			"Exporter's Account Balance, " +
-// 			"Importer, " +
-// 			"Importer's Bank, " +
-// 			"Importer's Account Balance, " +
-// 			"Carrier, " +
-// 			"Regulatory Authority" +
-// 			"}. Found %d", len(args)))
-// 		return shim.Error(err.Error())
-// 	}
 }
 
 // ============================================================================================================================
@@ -96,123 +104,119 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	// AGENT, SERVICE, AGENT SERVICE RELATION INVOKES
 
 	// CREATE:
-	case "InitLedger":
+	case InitLedger:
 		response := a.InitLedger(stub)
 		return response
-	case "CreateService":
+	case CreateService:
 		return in.CreateService(stub, args)
-	case "CreateAgent":
+	case CreateAgent:
 		return in.CreateAgent(stub, args)
-	case "CreateServiceAgentRelation":
+	case CreateServiceAgentRelation:
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
+		// Standard reputation value from inside
 		return in.CreateServiceAgentRelation(stub, args)
-	case "CreateServiceAndServiceAgentRelationWithStandardValue":
+	case CreateServiceAndServiceAgentRelationWithStandardValue:
 		// If service doesn't exist it will create with a standard value of reputation defined inside the function
 		return in.CreateServiceAndServiceAgentRelationWithStandardValue(stub, args)
-	case "CreateServiceAndServiceAgentRelation":
+	case CreateServiceAndServiceAgentRelation:
 		// If service doesn't exist it will create
 		return in.CreateServiceAndServiceAgentRelation(stub, args)
 
 		// GET:
-	case "GetServiceHistory":
+	case GetServiceHistory:
 		return a.GetServiceHistory(stub, args)
-	case "GetServiceNotFoundError":
+	case GetServiceNotFoundError:
 		return in.QueryService(stub, args)
-	case "GetAgentNotFoundError":
+	case GetAgentNotFoundError:
 		return in.QueryAgent(stub, args)
-	case "GetServiceRelationAgent":
+	case GetServiceRelationAgent:
 		return in.QueryServiceRelationAgent(stub, args)
 
 		// RANGE QUERY:
-	case "byService":
+	case ByService:
 		return in.QueryByServiceAgentRelation(stub, args)
-	case "byAgent":
+	case ByAgent:
 		return in.QueryByAgentServiceRelation(stub, args)
-	case "GetAgentsByService":
+	case GetAgentsByService:
 		// also with only one record result return always a JSONArray
 		return in.GetServiceRelationAgentByServiceWithCostAndTime(stub, args)
-	case "GetServicesByAgent":
+	case GetServicesByAgent:
 		// also with only one record result return always a JSONArray
 		return in.GetServiceRelationAgentByAgentWithCostAndTime(stub, args)
 
 		// DELETE:
-	case "DeleteService":
+	case DeleteService:
 		return a.DeleteService(stub, args)
-	case "DeleteAgent":
+	case DeleteAgent:
 		return a.DeleteAgent(stub, args)
 
 	// ACTIVITY INVOKES
 	// CREATE:
-	case "CreateActivity":
+	case CreateActivity:
 		return in.CreateActivity(stub, args)
 		// GET:
-	case "GetActivity":
+	case GetActivity:
 		return in.QueryActivity(stub, args)
 		// RANGE QUERY:
-	case "byExecutedServiceTxId":
+	case ByExecutedServiceTxId:
 		return in.QueryByExecutedServiceTx(stub, args)
-	case "byDemanderExecuter":
+	case ByDemanderExecuter:
 		return in.QueryByDemanderExecuter(stub, args)
-	case "GetActivitiesByServiceTxId":
+	case GetActivitiesByServiceTxId:
 		// also with only one record result return always a JSONArray
 		return in.GetActivitiesByExecutedServiceTxId(stub, args)
-	case "GetActivitiesByDemanderExecuterTimestamp":
+	case GetActivitiesByDemanderExecuterTimestamp:
 		// also with only one record result return always a JSONArray
 		return in.GetActivitiesByDemanderExecuterTimestamp(stub, args)
 
 	// REPUTATION INVOKES
 	// CREATE:
-	case "CreateReputation":
+	case CreateReputation:
 		return in.CreateReputation(stub, args)
 		// MODIFTY:
-	case "ModifyReputationValue":
+	case ModifyReputationValue:
 		return in.ModifyReputationValue(stub, args)
-	case "ModifyOrCreateReputationValue":
+	case ModifyOrCreateReputationValue:
 		return in.ModifyOrCreateReputationValue(stub, args)
 
 		// GET:
-	case "GetReputationNotFoundError":
+	case GetReputationNotFoundError:
 		return in.QueryReputation(stub, args)
 		// RANGE QUERY:
-	case "byAgentServiceRole":
+	case ByAgentServiceRole:
 		return in.QueryByAgentServiceRole(stub, args)
-	case "GetReputationsByAgentServiceRole":
+	case GetReputationsByAgentServiceRole:
 		// also with only one record result return always a JSONArray
 		return in.GetReputationsByAgentServiceRole(stub, args)
 
 		// GENERAL INVOKES
-	case "Write":
+	case Write:
 		return gen.Write(stub, args)
-	case "Read":
+	case Read:
 		return gen.Read(stub, args)
-	case "ReadEverything":
+	case ReadEverything:
 		return a.ReadEverything(stub)
-	case "GetHistory":
+	case GetHistory:
 		// Get Chain Transaction Log of that assetId
 		return gen.GetHistory(stub, args)
-	case "GetReputationHistory":
+	case GetReputationHistory:
 		return in.GetReputationHistory(stub, args)
-	case "AllStateDB":
+	case AllStateDB:
 		return gen.ReadAllStateDB(stub)
-	case "GetValue":
+	case GetValue:
 		return gen.GetValue(stub, args)
-	case "HelloWorld":
+	case HelloWorld:
 		fmt.Println("Ciao")
-		// in := []byte(`{"Hello":"HelloWorld"}`)
-		// var raw map[string]interface{}
-		// json.Unmarshal(in, &raw)
-		// out, _ := json.Marshal(raw)
 		var buffer bytes.Buffer
-
 		buffer.WriteString("[{\"Hello\":\"HelloWorld\"}]")
-
 		return shim.Success(buffer.Bytes())
 	default:
+		// Error Output
 		fmt.Println("Received unknown in function Name - " + function)
 		return shim.Error("Invalid Smart Contract function Name.")
 	}
 
-	// error out
+
 }
 
 // ============================================================================================================================
