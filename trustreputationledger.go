@@ -27,6 +27,8 @@ const(
 	CreateServiceAndServiceAgentRelationWithStandardValue = "CreateServiceAndServiceAgentRelationWithStandardValue"
 	CreateServiceAndServiceAgentRelation = "CreateServiceAndServiceAgentRelation"
 	GetServiceHistory = "GetServiceHistory"
+	GetService = "GetService"
+	GetAgent = "GetAgent"
 	GetServiceNotFoundError = "GetServiceNotFoundError"
 	GetAgentNotFoundError = "GetAgentNotFoundError"
 	GetServiceRelationAgent = "GetServiceRelationAgent"
@@ -99,6 +101,48 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 
+	// TRY ChaincodeStubInterface Functions:
+	// fmt.Println("Received function Name - " +function)
+	// for i, singleArg := range args {
+	// 	// s:= string(singleArg)
+	// 	fmt.Println("Parameter n. "+ strconv.Itoa(i) + " - " + singleArg)
+	// }
+	// txId:=stub.GetTxID()
+	// fmt.Println("TX_ID: " + txId)
+	//
+	// chId:=stub.GetChannelID()
+	// fmt.Println("CH_ID: " + chId)
+	//
+	// creator,_:= stub.GetCreator()
+	// fmt.Print("Creator: ")
+	// fmt.Println(creator)
+	//
+	// transient,_:= stub.GetTransient()
+	// fmt.Print("Transient: ")
+	// fmt.Println(transient)
+	//
+	// signedProposal,_:= stub.GetSignedProposal()
+	// fmt.Print("Signed Proposal: ")
+	// fmt.Println(signedProposal)
+	//
+	// txTimestamp, txTimestampError := stub.GetTxTimestamp()
+	// if txTimestampError != nil {
+	// 	fmt.Println(txTimestampError.Error())
+	// }else {
+	// 	fmt.Print("Original Timestamp: ")
+	// 	fmt.Println(txTimestamp.String())
+	// 	timestampHumanReadable := time.Unix(txTimestamp.Seconds, int64(txTimestamp.Nanos))
+	// 	fmt.Print("Human Readable Timestamp: ")
+	// 	fmt.Println(timestampHumanReadable)
+	// }
+	// eventError:=stub.SetEvent("EventHello", []byte("EventPayload"))
+	// if eventError != nil {
+	// 	fmt.Println(eventError.Error())
+	// }else {
+	// 	fmt.Println("Event OK")
+	// }
+	// END TRY
+
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	switch function {
 	// AGENT, SERVICE, AGENT SERVICE RELATION INVOKES
@@ -125,10 +169,16 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		// GET:
 	case GetServiceHistory:
 		return a.GetServiceHistory(stub, args)
+	case GetService:
+		return in.QueryService(stub,args)
+	case GetAgent:
+		return in.QueryAgent(stub,args)
+
+		// GET NOT FOUND (DEPRECATED):
 	case GetServiceNotFoundError:
-		return in.QueryService(stub, args)
+		return in.QueryServiceNotFoundError(stub, args)
 	case GetAgentNotFoundError:
-		return in.QueryAgent(stub, args)
+		return in.QueryAgentNotFoundError(stub, args)
 	case GetServiceRelationAgent:
 		return in.QueryServiceRelationAgent(stub, args)
 
@@ -197,18 +247,29 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case ReadEverything:
 		return a.ReadEverything(stub)
 	case GetHistory:
-		// Get Chain Transaction Log of that assetId
+		// Get Block Chain Transaction Log of that assetId
 		return gen.GetHistory(stub, args)
 	case GetReputationHistory:
 		return in.GetReputationHistory(stub, args)
 	case AllStateDB:
+		// All Records Level DB (World State DB)
 		return gen.ReadAllStateDB(stub)
 	case GetValue:
 		return gen.GetValue(stub, args)
 	case HelloWorld:
-		fmt.Println("Ciao")
+		fmt.Println("Hello, lorem ipsum")
 		var buffer bytes.Buffer
 		buffer.WriteString("[{\"Hello\":\"HelloWorld\"}]")
+		// TRY SET EVENT, OK WORKS
+		eventPayload:="EventHello"
+		payloadAsBytes := []byte(eventPayload)
+		eventError := stub.SetEvent("HelloEvent",payloadAsBytes)
+		if eventError != nil {
+			fmt.Println(eventError.Error())
+		}else {
+			fmt.Println("Event Create Service OK")
+		}
+
 		return shim.Success(buffer.Bytes())
 	default:
 		// Error Output

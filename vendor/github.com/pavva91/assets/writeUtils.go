@@ -12,7 +12,7 @@ import (
 )
 
 // =====================================================================================================================
-// InitLedger - create a batch of new agents and services
+// InitLedger - create a batch of new agents and services (TEST)
 // =====================================================================================================================
 func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 	services := []Service{
@@ -21,6 +21,7 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 		Service{ServiceId: "idservice3", Name: "service3", Description: "service Description 3"},
 		Service{ServiceId: "idservice4", Name: "service4", Description: "service Description 4"},
 		Service{ServiceId: "idservice5", Name: "service5", Description: "service Description 5"},
+		Service{ServiceId: "idservice99", Name: "service99", Description: "service Description 99"},
 	}
 	agents := []Agent{
 		Agent{AgentId: "idagent1", Name: "agent1", Address: "address1"},
@@ -28,6 +29,15 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 		Agent{AgentId: "idagent3", Name: "agent3", Address: "address3"},
 		Agent{AgentId: "idagent4", Name: "agent4", Address: "address4"},
 		Agent{AgentId: "idagent5", Name: "agent5", Address: "address5"},
+		Agent{AgentId: "idagent98", Name: "agent98", Address: "address98"},
+		Agent{AgentId: "idagent99", Name: "agent99", Address: "address99"},
+	}
+	serviceRelationAgents := []ServiceRelationAgent{
+		ServiceRelationAgent{"idservice99idagent99","idservice99","idagent99" ,"5","7"},
+	}
+	reputations := []Reputation{
+		Reputation{"idagent99idservice99EXECUTER","idagent99","idservice99" ,"EXECUTER","9"},
+		Reputation{"idagent98idservice99DEMANDER","idagent98","idservice99" ,"DEMANDER","8"},
 	}
 
 
@@ -53,6 +63,24 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 			return shim.Error(err.Error())
 		}
 		fmt.Println("Added", agents[i])
+	}
+	for i := 0; i < len(serviceRelationAgents); i++ {
+		fmt.Println("i is ", i)
+		serviceRelationAgentsAsBytes, _ := json.Marshal(serviceRelationAgents[i])
+		err := stub.PutState(serviceRelationAgents[i].RelationId, serviceRelationAgentsAsBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		fmt.Println("Added", serviceRelationAgents[i])
+	}
+	for i := 0; i < len(reputations); i++ {
+		fmt.Println("i is ", i)
+		reputationsAsBytes, _ := json.Marshal(reputations[i])
+		err := stub.PutState(reputations[i].ReputationId, reputationsAsBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		fmt.Println("Added", reputations[i])
 	}
 
 	return shim.Success(nil)

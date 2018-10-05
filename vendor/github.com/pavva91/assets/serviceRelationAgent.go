@@ -11,7 +11,7 @@ import (
 )
 
 type ServiceRelationAgent struct {
-	RelationId      string  `json:"RelationId"`
+	RelationId      string  `json:"RelationId"`// relationId := serviceId + agentId
 	ServiceId       string  `json:"ServiceId"`
 	AgentId         string  `json:"AgentId"`
 	Cost            string  `json:"Cost"`            //TODO: Usare float64
@@ -208,10 +208,11 @@ func GetByService(serviceId string, stub shim.ChaincodeStubInterface) (shim.Stat
 // =====================================================================================================================
 // Get the agent query on ServiceRelationAgent - Execute the query based on agent composite index
 // =====================================================================================================================
-func GetByAgent(serviceId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
+// TODO: BUG, ritorna anche il record dell'agente
+func GetByAgent(agentId string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
 	// Query the service~agent~relation index by service
-	// This will execute a key range query on all keys starting with 'service'
-	agentServiceResultsIterator, err := stub.GetStateByPartialCompositeKey("agent~service~relation", []string{serviceId})
+	// This will execute a key range query on all keys starting with 'agent'
+	agentServiceResultsIterator, err := stub.GetStateByPartialCompositeKey("agent~service~relation", []string{agentId})
 	if err != nil {
 		return agentServiceResultsIterator, err
 	}

@@ -25,6 +25,7 @@ import (
 // - IsFinalEvaluation
 // UNIVOCAL: WriterAgentId, DemanderAgentId, ExecuterAgentId, ExecutedServiceTxId
 type Activity struct {
+	// 	evaluationId := writerAgentId + demanderAgentId + executerAgentId + executedServiceTxId
 	EvaluationId             string `json:"EvaluationId"`
 	WriterAgentId            string `json:"WriterAgentId"` // WriterAgentId = DemanderAgentId || ExecuterAgentId
 	DemanderAgentId          string `json:"DemanderAgentId"`

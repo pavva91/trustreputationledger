@@ -25,7 +25,7 @@ type Reputation struct {
 	ReputationId        string `json:"ReputationId"`
 	AgentId             string `json:"AgentId"`
 	ServiceId           string `json:"ServiceId"`
-	AgentRole           string `json:"AgentRole"` // "Demander" || "Executer"
+	AgentRole           string `json:"AgentRole"` // "DEMANDER" || "EXECUTER"
 	Value               string `json:"Value"`  // Value of Reputation of the agent
 }
 // AgentRole Values

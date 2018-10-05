@@ -185,7 +185,7 @@ func GetServiceAsBytes(stub shim.ChaincodeStubInterface, idService string) ([]by
 //     ServiceId
 // =====================================================================================================================
 func DeleteService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("starting delete_marble")
+	fmt.Println("Starting Delete Service")
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")

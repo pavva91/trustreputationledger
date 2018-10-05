@@ -59,6 +59,17 @@ func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 		return shim.Error("Failed to create reputation of agent " + agent.Name + " of service: " + service.Name + " with agent role: " + agentRole + ": " + err.Error())
 	}
 
+	// ==== Reputation saved and indexed. Set Event ====
+
+	eventPayload:="Created Reputation: " + reputation.ReputationId + " of agent ID: " + reputation.AgentId + ", for service ID: " + reputation.ServiceId + ", with role: " + reputation.AgentRole
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ReputationCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create Reputation OK")
+	}
+
 	// ==== Reputation saved & indexed. Return success ====
 	fmt.Println("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
 	return shim.Success(nil)

@@ -89,6 +89,7 @@ peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "Ge
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServiceRelationAgent", "Args":["idservice1idagent1"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitServiceAgentRelation", "Args":["idservice1","idagent2","3","5","7"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetAgentsByService", "Args":["CIAO"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServicesByAgent", "Args":["d"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "byAgent", "Args":["a1"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServiceNotFoundError", "Args":["idservice5"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "DeleteService", "Args":["idservice5"]}'

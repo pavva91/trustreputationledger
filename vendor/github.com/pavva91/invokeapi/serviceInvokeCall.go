@@ -70,11 +70,18 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 		return shim.Error(saveIndexError.Error())
 	}
 
-	// ==== Service saved and indexed. Return success ====
-	fmt.Println("Service: " + service.Name + " created - end create service")
+	// ==== Service saved and indexed. Set Event ====
+
 	eventPayload:="Created Service: " + serviceId
 	payloadAsBytes := []byte(eventPayload)
-	stub.SetEvent("Service Created",payloadAsBytes)
+	eventError := stub.SetEvent("ServiceCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create Service OK")
+	}
+	// ==== Service saved and indexed. Return success ====
+	fmt.Println("ServiceId: " + service.ServiceId + ", Name: " + service.Name + ", Description: " + service.Description + " Succesfully Created - End Create Service")
 	return shim.Success(nil)
 }
 
@@ -156,7 +163,43 @@ func ModifyServiceDescription(stub shim.ChaincodeStubInterface, args []string) p
 }
 
 // =====================================================================================================================
-// Query Service - wrapper of GetServiceNotFoundError called from the chaincode invoke
+// Query Service Not Found Error - wrapper of GetServiceNotFoundError called from the chaincode invoke
+// =====================================================================================================================
+func QueryServiceNotFoundError(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0
+	// "ServiceId"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	serviceId := args[0]
+
+	// ==== get the service ====
+	service, err := a.GetServiceNotFoundError(stub, serviceId)
+	if err != nil {
+		fmt.Println("Failed to find service by id " + serviceId)
+		return shim.Error(err.Error())
+	} else {
+		fmt.Println("Service ID: " + service.ServiceId + ", Service: " + service.Name + ", with Description: " + service.Description + " found")
+		// ==== Marshal the byService query result ====
+		serviceAsJSON, err := json.Marshal(service)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		return shim.Success(serviceAsJSON)
+	}
+}
+
+// =====================================================================================================================
+// Query Service - wrapper of GetService called from the chaincode invoke
 // =====================================================================================================================
 func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
@@ -176,7 +219,7 @@ func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	serviceId := args[0]
 
 	// ==== get the service ====
-	service, err := a.GetServiceNotFoundError(stub, serviceId)
+	service, err := a.GetService(stub, serviceId)
 	if err != nil {
 		fmt.Println("Failed to find service by id " + serviceId)
 		return shim.Error(err.Error())

@@ -32,19 +32,28 @@ const (
 	ExistingServiceName        = "service1"
 	ExistingServiceDescription = "service Description 1"
 	ExistingAgentId            = "idagent1"
-	ExistingAgentName          = "agent1"
-	ExistingAgentAddress       = "address1"
-	NewServiceId               = "idservice6"
-	NewServiceName             = "service6"
-	NewServiceDescription      = "service Description 6"
-	NewAgentId                 = "idagent6"
-	NewAgentName               = "agent6"
-	NewAgentAddress            = "address6"
-	ServiceAgentServiceId      = ExistingServiceId
-	ServiceAgentAgentId        = ExistingAgentId
-	ServiceAgentCost           = "8"
-	ServiceAgentTime           = "6"
-	ReputationValue            = "6"
+	ExistingAgentName      = "agent1"
+	ExistingAgentAddress   = "address1"
+	NewServiceId           = "idservice6"
+	NewServiceName         = "service6"
+	NewServiceDescription  = "service Description 6"
+	NewAgentId             = "idagent6"
+	NewAgentName           = "agent6"
+	NewAgentAddress        = "address6"
+	ServiceAgentServiceId  = ExistingServiceId
+	ServiceAgentAgentId    = ExistingAgentId
+	ServiceAgentCost       = "8"
+	ServiceAgentTime       = "6"
+	ReputationValue        = "6"
+	ExecuterAgentId = "idagent99"
+	DemanderAgentId = "idagent98"
+	WritingExecuterAgentId = ExecuterAgentId
+	WritingDemanderAgentId = DemanderAgentId
+	ExecutedServiceId = "idservice99"
+	ExecutedServiceTxId = "execServiceTxId"
+	ExecutedServiceTimestamp = "execServiceTimestamp"
+	ActivityValue = "10"
+
 
 	EXPORTER = "LumberInc"
 	EXPBANK = "LumberBank"
@@ -542,6 +551,88 @@ func TestServiceAndServiceAgentRelationExistingService(t *testing.T) {
 	expectedResp2 := "{\"ReputationId\":\""+ reputationId +"\",\"AgentId\":\""+ agentId +"\",\"ServiceId\":\""+ serviceId +"\",\"AgentRole\":\""+ agentRole +"\",\"Value\":\""+ initReputationValue +"\"}"
 
 	checkQuery(t, mockStub, GetReputationNotFoundError, reputationId, expectedResp2)
+}
+// =====================================================================================================================
+// TestExecuterActivityCreation - Test the 'CreateActivity' function called from an Reputation.EXECUTER
+// =====================================================================================================================
+func TestExecuterActivityCreation(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Executer Activity Creation", simpleChaincode)
+
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	//   0               1                   2                     3                   4                        5         6
+	// "WriterAgentId", "DemanderAgentId", "ExecuterAgentId", "ExecutedServiceId", "ExecutedServiceTxId", "ExecutedServiceTimestamp", "Value"
+	var functionAndArgs []string
+	functionName:= CreateActivity
+
+	// Invoke 'CreateServiceAgentRelation'
+	writerAgentId := WritingExecuterAgentId
+	demanderAgentId := DemanderAgentId
+	executerAgentId := ExecuterAgentId
+	executedServiceId := ExecutedServiceId
+	executedServiceTxId := ExecutedServiceTxId
+	executedServiceTimestamp := ExecutedServiceTimestamp
+	activityValue := ActivityValue
+
+	args := []string{writerAgentId, demanderAgentId, executerAgentId, executedServiceId,executedServiceTxId,executedServiceTimestamp, activityValue}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	evaluationId := writerAgentId + demanderAgentId + executerAgentId + executedServiceTxId
+
+	activity := &a.Activity{evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId,executedServiceTxId,executedServiceTimestamp, activityValue}
+	activityAsBytes, _ := json.Marshal(activity)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{demanderAgentId})
+	checkState(t, mockStub, evaluationId, string(activityAsBytes))
+
+	expectedResp := "{\"EvaluationId\":\""+ evaluationId +"\",\"WriterAgentId\":\""+ writerAgentId +"\",\"DemanderAgentId\":\""+ demanderAgentId + "\",\"ExecuterAgentId\":\""+ executerAgentId + "\",\"ExecutedServiceId\":\""+ executedServiceId + "\",\"ExecutedServiceTxid\":\""+ executedServiceTxId + "\",\"ExecutedServiceTimestamp\":\""+ executedServiceTimestamp + "\",\"Value\":\""+ activityValue + "\"}"
+	checkQuery(t, mockStub, GetActivity, evaluationId, expectedResp)
+}
+// =====================================================================================================================
+// TestDemanderActivityCreation - Test the 'CreateActivity' function called from an Reputation.DEMANDER
+// =====================================================================================================================
+func TestDemanderActivityCreation(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Demander Activity Creation", simpleChaincode)
+
+	// Init
+	checkInit(t, mockStub, getInitArguments())
+
+	//   0               1                   2                     3                   4                        5         6
+	// "WriterAgentId", "DemanderAgentId", "ExecuterAgentId", "ExecutedServiceId", "ExecutedServiceTxId", "ExecutedServiceTimestamp", "Value"
+	var functionAndArgs []string
+	functionName:= CreateActivity
+
+	// Invoke 'CreateServiceAgentRelation'
+	writerAgentId := WritingDemanderAgentId
+	demanderAgentId := DemanderAgentId
+	executerAgentId := ExecuterAgentId
+	executedServiceId := ExecutedServiceId
+	executedServiceTxId := ExecutedServiceTxId
+	executedServiceTimestamp := ExecutedServiceTimestamp
+	activityValue := ActivityValue
+
+	args := []string{writerAgentId, demanderAgentId, executerAgentId, executedServiceId,executedServiceTxId,executedServiceTimestamp, activityValue}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	evaluationId := writerAgentId + demanderAgentId + executerAgentId + executedServiceTxId
+
+	activity := &a.Activity{evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId,executedServiceTxId,executedServiceTimestamp, activityValue}
+	activityAsBytes, _ := json.Marshal(activity)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{demanderAgentId})
+	checkState(t, mockStub, evaluationId, string(activityAsBytes))
+
+	expectedResp := "{\"EvaluationId\":\""+ evaluationId +"\",\"WriterAgentId\":\""+ writerAgentId +"\",\"DemanderAgentId\":\""+ demanderAgentId + "\",\"ExecuterAgentId\":\""+ executerAgentId + "\",\"ExecutedServiceId\":\""+ executedServiceId + "\",\"ExecutedServiceTxid\":\""+ executedServiceTxId + "\",\"ExecutedServiceTimestamp\":\""+ executedServiceTimestamp + "\",\"Value\":\""+ activityValue + "\"}"
+	checkQuery(t, mockStub, GetActivity, evaluationId, expectedResp)
 }
 /*
 func TestTradeWorkflow_LetterOfCredit(t *testing.T) {

@@ -125,6 +125,17 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 		return shim.Error("Error  saving Agent index: " + putStateDemanderExecuterIndexError.Error())
 	}
 
+	// ==== Activity saved and indexed. Set Event ====
+
+	eventPayload:="Created Activity: " + evaluationId + " Demander agent ID: " + demanderAgentId + ", Executer agent ID: " + executerAgentId
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ActivityCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create Activity OK")
+	}
+
 	// ==== AgentServiceRelation saved & indexed. Return success ====
 	fmt.Println("Servizio: " + executedService.Name + " evaluated by: " + writerAgent.Name + " relative to the transaction: " + executedServiceTxId)
 	return shim.Success(nil)

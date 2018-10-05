@@ -50,10 +50,20 @@ func CreateAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	agent := a.CreateAgent(agentId, agentName, agentAddress, stub)
 
-	// indexAgent(agent, stub)
 	// TODO: index agent, sarà da fare lo stesso se riesco a fare queste due tabelle?
-	// ==== Service2 saved and indexed. Return success ====
-	fmt.Println("Servizio: " + agent.Name + " creato - end init agent")
+
+	// ==== Agent saved and indexed. Set Event ====
+	eventPayload:="Created Agent: " + agentId
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("AgentCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create Agent OK")
+	}
+
+	// ==== Agent saved and indexed and event setted. Return success ====
+	fmt.Println("Agent: " + agent.Name + " created - end init agent")
 	return shim.Success(nil)
 }
 
@@ -134,7 +144,42 @@ func ModifyAgentAddress(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 }
 
 // =====================================================================================================================
-// Query Agent - wrapper of GetAgentNotFoundError called from the chaincode invoke
+// Query Agent Not Found Error - wrapper of GetAgentNotFoundError called from the chaincode invoke
+// =====================================================================================================================
+func QueryAgentNotFoundError(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0
+	// "AgentId"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	agentId := args[0]
+
+	// ==== get the agent ====
+	agent, err := a.GetAgentNotFoundError(stub, agentId)
+	if err != nil {
+		fmt.Println("Failed to find agent by id " + agentId)
+		return shim.Error("Failed to find agent by id: " + err.Error())
+	} else {
+		fmt.Println("Agent: " + agent.Name + ", with Address: " + agent.Address + " found")
+		// ==== Marshal the byService query result ====
+		agentAsJSON, err := json.Marshal(agent)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		return shim.Success(agentAsJSON)
+	}
+}
+// =====================================================================================================================
+// Query Agent - wrapper of GetAgent called from the chaincode invoke
 // =====================================================================================================================
 func QueryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
@@ -154,7 +199,7 @@ func QueryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	agentId := args[0]
 
 	// ==== get the agent ====
-	agent, err := a.GetAgentNotFoundError(stub, agentId)
+	agent, err := a.GetAgent(stub, agentId)
 	if err != nil {
 		fmt.Println("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + err.Error())

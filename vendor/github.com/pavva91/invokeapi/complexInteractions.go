@@ -69,6 +69,17 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
 	}
 
+	// ==== Service, ServiceRealationAgent and Reputation saved and indexed. Set Event ====
+
+	eventPayload:="Created Service: " + serviceId + " ServiceRelationAgent with agent: " + agentId + " with reputation value: " + reputation.Value
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceRelationAgentAndReputationCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create ServiceRelationAgent and Reputation OK")
+	}
+
 	// ==== AgentServiceRelation saved & indexed. Return success ====
 	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " at cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " in the relation with initial reputation value of: "+ reputation.Value)
 	return shim.Success(nil)
@@ -133,6 +144,17 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 	reputation,reputationError := a.CheckingCreatingIndexingReputation(agentId,serviceId,a.Executer,initReputationValue,stub)
 	if reputationError != nil {
 		return shim.Error("Error saving Agent reputation: " + reputationError.Error())
+	}
+
+	// ==== Service, ServiceRealationAgent and Reputation saved and indexed. Set Event ====
+
+	eventPayload:="Created Service: " + serviceId + " ServiceRelationAgent with agent: " + agentId + " with reputation value: " + reputation.Value
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceRelationAgentAndReputationStandardValueCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create ServiceRelationAgent and Reputation OK")
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
