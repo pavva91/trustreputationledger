@@ -19,7 +19,7 @@ import (
 For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
  */
 // ========================================================================================================================
-// Create Executed Service Evaluation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
+// Create Executed Service Evaluation - wrapper of CreateServiceAgentRelationAndReputation called from chiancode's Invoke
 // ========================================================================================================================
 func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                   2                     3                   4                        5         6

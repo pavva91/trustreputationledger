@@ -24,14 +24,15 @@ const(
 	CreateService = "CreateService"
 	CreateAgent   = "CreateAgent"
 	CreateServiceAgentRelation = "CreateServiceAgentRelation"
+	CreateServiceAgentRelationAndReputation = "CreateServiceAgentRelationAndReputation"
 	CreateServiceAndServiceAgentRelationWithStandardValue = "CreateServiceAndServiceAgentRelationWithStandardValue"
 	CreateServiceAndServiceAgentRelation = "CreateServiceAndServiceAgentRelation"
 	GetServiceHistory = "GetServiceHistory"
 	GetService = "GetService"
 	GetAgent = "GetAgent"
+	GetServiceRelationAgent = "GetServiceRelationAgent"
 	GetServiceNotFoundError = "GetServiceNotFoundError"
 	GetAgentNotFoundError = "GetAgentNotFoundError"
-	GetServiceRelationAgent = "GetServiceRelationAgent"
 	ByService = "byService"
 	ByAgent = "byAgent"
 	GetAgentsByService = "GetAgentsByService"
@@ -47,6 +48,7 @@ const(
 	CreateReputation = "CreateReputation"
 	ModifyReputationValue = "ModifyReputationValue"
 	ModifyOrCreateReputationValue = "ModifyOrCreateReputationValue"
+	GetReputation = "GetReputation"
 	GetReputationNotFoundError = "GetReputationNotFoundError"
 	ByAgentServiceRole = "byAgentServiceRole"
 	GetReputationsByAgentServiceRole = "GetReputationsByAgentServiceRole"
@@ -157,8 +159,12 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return in.CreateAgent(stub, args)
 	case CreateServiceAgentRelation:
 		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
-		// Standard reputation value from inside
+		// NO REPUTATION INITIALIZATION
 		return in.CreateServiceAgentRelation(stub, args)
+	case CreateServiceAgentRelationAndReputation:
+		// Already with reference integrity controls (service already exist, agent already exist, relation don't already exist)
+		// Standard reputation value (6) from inside
+		return in.CreateServiceAgentRelationAndReputation(stub, args)
 	case CreateServiceAndServiceAgentRelationWithStandardValue:
 		// If service doesn't exist it will create with a standard value of reputation defined inside the function
 		return in.CreateServiceAndServiceAgentRelationWithStandardValue(stub, args)
@@ -173,14 +179,15 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return in.QueryService(stub,args)
 	case GetAgent:
 		return in.QueryAgent(stub,args)
+	case GetServiceRelationAgent:
+		return in.QueryServiceRelationAgent(stub, args)
 
 		// GET NOT FOUND (DEPRECATED):
 	case GetServiceNotFoundError:
 		return in.QueryServiceNotFoundError(stub, args)
 	case GetAgentNotFoundError:
 		return in.QueryAgentNotFoundError(stub, args)
-	case GetServiceRelationAgent:
-		return in.QueryServiceRelationAgent(stub, args)
+
 
 		// RANGE QUERY:
 	case ByService:
@@ -192,7 +199,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return in.GetServiceRelationAgentByServiceWithCostAndTime(stub, args)
 	case GetServicesByAgent:
 		// also with only one record result return always a JSONArray
-		return in.GetServiceRelationAgentByAgentWithCostAndTime(stub, args)
+		return in.GetServiceRelationAgentByAgentWithCostAndTimeNotFoundError(stub, args)
 
 		// DELETE:
 	case DeleteService:
@@ -230,8 +237,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return in.ModifyOrCreateReputationValue(stub, args)
 
 		// GET:
+	case GetReputation:
+		return in.QueryReputation(stub,args)
 	case GetReputationNotFoundError:
-		return in.QueryReputation(stub, args)
+		return in.QueryReputationNotFoundError(stub, args)
 		// RANGE QUERY:
 	case ByAgentServiceRole:
 		return in.QueryByAgentServiceRole(stub, args)

@@ -14,10 +14,75 @@ import (
 
 )
 
+
 // ========================================================================================================================
-// Init Service Agent Relation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
+// Init Service Agent Relation - wrapper of CreateServiceAgentRelationAndReputation called from chiancode's Invoke
 // ========================================================================================================================
 func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0               1       2       3
+	// "ServiceId", "AgentId", "Cost", "Time"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 4)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	// ==== Set Variables from Passed Arguments ====
+	serviceId := args[0]
+	agentId := args[1]
+	cost := args[2]
+	time := args[3]
+
+	// ==== Check if already existing service ====
+	service, errS := a.GetServiceNotFoundError(stub, serviceId)
+	if errS != nil {
+		fmt.Println("Failed to find service by id " + serviceId)
+		return shim.Error("Failed to find service by id " + errS.Error())
+	}
+	fmt.Println("Service Already existing ok")
+
+	// ==== Check if already existing agent ====
+	agent, errA := a.GetAgentNotFoundError(stub, agentId)
+	if errA != nil {
+		fmt.Println("Failed to find agent by id " + agentId)
+		return shim.Error("Failed to find agent by id: " + errA.Error())
+	}
+	fmt.Println("Agent Already existing ok")
+
+
+	// ==== Check, Create, Indexing ServiceRelationAgent ====
+
+	serviceRelationAgent, serviceRelationError := a.CheckingCreatingIndexingServiceRelationAgent(serviceId,agentId, cost, time, stub)
+	if serviceRelationError != nil {
+		return shim.Error("Error saving ServiceRelationAgent: " + serviceRelationError.Error())
+
+	}
+
+	// ==== ServiceRelationAgent saved and indexed. Set Event ====
+
+	eventPayload:="Created Service RelationAgent: " + serviceId + " with agent: " + agentId
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceRelationAgentCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create ServiceRelationAgent OK")
+	}
+	// ==== ServiceRelationAgent saved & indexed. Return success ====
+	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " with cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time)
+	return shim.Success(nil)
+}
+
+// ========================================================================================================================
+// Init Service Agent Relation - wrapper of CreateServiceAgentRelationAndReputation called from chiancode's Invoke
+// ========================================================================================================================
+func CreateServiceAgentRelationAndReputation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1       2       3
 	// "ServiceId", "AgentId", "Cost", "Time"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 4)
@@ -74,7 +139,7 @@ func CreateServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 
 	eventPayload:="Created Service RelationAgent: " + serviceId + " with agent: " + agentId
 	payloadAsBytes := []byte(eventPayload)
-	eventError := stub.SetEvent("ServiceRelationAgentCreatedEvent",payloadAsBytes)
+	eventError := stub.SetEvent("ServiceRelationAgentAndReputationCreatedEvent",payloadAsBytes)
 	if eventError != nil {
 		fmt.Println("Error in event Creation: " + eventError.Error())
 	}else {
@@ -366,9 +431,9 @@ func GetServiceRelationAgentByServiceWithCostAndTime(stub shim.ChaincodeStubInte
 }
 
 // ========================================================================================================================
-// GetServiceRelationAgentByServiceWithCostAndTime - wrapper of GetByService called from chiancode's Invoke, for looking for agents that provide certain service
+// GetServiceRelationAgentByServiceWithCostAndTimeNotFoundError - wrapper of GetByService called from chiancode's Invoke, for looking for agents that provide certain service, return Error if not found
 // ========================================================================================================================
-func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func GetServiceRelationAgentByAgentWithCostAndTimeNotFoundError(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
 	// "AgentId"
 
@@ -428,6 +493,70 @@ func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterf
 		fmt.Println("Agent exists but has no existing relationships with services")
 		return shim.Error("Service exists but has no existing relationships with agents")
 	}
+
+	// ==== AgentServiceRelation saved & indexed. Return success with payload ====
+	return shim.Success(servicesByAgentAsBytes)
+}
+
+// ========================================================================================================================
+// GetServiceRelationAgentByServiceWithCostAndTime - wrapper of GetByAgent called from chiancode's Invoke, for looking for services provided by the agent, return null if not found
+// ========================================================================================================================
+func GetServiceRelationAgentByAgentWithCostAndTime(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0
+	// "AgentId"
+
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	fmt.Println("- start init serviceRelationAgent")
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	agentId := args[0]
+
+	// ==== Check if already existing agent ====
+	agent, err := a.GetAgentNotFoundError(stub, agentId)
+	if err != nil {
+		fmt.Println("The agent doesn't exist " + agentId)
+		return shim.Error("The agent doesn't exist: " + err.Error())
+	}
+
+	// ==== Run the byAgent query ====
+	byAgentQueryIterator, err := a.GetByAgent(agentId, stub)
+	defer byAgentQueryIterator.Close()
+
+	if err != nil {
+		fmt.Println("The agent " + agent.Name + " is not mapped with any service " + agentId)
+		return shim.Error(err.Error())
+	}
+	if byAgentQueryIterator != nil {
+		fmt.Println(&byAgentQueryIterator)
+	}
+
+	// ==== Get the Agents for the byService query result ====
+	serviceRelationSlice, err := a.GetServiceRelationSliceFromRangeQuery(byAgentQueryIterator, stub)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	byAgentQueryIterator.Close()
+	// ==== Marshal the byService query result ====
+	fmt.Print(serviceRelationSlice)
+	servicesByAgentAsBytes, err := json.Marshal(serviceRelationSlice)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	fmt.Println(servicesByAgentAsBytes)
+
+	stringOut := string(servicesByAgentAsBytes)
+	fmt.Println("stringOut Value: " + stringOut)
 
 	// ==== AgentServiceRelation saved & indexed. Return success with payload ====
 	return shim.Success(servicesByAgentAsBytes)

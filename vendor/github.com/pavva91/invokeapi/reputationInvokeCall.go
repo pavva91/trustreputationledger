@@ -17,7 +17,7 @@ import (
 For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
  */
 // ========================================================================================================================
-// Create Executed Service Evaluation - wrapper of CreateServiceAgentRelation called from chiancode's Invoke
+// Create Executed Service Evaluation - wrapper of CreateServiceAgentRelationAndReputation called from chiancode's Invoke
 // ========================================================================================================================
 func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0         1            2             3
@@ -163,14 +163,60 @@ func ModifyReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.R
 		return shim.Error(modifyError.Error())
 	}
 
+	// ==== Reputation modified. Set Event ====
+
+	eventPayload:="Modified Reputation: " + reputation.ReputationId + " of agent ID: " + reputation.AgentId + ", for service ID: " + reputation.ServiceId + ", with role: " + reputation.AgentRole + ", with new value: " + newReputationValue
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ReputationModifiedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Modification: " + eventError.Error())
+	}else {
+		fmt.Println("Event Modifify Reputation OK")
+	}
+
+
 	return shim.Success(nil)
 }
-
 
 // ============================================================================================================================
 // Query Reputation - wrapper of GetReputation called from the chaincode invoke
 // ============================================================================================================================
 func QueryReputation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0
+	// "reputationId"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	reputationId := args[0]
+
+	// ==== get the reputation ====
+	reputation, err := a.GetReputation(stub, reputationId)
+	if err != nil {
+		fmt.Println("Failed to find reputation by id " + reputationId)
+		return shim.Error(err.Error())
+	} else {
+		fmt.Println("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId)
+		// ==== Marshal the Get Service Evaluation query result ====
+		evaluationAsJSON, err := json.Marshal(reputation)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		return shim.Success(evaluationAsJSON)
+	}
+}
+// ============================================================================================================================
+// Query Reputation Not Found Error- wrapper of GetReputation called from the chaincode invoke with Not Found Error
+// ============================================================================================================================
+func QueryReputationNotFoundError(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0
 	// "reputationId"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)

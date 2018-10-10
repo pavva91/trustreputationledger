@@ -12,7 +12,8 @@ import (
 
 // =====================================================================================================================
 // Init Service And Service Agent Relation - Same as InitServiceAgentRelation, but if the service doesn't exist
-// it will create the service (and relative indexes) first
+// it will create the service (and relative indexes) first.
+// Will also create the reputation as Executer
 // =====================================================================================================================
 func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0            1             2                     3         4       5         6
