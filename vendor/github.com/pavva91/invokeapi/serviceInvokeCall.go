@@ -20,16 +20,16 @@ import (
 )
 
 // =====================================================================================================================
-// Create Service - wrapper of CreateService called from the chaincode invoke
+// Create Leaf Service - wrapper of CreateLeafService called from the chaincode invoke
 // =====================================================================================================================
-func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func CreateLeafService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	//   0               1                 2
 	// "ServiceId", "serviceName", "serviceDescription"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 3)
 	if argumentSizeError != nil {
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
-	fmt.Println("- start create service")
+	fmt.Println("- start create Leaf service")
 
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
@@ -51,7 +51,7 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 		return shim.Error("This service already exists: " + serviceId)
 	}
 
-	service, err := a.CreateService(serviceId, serviceName, serviceDescription, stub)
+	service, err := a.CreateLeafService(serviceId, serviceName, serviceDescription, stub)
 	if err != nil {
 		return shim.Error("Failed to create the service: " + err.Error())
 	}
@@ -83,6 +83,135 @@ func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	// ==== Service saved and indexed. Return success ====
 	fmt.Println("ServiceId: " + service.ServiceId + ", Name: " + service.Name + ", Description: " + service.Description + " Succesfully Created - End Create Service")
 	return shim.Success(nil)
+}
+// =====================================================================================================================
+// Create Composite Service - wrapper of CreateLeafService called from the chaincode invoke
+// =====================================================================================================================
+func CreateCompositeService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0               1                 2               3
+	// "ServiceId", "serviceName", "serviceDescription", "serviceComposition"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 4)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+	fmt.Println("- start create Composite service")
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	serviceId := args[0]
+	serviceName := args[1]
+	serviceDescription := args[2]
+	serviceCompositionAsString := args[3]
+
+	serviceComposition := arglib.ParseStringToStringSlice(serviceCompositionAsString)
+
+	// ==== Check if service already exists ====
+	serviceAsBytes, err := a.GetServiceAsBytes(stub, serviceId)
+	if err != nil {
+		return shim.Error("Failed to get service: " + err.Error())
+	} else if serviceAsBytes != nil {
+		fmt.Println("This service already exists: " + serviceId)
+		return shim.Error("This service already exists: " + serviceId)
+	}
+
+	service, err := a.CreateCompositeService(serviceId, serviceName, serviceDescription, serviceComposition, stub)
+	if err != nil {
+		return shim.Error("Failed to create the service: " + err.Error())
+	}
+
+	// ==== Indexing of service by Name (to do query by Name, if you want) ====
+	// index create
+	nameIndexKey, nameIndexError := a.CreateNameIndex(service, stub)
+	if nameIndexError != nil {
+		return shim.Error(nameIndexError.Error())
+	}
+	fmt.Println(nameIndexKey)
+
+	// index save
+	saveIndexError := a.SaveIndex(nameIndexKey, stub)
+	if saveIndexError != nil {
+		return shim.Error(saveIndexError.Error())
+	}
+
+	// ==== Service saved and indexed. Set Event ====
+
+	eventPayload:="Created Service: " + serviceId
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceCreatedEvent",payloadAsBytes)
+	if eventError != nil {
+		fmt.Println("Error in event Creation: " + eventError.Error())
+	}else {
+		fmt.Println("Event Create Service OK")
+	}
+	// ==== Service saved and indexed. Return success ====
+	fmt.Println("ServiceId: " + service.ServiceId + ", Name: " + service.Name + ", Description: " + service.Description + " Succesfully Created - End Create Service")
+	return shim.Success(nil)
+}
+// =====================================================================================================================
+// Create Service - wrapper of CreateLeafService called from the chaincode invoke
+// =====================================================================================================================
+func CreateService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0               1                 2               3
+	// "ServiceId", "serviceName", "serviceDescription", "serviceComposition"
+	fourArgumentSizeError := arglib.ArgumentSizeVerification(args, 4)
+	if fourArgumentSizeError != nil {
+		return CreateLeafService(stub,args)
+	}else{
+
+		serviceId := args[0]
+		serviceName := args[1]
+		serviceDescription := args[2]
+		serviceCompositionAsString := args[3]
+
+		serviceComposition := arglib.ParseStringToStringSlice(serviceCompositionAsString)
+
+		// ==== Check if service already exists ====
+		serviceAsBytes, err := a.GetServiceAsBytes(stub, serviceId)
+		if err != nil {
+			return shim.Error("Failed to get service: " + err.Error())
+		} else if serviceAsBytes != nil {
+			fmt.Println("This service already exists: " + serviceId)
+			return shim.Error("This service already exists: " + serviceId)
+		}
+
+		service, err := a.CreateService(serviceId, serviceName, serviceDescription, serviceComposition, stub)
+		if err != nil {
+			return shim.Error("Failed to create the service: " + err.Error())
+		}
+
+		// ==== Indexing of service by Name (to do query by Name, if you want) ====
+		// index create
+		nameIndexKey, nameIndexError := a.CreateNameIndex(service, stub)
+		if nameIndexError != nil {
+			return shim.Error(nameIndexError.Error())
+		}
+		fmt.Println(nameIndexKey)
+
+		// index save
+		saveIndexError := a.SaveIndex(nameIndexKey, stub)
+		if saveIndexError != nil {
+			return shim.Error(saveIndexError.Error())
+		}
+
+		// ==== Service saved and indexed. Set Event ====
+
+		eventPayload:="Created Service: " + serviceId
+		payloadAsBytes := []byte(eventPayload)
+		eventError := stub.SetEvent("ServiceCreatedEvent",payloadAsBytes)
+		if eventError != nil {
+			fmt.Println("Error in event Creation: " + eventError.Error())
+		}else {
+			fmt.Println("Event Create Service OK")
+		}
+		// ==== Service saved and indexed. Return success ====
+		fmt.Println("ServiceId: " + service.ServiceId + ", Name: " + service.Name + ", Description: " + service.Description + " Succesfully Created - End Create Service")
+		return shim.Success(nil)
+	}
 }
 
 // ========================================================================================================================
@@ -232,4 +361,57 @@ func QueryService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		}
 		return shim.Success(serviceAsJSON)
 	}
+}
+
+// ========================================================================================================================
+// Query by  - wrapper of GetByServiceName called from chiancode's Invoke
+// ========================================================================================================================
+func QueryByServiceName(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	//   0
+	// "ServiceName"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
+	if argumentSizeError != nil {
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+
+	// ==== Input sanitation ====
+	sanitizeError := arglib.SanitizeArguments(args)
+	if sanitizeError != nil {
+		fmt.Print(sanitizeError)
+		return shim.Error("Sanitize error: " + sanitizeError.Error())
+	}
+
+	serviceName := args[0]
+
+	// ==== Run the byServiceName query ====
+	byServiceNameQueryIterator, err := a.GetByServiceName(serviceName, stub)
+	if err != nil {
+		fmt.Println("Failed to get service by name: " + serviceName)
+		return shim.Error(err.Error())
+	}
+	if byServiceNameQueryIterator != nil {
+		fmt.Println(&byServiceNameQueryIterator)
+	}
+
+	// ==== Get the Services for the byServiceName query result ====
+	servicesSlice, err := a.GetServiceSliceFromRangeQuery(byServiceNameQueryIterator, stub)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// ==== Marshal the byServiceName query result ====
+	servicesByNameAsBytes, err := json.Marshal(servicesSlice)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	fmt.Println(servicesByNameAsBytes)
+
+	stringOut := string(servicesByNameAsBytes)
+	if stringOut == "null" {
+		fmt.Println("Doesn't exist a service with the name: " + serviceName)
+		return shim.Error("Doesn't exist a service with the name: " + serviceName)
+	}
+
+	// ==== Return success with servicesByNameAsBytes as payload ====
+	return shim.Success(servicesByNameAsBytes)
 }

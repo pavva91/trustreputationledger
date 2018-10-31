@@ -426,7 +426,7 @@ func GetServiceRelationAgentByServiceWithCostAndTime(stub shim.ChaincodeStubInte
 		return shim.Error("Service exists but has no existing relationships with agents")
 	}
 
-	// ==== AgentServiceRelation saved & indexed. Return success with payload ====
+	// ==== Return success with agentsByServiceSliceAsBytes as payload ====
 	return shim.Success(agentsByServiceAsBytes)
 }
 

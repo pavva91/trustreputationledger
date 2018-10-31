@@ -37,6 +37,9 @@ const (
 	NewServiceId           = "idservice6"
 	NewServiceName         = "service6"
 	NewServiceDescription  = "service Description 6"
+	NewServiceSameNameId = "idservice1000"
+	ServiceComposition = "asdf,fdas"
+	NullServiceComposition = ""
 	NewAgentId             = "idagent6"
 	NewAgentName           = "agent6"
 	NewAgentAddress        = "address6"
@@ -106,7 +109,7 @@ func checkBadQuery(t *testing.T, stub *shim.MockStub, function string, name stri
 		fmt.Println("Query", name, "unexpectedly succeeded")
 		t.FailNow()
 	}else {
-		fmt.Println("Query", name, "failed as espected")
+		fmt.Println("Query", name, "failed as espected, with message: ",res.Message)
 
 	}
 }
@@ -157,7 +160,7 @@ func checkBadInvoke(t *testing.T, stub *shim.MockStub, functionAndArgs []string)
 		fmt.Println("Invoke", functionAndArgs, "unexpectedly succeeded")
 		t.FailNow()
 	}else {
-		fmt.Println("Invoke", functionAndArgs, "failed as espected")
+		fmt.Println("Invoke", functionAndArgs, "failed as espected, with message: "+ res.Message)
 	}
 }
 
@@ -213,10 +216,90 @@ func TestServiceCreation(t *testing.T) {
 	var functionAndArgs []string
 	functionName:= CreateService
 
-	// Invoke 'CreateService'
+	// Invoke 'CreateLeafService'
 	serviceId := NewServiceId
 	serviceName := NewServiceName
 	serviceDescription := NewServiceDescription
+
+	serviceCompositionAsString := "asd,fda"
+
+	serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString)
+	args := []string{serviceId,serviceName,serviceDescription, serviceCompositionAsString}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	service := &a.Service{ServiceId: serviceId, Name: serviceName, Description: serviceDescription, ServiceComposition:serviceComposition}
+	serviceAsBytes, _ := json.Marshal(service)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
+	checkState(t, mockStub, serviceId, string(serviceAsBytes))
+	fmt.Println(serviceComposition)
+	serviceCompositionJsonRappresentation := "["
+	for i := 0; i<len(service.ServiceComposition) ;i++  {
+		if i == 0 {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + "\""+service.ServiceComposition[i]+ "\""
+		}else {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + ",\""+service.ServiceComposition[i]+ "\""
+		}
+	}
+	serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation +"]"
+
+
+	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":"+ serviceCompositionJsonRappresentation + "}"
+	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
+}
+
+// =====================================================================================================================
+// TestServiceCreationWithEmptyServiceComposition - Test the 'CreateService' function
+// =====================================================================================================================
+func TestServiceCreationWithEmptyServiceComposition(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Service Creation", simpleChaincode)
+
+	var functionAndArgs []string
+	functionName:= CreateService
+
+	// Invoke 'CreateLeafService'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+
+	serviceCompositionAsString := NullServiceComposition
+
+	serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString)
+	args := []string{serviceId,serviceName,serviceDescription, serviceCompositionAsString}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	service := &a.Service{ServiceId: serviceId, Name: serviceName, Description: serviceDescription, ServiceComposition:serviceComposition}
+	serviceAsBytes, _ := json.Marshal(service)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
+	checkState(t, mockStub, serviceId, string(serviceAsBytes))
+
+	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":null}"
+	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
+}
+
+// =====================================================================================================================
+// TestServiceCreationWithEmptyServiceComposition - Test the 'CreateService' function
+// =====================================================================================================================
+func TestServiceCreationWithMissingServiceComposition(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Service Creation", simpleChaincode)
+
+	var functionAndArgs []string
+	functionName:= CreateService
+
+	// Invoke 'CreateLeafService'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+
 
 	args := []string{serviceId,serviceName,serviceDescription}
 	functionAndArgs = append(functionAndArgs, functionName)
@@ -224,18 +307,124 @@ func TestServiceCreation(t *testing.T) {
 
 	checkInvoke(t, mockStub, functionAndArgs)
 
-	service := &a.Service{serviceId, serviceName, serviceDescription}
+	service := &a.Service{ServiceId: serviceId, Name: serviceName, Description: serviceDescription}
 	serviceAsBytes, _ := json.Marshal(service)
 	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
 	checkState(t, mockStub, serviceId, string(serviceAsBytes))
 
-	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\"}"
+
+	fmt.Println(len(service.ServiceComposition))
+
+	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":null}"
 	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
 }
 // =====================================================================================================================
-// TestServiceCreation - Test the 'CreateService' function when trying to insert an already existing record
+// TestLeafServiceCreation - Test the 'CreateLeafService' function
 // =====================================================================================================================
-func TestExistingServiceCreation(t *testing.T) {
+func TestLeafServiceCreation(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Service Creation", simpleChaincode)
+
+	var functionAndArgs []string
+	functionName:= CreateLeafService
+
+	// Invoke 'CreateLeafService'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+
+
+
+	args := []string{serviceId,serviceName,serviceDescription}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	service := &a.Service{ServiceId: serviceId, Name: serviceName, Description: serviceDescription}
+	serviceAsBytes, _ := json.Marshal(service)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
+	checkState(t, mockStub, serviceId, string(serviceAsBytes))
+
+	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":null}"
+	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
+}
+// =====================================================================================================================
+// TestCompositeServiceCreation - Test the 'CreateLeafService' function
+// =====================================================================================================================
+func TestCompositeServiceCreation(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Service Creation", simpleChaincode)
+
+	var functionAndArgs []string
+	functionName:= CreateCompositeService
+
+	// Invoke 'CreateLeafService'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+
+	serviceCompositionAsString := ServiceComposition
+	serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString)
+
+	args := []string{serviceId,serviceName,serviceDescription,serviceCompositionAsString}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkInvoke(t, mockStub, functionAndArgs)
+
+	service := &a.Service{ServiceId: serviceId, Name: serviceName, Description: serviceDescription, ServiceComposition:serviceComposition}
+	serviceAsBytes, _ := json.Marshal(service)
+	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
+	checkState(t, mockStub, serviceId, string(serviceAsBytes))
+
+
+	serviceCompositionJsonRappresentation := "["
+	for i := 0; i<len(service.ServiceComposition) ;i++  {
+		if i == 0 {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + "\""+service.ServiceComposition[i]+ "\""
+		}else {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + ",\""+service.ServiceComposition[i]+ "\""
+		}
+	}
+	serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation +"]"
+
+
+	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":"+serviceCompositionJsonRappresentation+"}"
+	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
+}
+// =====================================================================================================================
+// TestCompositeServiceCreationWithNullValue - Test the 'CreateLeafService' function
+// =====================================================================================================================
+func TestCompositeServiceCreationWithNullValue(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Service Creation", simpleChaincode)
+
+	var functionAndArgs []string
+	functionName:= CreateCompositeService
+
+	// Invoke 'CreateLeafService'
+	serviceId := NewServiceId
+	serviceName := NewServiceName
+	serviceDescription := NewServiceDescription
+
+	serviceCompositionAsString := NullServiceComposition
+	// serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString)
+
+	args := []string{serviceId,serviceName,serviceDescription,serviceCompositionAsString}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs,args...)
+
+	checkBadInvoke(t, mockStub, functionAndArgs)
+	checkBadQuery(t, mockStub, "GetServiceNotFoundError", serviceId)
+}
+// =====================================================================================================================
+// TestExistingLeafServiceCreation - Test the 'CreateLeafService' function when trying to insert an already existing record
+// =====================================================================================================================
+func TestExistingLeafServiceCreation(t *testing.T) {
 	simpleChaincode := new(SimpleChaincode)
 	simpleChaincode.testMode = true
 	mockStub := shim.NewMockStub("Test Already Existing Service Creation", simpleChaincode)
@@ -244,7 +433,7 @@ func TestExistingServiceCreation(t *testing.T) {
 	checkInit(t, mockStub, getInitArguments())
 
 	var functionAndArgs []string
-	functionName:= CreateService
+	functionName:= CreateLeafService
 
 	// Invoke 'CreateService'
 	existingServiceId := ExistingServiceId
@@ -258,12 +447,12 @@ func TestExistingServiceCreation(t *testing.T) {
 	checkBadInvoke(t, mockStub, functionAndArgs)
 
 
-	service := &a.Service{existingServiceId, serviceName, serviceDescription}
+	service := &a.Service{ServiceId: existingServiceId, Name: serviceName, Description: serviceDescription}
 	serviceBytes, _ := json.Marshal(service)
 	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{existingServiceId})
 	checkState(t, mockStub, existingServiceId, string(serviceBytes))
 
-	expectedResp := "{\"ServiceId\":\""+ existingServiceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\"}"
+	expectedResp := "{\"ServiceId\":\""+ existingServiceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":null}"
 	checkQuery(t, mockStub, "GetServiceNotFoundError", existingServiceId, expectedResp)
 }
 
@@ -634,6 +823,79 @@ func TestDemanderActivityCreation(t *testing.T) {
 	expectedResp := "{\"EvaluationId\":\""+ evaluationId +"\",\"WriterAgentId\":\""+ writerAgentId +"\",\"DemanderAgentId\":\""+ demanderAgentId + "\",\"ExecuterAgentId\":\""+ executerAgentId + "\",\"ExecutedServiceId\":\""+ executedServiceId + "\",\"ExecutedServiceTxid\":\""+ executedServiceTxId + "\",\"ExecutedServiceTimestamp\":\""+ executedServiceTimestamp + "\",\"Value\":\""+ activityValue + "\"}"
 	checkQuery(t, mockStub, GetActivity, evaluationId, expectedResp)
 }
+
+// =====================================================================================================================
+// TestQueryByServiceName - Test the 'GetServicesByName' function
+// =====================================================================================================================
+func TestQueryByServiceName(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Get Services by Service Name", simpleChaincode)
+
+	// CREATION OF SERVICE 1:
+	var functionAndArgsCreateService1 []string
+	createServiceFunctionName := CreateService
+	newServiceId1 := NewServiceId
+	sameServiceName := NewServiceName
+	newServiceDescription1 := NewServiceDescription
+	serviceCompositionAsString1 := "asd,fda"
+	serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString1)
+	args1 := []string{newServiceId1, sameServiceName, newServiceDescription1, serviceCompositionAsString1}
+	functionAndArgsCreateService1 = append(functionAndArgsCreateService1, createServiceFunctionName)
+	functionAndArgsCreateService1 = append(functionAndArgsCreateService1,args1...)
+
+	checkInvoke(t, mockStub, functionAndArgsCreateService1)
+
+	serviceCompositionJsonRappresentation := "["
+	for i := 0; i<len(serviceComposition) ;i++  {
+		if i == 0 {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + "\""+serviceComposition[i]+ "\""
+		}else {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + ",\""+serviceComposition[i]+ "\""
+		}
+	}
+	serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation +"]"
+
+	// CREATION OF SERVICE 2 (WITH THE SAME NAME)
+	var functionAndArgsCreateService2 []string
+	newServiceId2 := NewServiceSameNameId
+	newServiceDescription2 := NewServiceDescription
+	serviceCompositionAsString2 := "blu,les"
+	serviceComposition2 := lib.ParseStringToStringSlice(serviceCompositionAsString2)
+	args2 := []string{newServiceId2, sameServiceName, newServiceDescription2, serviceCompositionAsString2}
+	functionAndArgsCreateService2 = append(functionAndArgsCreateService2, createServiceFunctionName)
+	functionAndArgsCreateService2 = append(functionAndArgsCreateService2, args2...)
+
+	checkInvoke(t, mockStub, functionAndArgsCreateService2)
+
+	serviceCompositionJsonRappresentation2 := "["
+	for i := 0; i<len(serviceComposition) ;i++  {
+		if i == 0 {
+			serviceCompositionJsonRappresentation2 = serviceCompositionJsonRappresentation2 + "\""+ serviceComposition2[i]+ "\""
+		}else {
+			serviceCompositionJsonRappresentation2 = serviceCompositionJsonRappresentation2 + ",\""+ serviceComposition2[i]+ "\""
+		}
+	}
+	serviceCompositionJsonRappresentation2 = serviceCompositionJsonRappresentation2 +"]"
+
+	// VERIFY THE QUERY GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	var functionAndArgs []string
+	functionName:= GetServicesByName
+
+	serviceName := sameServiceName
+
+	args := []string{serviceName}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs, args...)
+
+	expectedResp := "[{\"ServiceId\":\""+ newServiceId2 + "\",\"Name\":\""+ sameServiceName + "\",\"Description\":\""+ newServiceDescription2 + "\",\"ServiceComposition\":"+ serviceCompositionJsonRappresentation2 + "},{\"ServiceId\":\""+ newServiceId1 + "\",\"Name\":\""+ sameServiceName + "\",\"Description\":\""+ newServiceDescription1 + "\",\"ServiceComposition\":"+ serviceCompositionJsonRappresentation + "}]"
+	checkQuery(t, mockStub, functionName, serviceName, expectedResp)
+
+}
+
+
 /*
 func TestTradeWorkflow_LetterOfCredit(t *testing.T) {
 	scc := new(TradeWorkflowChaincode)

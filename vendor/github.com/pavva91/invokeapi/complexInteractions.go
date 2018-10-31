@@ -51,7 +51,7 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 	if errS != nil {
 		// se il servizio non esiste lo creo
 		fmt.Println("Failed to find service by id " + serviceId)
-		errorCreateAndIndex := a.CreateAndIndexService(serviceId, serviceName, serviceDescription, stub)
+		errorCreateAndIndex := a.CreateAndIndexLeafService(serviceId, serviceName, serviceDescription, stub)
 		if errorCreateAndIndex != nil {
 			return shim.Error("Error in creating and indexing service: " + errorCreateAndIndex.Error())
 		}
@@ -126,7 +126,7 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 	if errS != nil {
 		// se il servizio non esiste lo creo
 		fmt.Println("Failed to find service by id " + serviceId)
-		errorCreateAndIndex := a.CreateAndIndexService(serviceId, serviceName, serviceDescription, stub)
+		errorCreateAndIndex := a.CreateAndIndexLeafService(serviceId, serviceName, serviceDescription, stub)
 		if errorCreateAndIndex != nil {
 			return shim.Error("Error in creating and indexing service: " + errorCreateAndIndex.Error())
 		}

@@ -26,14 +26,55 @@ type Service struct {
 	ServiceId   string `json:"ServiceId"`
 	Name        string `json:"Name"`
 	Description string `json:"Description"`
+	ServiceComposition []string `json:"ServiceComposition"`
+	// TODO: Finish refactor with ServiceComposition
+}
+// We have 2 kind of Service:
+// - LeafService ----> with ServiceComposition = [] (zero-value)
+// - CompositeService ----> with ServiceComposition = [LeafServi
+// ce1, ... , LeafServiceN]
+
+// =====================================================================================================================
+// CreateLeafService - create a new Leaf service and return the created agent
+// =====================================================================================================================
+func CreateLeafService(serviceId string, serviceName string, serviceDescription string, stub shim.ChaincodeStubInterface) (*Service, error) {
+	// ==== Create marble object and marshal to JSON ====
+	service := &Service{ServiceId: serviceId, Name: serviceName, Description: serviceDescription}
+	service2JSONAsBytes, err := json.Marshal(service)
+	if err != nil {
+		return service, errors.New("Failed Marshal service: " + service.Name)
+	}
+
+	// === Save marble to state ===
+	stub.PutState(serviceId, service2JSONAsBytes)
+	return service, nil
 }
 
 // =====================================================================================================================
-// CreateService - create a new service and return the created agent
+// CreateCompositeService - create a new Composite service and return the created agent as a composition of (TODO:Leaf) Services
 // =====================================================================================================================
-func CreateService(serviceId string, serviceName string, serviceDescription string, stub shim.ChaincodeStubInterface) (*Service, error) {
+func CreateCompositeService(serviceId string, serviceName string, serviceDescription string, serviceComposition []string, stub shim.ChaincodeStubInterface) (*Service, error) {
+	if serviceComposition == nil {
+		return nil, errors.New("Inserted null serviceComposition, for composite service has to be != nil")
+	}
 	// ==== Create marble object and marshal to JSON ====
-	service := &Service{serviceId, serviceName, serviceDescription}
+	service := &Service{serviceId, serviceName, serviceDescription, serviceComposition}
+	service2JSONAsBytes, err := json.Marshal(service)
+	if err != nil {
+		return service, errors.New("Failed Marshal service: " + service.Name)
+	}
+
+	// === Save marble to state ===
+	stub.PutState(serviceId, service2JSONAsBytes)
+	return service, nil
+}
+
+// =====================================================================================================================
+// CreateService - create a new service and return the created agent as a composition of Services
+// =====================================================================================================================
+func CreateService(serviceId string, serviceName string, serviceDescription string, serviceComposition []string, stub shim.ChaincodeStubInterface) (*Service, error) {
+	// ==== Create marble object and marshal to JSON ====
+	service := &Service{serviceId, serviceName, serviceDescription, serviceComposition}
 	service2JSONAsBytes, err := json.Marshal(service)
 	if err != nil {
 		return service, errors.New("Failed Marshal service: " + service.Name)
@@ -53,7 +94,7 @@ func CreateNameIndex(serviceToIndex *Service, stub shim.ChaincodeStubInterface) 
 	//  The key is a composite key, with the elements that you want to range query on listed first.
 	//  In our case, the composite key is based on service~agent~relation.
 	//  This will enable very efficient state range queries based on composite keys matching service~agent~relation
-	indexName := "Name~ServiceId"
+	indexName := "name~serviceId"
 	nameServiceIndexKey, err = stub.CreateCompositeKey(indexName, []string{serviceToIndex.Name, serviceToIndex.ServiceId})
 	if err != nil {
 		return nameServiceIndexKey, err
@@ -62,10 +103,62 @@ func CreateNameIndex(serviceToIndex *Service, stub shim.ChaincodeStubInterface) 
 }
 
 // =====================================================================================================================
+// Create Leaf Service and create and save the index - Atomic function of 3 the subfunctions: save, index, saveindex
+// =====================================================================================================================
+func CreateAndIndexLeafService(serviceId string, serviceName string, serviceDescription string, stub shim.ChaincodeStubInterface) error {
+	service, err := CreateLeafService(serviceId, serviceName, serviceDescription, stub)
+	if err != nil {
+		return errors.New("Failed to create the service: " + err.Error())
+	}
+
+	// ==== Indexing of service by Name (to do query by Name, if you want) ====
+	// index create
+	nameIndexKey, nameIndexError := CreateNameIndex(service, stub)
+	if nameIndexError != nil {
+		return errors.New(nameIndexError.Error())
+	}
+	fmt.Println(nameIndexKey)
+	// TODO: Mettere a Posto (fare un create Service index
+
+	saveIndexError := SaveIndex(nameIndexKey, stub)
+	if saveIndexError != nil {
+		return errors.New(saveIndexError.Error())
+	}
+	return nil
+
+}
+
+// =====================================================================================================================
+// Create Composite Service and create and save the index - Atomic function of 3 the subfunctions: save, index, saveindex
+// =====================================================================================================================
+func CreateAndIndexCompositeService(serviceId string, serviceName string, serviceDescription string, serviceComposition []string, stub shim.ChaincodeStubInterface) error {
+	service, err := CreateCompositeService(serviceId, serviceName, serviceDescription, serviceComposition,stub)
+	if err != nil {
+		return errors.New("Failed to create the service: " + err.Error())
+	}
+
+	// ==== Indexing of service by Name (to do query by Name, if you want) ====
+	// index create
+	nameIndexKey, nameIndexError := CreateNameIndex(service, stub)
+	if nameIndexError != nil {
+		return errors.New(nameIndexError.Error())
+	}
+	fmt.Println(nameIndexKey)
+	// TODO: Mettere a Posto (fare un create Service index
+
+	saveIndexError := SaveIndex(nameIndexKey, stub)
+	if saveIndexError != nil {
+		return errors.New(saveIndexError.Error())
+	}
+	return nil
+
+}
+
+// =====================================================================================================================
 // Create Service and create and save the index - Atomic function of 3 the subfunctions: save, index, saveindex
 // =====================================================================================================================
-func CreateAndIndexService(serviceId string, serviceName string, serviceDescription string, stub shim.ChaincodeStubInterface) error {
-	service, err := CreateService(serviceId, serviceName, serviceDescription, stub)
+func CreateAndIndexService(serviceId string, serviceName string, serviceDescription string, serviceComposition []string, stub shim.ChaincodeStubInterface) error {
+	service, err := CreateService(serviceId, serviceName, serviceDescription, serviceComposition,stub)
 	if err != nil {
 		return errors.New("Failed to create the service: " + err.Error())
 	}
@@ -176,6 +269,20 @@ func GetServiceAsBytes(stub shim.ChaincodeStubInterface, idService string) ([]by
 }
 
 // =====================================================================================================================
+// Get the name query on Service - Execute the query based on service name composite index
+// =====================================================================================================================
+func GetByServiceName(serviceName string, stub shim.ChaincodeStubInterface) (shim.StateQueryIteratorInterface, error) {
+	// Query the service~agent~relation index by service
+	// This will execute a key range query on all keys starting with 'service'
+	byServiceNameResultIterator, err := stub.GetStateByPartialCompositeKey("name~serviceId", []string{serviceName})
+	if err != nil {
+		return byServiceNameResultIterator, err
+	}
+	// defer byServiceNameResultIterator.Close()
+	return byServiceNameResultIterator, nil
+}
+
+// =====================================================================================================================
 // DeleteService() - remove a service from state and from service index
 //
 // Shows Off DelState() - "removing"" a key/value from the ledger
@@ -262,4 +369,29 @@ func DeleteAllServiceAgentRelations(serviceId string, stub shim.ChaincodeStubInt
 
 	}
 	return nil
+}
+// =====================================================================================================================
+// GetServiceSliceFromRangeQuery - Get the Service Slices from the result of query "byServiceName"
+// =====================================================================================================================
+func GetServiceSliceFromRangeQuery(queryIterator shim.StateQueryIteratorInterface, stub shim.ChaincodeStubInterface) ([]Service, error) {
+	var serviceSlice []Service
+
+	for i := 0; queryIterator.HasNext(); i++ {
+		responseRange, err := queryIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		_, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
+
+		serviceId := compositeKeyParts[1]
+
+		service, err := GetServiceNotFoundError(stub, serviceId)
+		serviceSlice = append(serviceSlice, service)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Printf("- found a service SERVICE ID: %s \n", serviceId)
+	}
+	queryIterator.Close()
+	return serviceSlice, nil
 }

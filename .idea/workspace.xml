@@ -3,10 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="e17f17fd-6e42-45a0-9144-4d0344a5aa27" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/devCommands.sh" beforeDir="false" afterPath="$PROJECT_DIR$/devCommands.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trustreputationledger.go" beforeDir="false" afterPath="$PROJECT_DIR$/trustreputationledger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/activityInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/activityInvokeCall.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trustreputationledger_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/trustreputationledger_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/parse.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/parse.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/complexInteractions.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/complexInteractions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/reputationInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/reputationInvokeCall.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceRelationAgentInvokeCall.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceRelationAgentInvokeCall.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -70,51 +74,56 @@
     <session id="1976318355">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="37" />
-          <entry key="project.open.time.10" value="2" />
+          <entry key="project.closed" value="48" />
+          <entry key="project.open.time.10" value="3" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.15" value="1" />
-          <entry key="project.open.time.5" value="11" />
-          <entry key="project.open.time.6" value="20" />
-          <entry key="project.open.time.7" value="2" />
-          <entry key="project.open.time.8" value="2" />
-          <entry key="project.open.time.9" value="2" />
-          <entry key="project.opened" value="41" />
+          <entry key="project.open.time.5" value="14" />
+          <entry key="project.open.time.6" value="21" />
+          <entry key="project.open.time.7" value="3" />
+          <entry key="project.open.time.8" value="4" />
+          <entry key="project.open.time.9" value="5" />
+          <entry key="project.opened" value="52" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="go" value="97" />
-          <entry key="sh" value="5" />
+          <entry key="go" value="117" />
+          <entry key="sh" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Bash" value="5" />
-          <entry key="Go" value="97" />
+          <entry key="Bash" value="6" />
+          <entry key="Go" value="117" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="9164" />
-          <entry key="sh" value="267" />
+          <entry key="go" value="12610" />
+          <entry key="sh" value="286" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Bash" value="267" />
-          <entry key="Go" value="9164" />
+          <entry key="Bash" value="286" />
+          <entry key="Go" value="12610" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.go.postfix.template.usages.trigger">
+        <counts>
+          <entry key=".println" value="1" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trustreputationledger.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-435">
-              <caret line="178" column="41" lean-forward="true" selection-start-line="178" selection-start-column="41" selection-end-line="178" selection-end-column="41" />
+            <state relative-caret-position="211">
+              <caret line="41" column="78" selection-start-line="41" selection-start-column="61" selection-end-line="41" selection-end-column="78" />
             </state>
           </provider>
         </entry>
@@ -123,52 +132,7 @@
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/writeUtils.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="255">
-              <caret line="23" column="39" selection-start-line="23" selection-start-column="28" selection-end-line="23" selection-end-column="39" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/trustreputationledger_test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8835">
-              <caret line="598" column="5" selection-start-line="598" selection-start-column="5" selection-end-line="598" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/activity.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="27" column="4" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="95" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/serviceRelationAgent.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1305">
-              <caret line="92" column="5" lean-forward="true" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/reputationInvokeCall.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2775">
-              <caret line="193" column="29" selection-start-line="193" selection-start-column="29" selection-end-line="193" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/complexInteractions.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="67" column="94" lean-forward="true" selection-start-line="67" selection-start-column="94" selection-end-line="67" selection-end-column="94" />
+              <caret line="23" column="100" selection-start-line="23" selection-start-column="100" selection-end-line="23" selection-end-column="100" />
             </state>
           </provider>
         </entry>
@@ -176,17 +140,62 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceRelationAgentInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="85" column="42" lean-forward="true" selection-start-line="85" selection-start-column="42" selection-end-line="85" selection-end-column="42" />
+            <state relative-caret-position="226">
+              <caret line="475" column="54" selection-start-line="475" selection-start-column="54" selection-end-line="475" selection-end-column="54" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/reputation.go">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+            <state relative-caret-position="380">
+              <caret line="401" column="55" lean-forward="true" selection-start-line="401" selection-start-column="55" selection-end-line="401" selection-end-column="55" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/trustreputationledger_test.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="829">
+              <caret line="880" column="73" selection-start-line="880" selection-start-column="73" selection-end-line="880" selection-end-column="73" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/mockstub.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-3780">
+              <caret line="125" column="22" selection-start-line="125" selection-start-column="22" selection-end-line="125" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/serviceRelationAgent.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="121">
+              <caret line="270" column="5" selection-start-line="270" selection-start-column="5" selection-end-line="270" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="24" column="21" lean-forward="true" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/agent.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="795">
+              <caret line="81" column="5" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -194,8 +203,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/activityInvokeCall.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1815">
-              <caret line="131" column="53" selection-start-line="131" selection-start-column="33" selection-end-line="131" selection-end-column="53" />
+            <state relative-caret-position="975">
+              <caret line="75" column="38" selection-start-line="75" selection-start-column="38" selection-end-line="75" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -243,7 +252,6 @@
         <option value="$PROJECT_DIR$/generalcc/read_ledger.go" />
         <option value="$PROJECT_DIR$/generalcc/write_ledger.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/writeUtils.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/serviceEvaluationInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/complexInteractions.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/service.go" />
@@ -274,22 +282,23 @@
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/trustreputationledger/invokeapi/complexInteractions.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/trustreputationledger/invokeapi/reputationInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/trustreputationledger/invokeapi/serviceRelationAgentInvokeCall.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/parse.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go" />
-        <option value="$PROJECT_DIR$/devCommands.sh" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/agent.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/agentInvokeCall.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/activityInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/serviceRelationAgent.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/reputation.go" />
-        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/writeUtils.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/activity.go" />
-        <option value="$PROJECT_DIR$/trustreputationledger_test.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/reputationInvokeCall.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/complexInteractions.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/parse.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go" />
+        <option value="$PROJECT_DIR$/devCommands.sh" />
         <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceRelationAgentInvokeCall.go" />
         <option value="$PROJECT_DIR$/trustreputationledger.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/writeUtils.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go" />
+        <option value="$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go" />
+        <option value="$PROJECT_DIR$/trustreputationledger_test.go" />
       </list>
     </option>
   </component>
@@ -300,10 +309,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="67" />
-    <option name="y" value="25" />
-    <option name="width" value="1613" />
-    <option name="height" value="1025" />
+    <option name="x" value="1680" />
+    <option name="y" value="-2" />
+    <option name="width" value="1600" />
+    <option name="height" value="1202" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -313,6 +322,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -328,13 +338,17 @@
             <path>
               <item name="trustreputationledger" type="b2602c69:ProjectViewProjectNode" />
               <item name="trustreputationledger" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="invokeapi" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="trustreputationledger" type="b2602c69:ProjectViewProjectNode" />
+              <item name="trustreputationledger" type="47feb1d3:ProjectViewModuleNode" />
               <item name="trustreputationledger" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -371,7 +385,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.trustreputationledger_test.go">
+  <component name="RunManager" selected="Go Test.TestQueryByServiceName in github.com/pavva91/trustreputationledger">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="trustreputationledger" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -391,6 +405,17 @@
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
       <pattern value="^TestExecuterActivityCreation$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="trustreputationledger" />
+      <working_directory value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/pavva91/trustreputationledger" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestQueryByServiceName$" />
       <method v="2" />
     </configuration>
     <configuration name="TestServiceAndServiceAgentRelationWithStandardValueCreationNewService in github.com/pavva91/trustreputationledger" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -428,18 +453,6 @@
       <filePath value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go test github.com/pavva91/trustreputationledger" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <output_file path="$USER_HOME$/Documents/Valerio/Bitbucket/bct4mas_v2.0/unit_test" is_save="true" />
-      <module name="trustreputationledger" />
-      <working_directory value="$PROJECT_DIR$" />
-      <go_parameters value="-i" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="github.com/pavva91/trustreputationledger" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
     <configuration name="trustreputationledger_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="trustreputationledger" />
       <working_directory value="$PROJECT_DIR$" />
@@ -453,51 +466,51 @@
     </configuration>
     <list>
       <item itemvalue="Go Test.TestServiceAndServiceAgentRelationWithStandardValueCreationNewService in github.com/pavva91/trustreputationledger" />
-      <item itemvalue="Go Test.go test github.com/pavva91/trustreputationledger" />
       <item itemvalue="Go Test.trustreputationledger_test.go" />
       <item itemvalue="Go Test.TestServiceCreation in github.com/pavva91/trustreputationledger" />
       <item itemvalue="Go Test.TestExecuterActivityCreation in github.com/pavva91/trustreputationledger" />
+      <item itemvalue="Go Test.TestQueryByServiceName in github.com/pavva91/trustreputationledger" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestQueryByServiceName in github.com/pavva91/trustreputationledger" />
         <item itemvalue="Go Test.trustreputationledger_test.go" />
         <item itemvalue="Go Test.TestExecuterActivityCreation in github.com/pavva91/trustreputationledger" />
         <item itemvalue="Go Test.TestServiceCreation in github.com/pavva91/trustreputationledger" />
         <item itemvalue="Go Test.TestServiceAndServiceAgentRelationWithStandardValueCreationNewService in github.com/pavva91/trustreputationledger" />
-        <item itemvalue="Go Test.go test github.com/pavva91/trustreputationledger" />
       </list>
     </recent_temporary>
   </component>
   <component name="TestHistory">
-    <history-entry file="TestServiceCreation_in_github_com_pavva91_trustreputationledger - 2018.09.25 at 16h 20m 51s.xml">
-      <configuration name="TestServiceCreation in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 28m 38s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestServiceCreation_in_github_com_pavva91_trustreputationledger - 2018.09.25 at 16h 21m 43s.xml">
-      <configuration name="TestServiceCreation in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 31m 59s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestServiceCreation_in_github_com_pavva91_trustreputationledger - 2018.09.25 at 16h 28m 21s.xml">
-      <configuration name="TestServiceCreation in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 32m 20s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestServiceCreation_in_github_com_pavva91_trustreputationledger - 2018.09.28 at 10h 57m 32s.xml">
-      <configuration name="TestServiceCreation in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 33m 10s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="trustreputationledger_test_go - 2018.09.28 at 10h 58m 20s.xml">
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 34m 49s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="trustreputationledger_test_go - 2018.10.31 at 14h 35m 51s.xml">
       <configuration name="trustreputationledger_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="trustreputationledger_test_go - 2018.09.28 at 11h 00m 55s.xml">
+    <history-entry file="trustreputationledger_test_go - 2018.10.31 at 14h 36m 55s.xml">
       <configuration name="trustreputationledger_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="trustreputationledger_test_go - 2018.10.05 at 11h 22m 50s.xml">
-      <configuration name="trustreputationledger_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 53m 42s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestExecuterActivityCreation_in_github_com_pavva91_trustreputationledger - 2018.10.05 at 11h 55m 29s.xml">
-      <configuration name="TestExecuterActivityCreation in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 14h 59m 10s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestExecuterActivityCreation_in_github_com_pavva91_trustreputationledger - 2018.10.05 at 12h 02m 21s.xml">
-      <configuration name="TestExecuterActivityCreation in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
-    </history-entry>
-    <history-entry file="trustreputationledger_test_go - 2018.10.05 at 12h 39m 14s.xml">
-      <configuration name="trustreputationledger_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestQueryByServiceName_in_github_com_pavva91_trustreputationledger - 2018.10.31 at 15h 02m 05s.xml">
+      <configuration name="TestQueryByServiceName in github.com/pavva91/trustreputationledger" configurationId="GoTestRunConfiguration" />
     </history-entry>
   </component>
   <component name="TodoView">
@@ -510,15 +523,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1613" height="1025" extended-state="6" />
+    <frame x="1680" y="-2" width="1600" height="1202" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16975112" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1975547" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32649255" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4996809" weight="0.36100745" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3255597" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4996809" weight="0.36007464" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -562,7 +575,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/invokeapi/complexInteractions.go" />
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/activity.go" />
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/serviceRelationAgent.go" />
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/servicemarbles/assets/reputation.go" />
@@ -606,83 +618,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/readUtils.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="23" column="67" lean-forward="true" selection-start-line="23" selection-start-column="67" selection-end-line="23" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/arglib/parse.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/mockstub.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1785">
-          <caret line="130" column="14" selection-start-line="130" selection-start-column="14" selection-end-line="130" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2115">
-          <caret line="148" column="5" selection-start-line="148" selection-start-column="5" selection-end-line="148" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3180">
-          <caret line="221" column="26" selection-start-line="221" selection-start-column="26" selection-end-line="221" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/devCommands.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1365">
-          <caret line="91" column="3" selection-start-line="91" selection-start-column="3" selection-end-line="91" selection-end-column="116" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/agentInvokeCall.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2085">
-          <caret line="148" column="14" selection-start-line="148" selection-start-column="14" selection-end-line="148" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/agent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1110">
-          <caret line="81" column="5" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/writeUtils.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="23" column="39" selection-start-line="23" selection-start-column="28" selection-end-line="23" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trustreputationledger_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8835">
-          <caret line="598" column="5" selection-start-line="598" selection-start-column="5" selection-end-line="598" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/activity.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -697,45 +632,129 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/activityInvokeCall.go">
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/readUtils.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1815">
-          <caret line="131" column="53" selection-start-line="131" selection-start-column="33" selection-end-line="131" selection-end-column="53" />
+        <state relative-caret-position="225">
+          <caret line="23" column="67" selection-start-line="23" selection-start-column="67" selection-end-line="23" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/arglib/parse.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/arglib/lib.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="57" column="1" selection-start-line="57" selection-start-column="1" selection-end-line="57" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/agentInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="57" column="31" selection-start-line="57" selection-start-column="23" selection-end-line="57" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/devCommands.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="55" column="86" selection-start-line="55" selection-start-column="86" selection-end-line="55" selection-end-column="86" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/complexInteractions.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="67" column="94" lean-forward="true" selection-start-line="67" selection-start-column="94" selection-end-line="67" selection-end-column="94" />
+        <state relative-caret-position="1020">
+          <caret line="76" column="25" selection-start-line="76" selection-start-column="25" selection-end-line="76" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/interfaces_stable.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2940">
+          <caret line="201" column="4" selection-start-line="201" selection-start-column="4" selection-end-line="201" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/reputation.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+        <state relative-caret-position="465">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/activityInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="975">
+          <caret line="75" column="38" selection-start-line="75" selection-start-column="38" selection-end-line="75" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/agent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="81" column="5" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/serviceRelationAgent.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1305">
-          <caret line="92" column="5" lean-forward="true" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
+        <state relative-caret-position="121">
+          <caret line="270" column="5" selection-start-line="270" selection-start-column="5" selection-end-line="270" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceRelationAgentInvokeCall.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="85" column="42" lean-forward="true" selection-start-line="85" selection-start-column="42" selection-end-line="85" selection-end-column="42" />
+        <state relative-caret-position="226">
+          <caret line="475" column="54" selection-start-line="475" selection-start-column="54" selection-end-line="475" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/hyperledger/fabric/core/chaincode/shim/mockstub.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3780">
+          <caret line="125" column="22" selection-start-line="125" selection-start-column="22" selection-end-line="125" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/writeUtils.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="23" column="100" selection-start-line="23" selection-start-column="100" selection-end-line="23" selection-end-column="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/invokeapi/serviceInvokeCall.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="401" column="55" lean-forward="true" selection-start-line="401" selection-start-column="55" selection-end-line="401" selection-end-column="55" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trustreputationledger.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-435">
-          <caret line="178" column="41" lean-forward="true" selection-start-line="178" selection-start-column="41" selection-end-line="178" selection-end-column="41" />
+        <state relative-caret-position="211">
+          <caret line="41" column="78" selection-start-line="41" selection-start-column="61" selection-end-line="41" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/pavva91/assets/service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="24" column="21" lean-forward="true" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trustreputationledger_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="829">
+          <caret line="880" column="73" selection-start-line="880" selection-start-column="73" selection-end-line="880" selection-end-column="73" />
         </state>
       </provider>
     </entry>

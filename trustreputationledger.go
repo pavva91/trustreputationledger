@@ -21,33 +21,36 @@ import (
 
 const(
 	InitLedger    = "InitLedger"
+	CreateLeafService = "CreateLeafService"
+	CreateCompositeService = "CreateCompositeService"
 	CreateService = "CreateService"
 	CreateAgent   = "CreateAgent"
 	CreateServiceAgentRelation = "CreateServiceAgentRelation"
 	CreateServiceAgentRelationAndReputation = "CreateServiceAgentRelationAndReputation"
 	CreateServiceAndServiceAgentRelationWithStandardValue = "CreateServiceAndServiceAgentRelationWithStandardValue"
-	CreateServiceAndServiceAgentRelation = "CreateServiceAndServiceAgentRelation"
-	GetServiceHistory = "GetServiceHistory"
-	GetService = "GetService"
-	GetAgent = "GetAgent"
-	GetServiceRelationAgent = "GetServiceRelationAgent"
-	GetServiceNotFoundError = "GetServiceNotFoundError"
-	GetAgentNotFoundError = "GetAgentNotFoundError"
-	ByService = "byService"
-	ByAgent = "byAgent"
-	GetAgentsByService = "GetAgentsByService"
-	GetServicesByAgent = "GetServicesByAgent"
-	DeleteService = "DeleteService"
-	DeleteAgent = "DeleteAgent"
-	CreateActivity = "CreateActivity"
-	GetActivity = "GetActivity"
-	ByExecutedServiceTxId = "byExecutedServiceTxId"
-	ByDemanderExecuter = "byDemanderExecuter"
-	GetActivitiesByServiceTxId = "GetActivitiesByServiceTxId"
-	GetActivitiesByDemanderExecuterTimestamp = "GetActivitiesByDemanderExecuterTimestamp"
-	CreateReputation = "CreateReputation"
-	ModifyReputationValue = "ModifyReputationValue"
-	ModifyOrCreateReputationValue = "ModifyOrCreateReputationValue"
+	CreateServiceAndServiceAgentRelation                  = "CreateServiceAndServiceAgentRelation"
+	GetServiceHistory                                     = "GetServiceHistory"
+	GetService                                            = "GetService"
+	GetAgent                                              = "GetAgent"
+	GetServiceRelationAgent                               = "GetServiceRelationAgent"
+	GetServiceNotFoundError                               = "GetServiceNotFoundError"
+	GetAgentNotFoundError                                 = "GetAgentNotFoundError"
+	ByService                                             = "byService"
+	ByAgent                                               = "byAgent"
+	GetAgentsByService                                    = "GetAgentsByService"
+	GetServicesByAgent                                    = "GetServicesByAgent"
+	GetServicesByName                                     = "GetServicesByName"
+	DeleteService                                         = "DeleteService"
+	DeleteAgent                                           = "DeleteAgent"
+	CreateActivity                                        = "CreateActivity"
+	GetActivity                                           = "GetActivity"
+	ByExecutedServiceTxId                                 = "byExecutedServiceTxId"
+	ByDemanderExecuter                                    = "byDemanderExecuter"
+	GetActivitiesByServiceTxId                            = "GetActivitiesByServiceTxId"
+	GetActivitiesByDemanderExecuterTimestamp              = "GetActivitiesByDemanderExecuterTimestamp"
+	CreateReputation                                      = "CreateReputation"
+	ModifyReputationValue                                 = "ModifyReputationValue"
+	ModifyOrCreateReputationValue                         = "ModifyOrCreateReputationValue"
 	GetReputation = "GetReputation"
 	GetReputationNotFoundError = "GetReputationNotFoundError"
 	ByAgentServiceRole = "byAgentServiceRole"
@@ -153,6 +156,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case InitLedger:
 		response := a.InitLedger(stub)
 		return response
+	case CreateLeafService:
+		return in.CreateLeafService(stub, args)
+	case CreateCompositeService:
+		return in.CreateCompositeService(stub, args)
 	case CreateService:
 		return in.CreateService(stub, args)
 	case CreateAgent:
@@ -200,6 +207,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case GetServicesByAgent:
 		// also with only one record result return always a JSONArray
 		return in.GetServiceRelationAgentByAgentWithCostAndTimeNotFoundError(stub, args)
+	case GetServicesByName:
+		return in.QueryByServiceName(stub,args)
 
 		// DELETE:
 	case DeleteService:
