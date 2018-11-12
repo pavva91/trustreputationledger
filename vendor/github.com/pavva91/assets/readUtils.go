@@ -13,6 +13,7 @@ import (
 	"github.com/pavva91/generalcc"
 )
 
+var readUtilsLog = shim.NewLogger("readUtils")
 // =====================================================================================================================
 // Get everything we need (agents + services)
 //
@@ -44,12 +45,12 @@ func ReadEverything(stub shim.ChaincodeStubInterface) pb.Response {
 		}
 		queryKeyAsStr := aKeyValue.Key
 		queryValAsBytes := aKeyValue.Value
-		fmt.Println("on service id - ", queryKeyAsStr)
+		serviceLog.Info("on service id - ", queryKeyAsStr)
 		var service Service
 		json.Unmarshal(queryValAsBytes, &service)                  //un stringify it aka JSON.parse()
 		everything.Services = append(everything.Services, service) //add this service to the list
 	}
-	fmt.Println("service array - ", everything.Services)
+	serviceLog.Info("service array - ", everything.Services)
 
 	// ---- Get All Agents ---- //
 	ownersIterator, err := stub.GetStateByRange("idagent0", "idagent9999999999999999999")
@@ -65,12 +66,12 @@ func ReadEverything(stub shim.ChaincodeStubInterface) pb.Response {
 		}
 		queryKeyAsStr := aKeyValue.Key
 		queryValAsBytes := aKeyValue.Value
-		fmt.Println("on agent id - ", queryKeyAsStr)
+		serviceLog.Info("on agent id - ", queryKeyAsStr)
 		var agent Agent
 		json.Unmarshal(queryValAsBytes, &agent)              //un stringify it aka JSON.parse()
 		everything.Agents = append(everything.Agents, agent) //add this service to the list
 	}
-	fmt.Println("agent array - ", everything.Agents)
+	serviceLog.Info("agent array - ", everything.Agents)
 
 	//change to array of bytes
 	everythingAsBytes, _ := json.Marshal(everything) //convert to array of bytes

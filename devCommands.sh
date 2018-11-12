@@ -7,6 +7,12 @@
 // ==== IMPORT PACKAGE (CLI) ==================
 // go get github.com/hyperledger/fabric/protos/ledger/queryresult
 
+// ==== RUN CLI CONTAINER to DIRECTLY INVOKE the CHAINCODE on the RUNNING NETWORK ==================
+// docker exec -it cli bash
+
+// ==== SEE LOGS ON the RUNNING NETWORK ==================
+// docker logs <CHAINCODE_CONTAINER_NAME> (E.G.: dev-peer1.org1.example.com-trustreputationledger-1.0 ...)
+
 // ==== CHAINCODE INSTALLATION (CLI) ==================
 
 // peer chaincode install -p chaincodedev/chaincode/trustreputationledger -n trustreputationledger -v 0
@@ -70,6 +76,7 @@
 // ==== DELETE ASSET ==================
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteService", "Args":["idservice1"]}'
 // peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteAgent", "Args":["idagent1"]}'
+// peer chaincode invoke -C ch2 -n scc -c '{"function": "DeleteServiceRelationAgent", "Args":["dinnerambassador"]}'
 
 
 
@@ -78,9 +85,9 @@
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "helloWorld", "Args":[]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitLedger", "Args":[]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "AllStateDB", "Args":[]}'
-// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetHistory", "Args":[""]}'
-peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetHistory", "Args":["S1"]}'
-// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetReputationHistory", "Args":["sasdfDEMANDER"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetHistory", "Args":["half_board"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetHistory", "Args":["S1"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetReputationHistory", "Args":["afEXECUTER"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetReputationHistory", "Args":["a2S1DEMANDER"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitAgent", "Args":["idagent10","agent10","address10"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "InitService", "Args":["idservice10","service10","description10"]}'
@@ -92,6 +99,7 @@ peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "Ge
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServicesByAgent", "Args":["d"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "byAgent", "Args":["a1"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetServiceNotFoundError", "Args":["idservice5"]}'
-// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "DeleteService", "Args":["idservice5"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "DeleteService", "Args":["half_boardambassador"]}'
+// peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "DeleteServiceRelationAgent", "Args":["dambassador"]}'
 // peer chaincode invoke -C servicech -n trustreputationledger -c '{"function": "GetActivitiesByDemanderExecuterTimestamp", "Args":["a3","a1","2018-07-23 16:51:01.2"]}'
 

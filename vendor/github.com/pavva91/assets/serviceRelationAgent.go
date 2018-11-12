@@ -8,7 +8,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	pb "github.com/hyperledger/fabric/protos/peer"
+	"github.com/pavva91/arglib"
 )
+
+var serviceRelationAgentLog = shim.NewLogger("serviceRelationAgent")
 
 type ServiceRelationAgent struct {
 	RelationId      string  `json:"RelationId"`// relationId := serviceId + agentId
@@ -82,7 +86,7 @@ func CheckingCreatingIndexingServiceRelationAgent(serviceId string, agentId stri
 	if err != nil {
 		return nil,errors.New("Failed to get service agent relation: " + err.Error())
 	} else if agent2AsBytes != nil {
-		fmt.Println("This service agent relation already exists with relationId: " + relationId)
+		serviceLog.Info("This service agent relation already exists with relationId: " + relationId)
 		return nil,errors.New("This service agent relation already exists with relationId: " + relationId)
 	}
 
@@ -221,9 +225,9 @@ func GetByAgent(agentId string, stub shim.ChaincodeStubInterface) (shim.StateQue
 }
 
 // =====================================================================================================================
-// Delete Service Agent Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
+// Delete Service Relation Agent - delete from state DelState() - "removing"" a key/value from the ledger
 // =====================================================================================================================
-func DeleteServiceAgentRelation(stub shim.ChaincodeStubInterface, relationId string) error {
+func DeleteServiceRelationAgent(stub shim.ChaincodeStubInterface, relationId string) error {
 	// remove the serviceRelationAgent
 	err := stub.DelState(relationId) //remove the key from chaincode state
 	if err != nil {
@@ -233,11 +237,64 @@ func DeleteServiceAgentRelation(stub shim.ChaincodeStubInterface, relationId str
 }
 
 // =====================================================================================================================
-// Delete Service Agent Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
+// DeleteServiceRelationAgentApi() - remove a service from state and from service index
+//
+// Shows Off DelState() - "removing"" a key/value from the ledger
+//
+// Inputs:
+//      0
+//     RelationId
+// =====================================================================================================================
+func DeleteServiceRelationAgentApi(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	// input sanitation
+	err := arglib.SanitizeArguments(args)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	relationId := args[0]
+
+	// get the serviceRelationAgent
+	serviceRelationAgent, err := GetServiceRelationAgentNotFoundError(stub, relationId)
+	if err != nil {
+		serviceLog.Info("Failed to find serviceRelationAgent by relationId " + relationId)
+		return shim.Error(err.Error())
+	}
+
+	// remove the serviceRelationAgent
+	err = stub.DelState(relationId) //remove the key from chaincode state
+	if err != nil {
+		return shim.Error("Failed to delete serviceRelationAgent: " + err.Error())
+	}
+
+	// remove the indexes
+	indexNameService := "service~agent~relation"
+	err = DeleteServiceIndex(stub, indexNameService,serviceRelationAgent.ServiceId,serviceRelationAgent.AgentId,serviceRelationAgent.RelationId)
+	if err != nil {
+		return shim.Error("Failed to delete serviceRelationAgent Agent Index: " + err.Error())
+	}
+
+
+	indexNameAgent := "agent~service~relation"
+	err = DeleteAgentIndex(stub, indexNameAgent,serviceRelationAgent.AgentId,serviceRelationAgent.ServiceId,serviceRelationAgent.RelationId)
+	if err != nil {
+		return shim.Error("Failed to delete serviceRelationAgent Agent Index: " + err.Error())
+	}
+	serviceLog.Info("Deleted serviceRelationAgent: " + serviceRelationAgent.RelationId)
+	return shim.Success(nil)
+}
+
+
+// =====================================================================================================================
+// Delete Service Index - Delete the index
 // =====================================================================================================================
 func DeleteServiceIndex(stub shim.ChaincodeStubInterface, indexName string, serviceId string, agentId string, relationId string) error {
-	// remove the serviceRelationAgent
-	// TODO: Capire come funziona, perché prima crea la composite key?
+
 	agentServiceIndex, err := stub.CreateCompositeKey(indexName, []string{serviceId, agentId, relationId})
 	if err != nil {
 		return err
@@ -272,10 +329,8 @@ func GetServiceRelationSliceFromRangeQuery(queryIterator shim.StateQueryIterator
 	var serviceRelationAgentSlice []ServiceRelationAgent
 	// get the service agent relation from service~agent~relation composite key
 	// defer queryIterator.Close()
-	fmt.Println("sono fuori")
 
 	for i := 0; queryIterator.HasNext(); i++ {
-		fmt.Println("sono dentro")
 		responseRange, err := queryIterator.Next()
 		if err != nil {
 			return nil, err

@@ -17,6 +17,7 @@ import (
 	a "github.com/pavva91/assets"
 )
 
+var agentInvokeCallLog = shim.NewLogger("agentInvokeCall")
 // =====================================================================================================================
 // Init Agent - wrapper of CreateAgent called from the chaincode invoke
 // =====================================================================================================================
@@ -44,7 +45,7 @@ func CreateAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if err != nil {
 		return shim.Error("Failed to get agent: " + err.Error())
 	} else if agentAsBytes != nil {
-		fmt.Println("This agent already exists: " + agentName)
+		agentInvokeCallLog.Error("This agent already exists: " + agentName)
 		return shim.Error("This agent already exists: " + agentName)
 	}
 
@@ -57,13 +58,13 @@ func CreateAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	payloadAsBytes := []byte(eventPayload)
 	eventError := stub.SetEvent("AgentCreatedEvent",payloadAsBytes)
 	if eventError != nil {
-		fmt.Println("Error in event Creation: " + eventError.Error())
+		agentInvokeCallLog.Info("Error in event Creation: " + eventError.Error())
 	}else {
-		fmt.Println("Event Create Agent OK")
+		agentInvokeCallLog.Info("Event Create Agent OK")
 	}
 
 	// ==== Agent saved and indexed and event setted. Return success ====
-	fmt.Println("Agent: " + agent.Name + " created - end init agent")
+	agentInvokeCallLog.Info("Agent: " + agent.Name + " created - end init agent")
 	return shim.Success(nil)
 }
 
@@ -91,14 +92,14 @@ func ModifyAgentName(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 	// ==== get the agent ====
 	agent, getError := a.GetAgentNotFoundError(stub, agentId)
 	if getError != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
+		agentInvokeCallLog.Info("Failed to find agent by id " + agentId)
 		return shim.Error(getError.Error())
 	}
 
 	// ==== modify the agent ====
 	modifyError := a.ModifyAgentName(agent, newAgentName, stub)
 	if modifyError != nil {
-		fmt.Println("Failed to modify the agent name: " + newAgentName)
+		agentInvokeCallLog.Info("Failed to modify the agent name: " + newAgentName)
 		return shim.Error(modifyError.Error())
 	}
 
@@ -129,14 +130,14 @@ func ModifyAgentAddress(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 	// ==== get the agent ====
 	agent, getError := a.GetAgentNotFoundError(stub, agentId)
 	if getError != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
+		agentInvokeCallLog.Info("Failed to find agent by id " + agentId)
 		return shim.Error(getError.Error())
 	}
 
 	// ==== modify the agent ====
 	modifyError := a.ModifyAgentAddress(agent, newAgentAddress, stub)
 	if modifyError != nil {
-		fmt.Println("Failed to modify the agent address: " + newAgentAddress)
+		agentInvokeCallLog.Info("Failed to modify the agent address: " + newAgentAddress)
 		return shim.Error(modifyError.Error())
 	}
 
@@ -166,10 +167,10 @@ func QueryAgentNotFoundError(stub shim.ChaincodeStubInterface, args []string) pb
 	// ==== get the agent ====
 	agent, err := a.GetAgentNotFoundError(stub, agentId)
 	if err != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
+		agentInvokeCallLog.Info("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + err.Error())
 	} else {
-		fmt.Println("Agent: " + agent.Name + ", with Address: " + agent.Address + " found")
+		agentInvokeCallLog.Info("Agent: " + agent.Name + ", with Address: " + agent.Address + " found")
 		// ==== Marshal the byService query result ====
 		agentAsJSON, err := json.Marshal(agent)
 		if err != nil {
@@ -201,10 +202,10 @@ func QueryAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// ==== get the agent ====
 	agent, err := a.GetAgent(stub, agentId)
 	if err != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
+		agentInvokeCallLog.Info("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + err.Error())
 	} else {
-		fmt.Println("Agent: " + agent.Name + ", with Address: " + agent.Address + " found")
+		agentInvokeCallLog.Info("Agent: " + agent.Name + ", with Address: " + agent.Address + " found")
 		// ==== Marshal the byService query result ====
 		agentAsJSON, err := json.Marshal(agent)
 		if err != nil {

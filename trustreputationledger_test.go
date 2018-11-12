@@ -18,7 +18,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	lib "github.com/pavva91/arglib"
 	"testing"
 
@@ -26,6 +25,8 @@ import (
 
 	a "github.com/pavva91/assets"
 )
+
+var testLog = shim.NewLogger("trustreputationledger_test")
 
 const (
 	ExistingServiceId          = "idservice1"
@@ -71,10 +72,10 @@ const (
 func checkInit(t *testing.T, stub *shim.MockStub, args [][]byte) {
 	res := stub.MockInit("1", args)
 	if res.Status != shim.OK {
-		fmt.Println("Init failed", string(res.Message))
+		testLog.Info("Init failed", string(res.Message))
 		t.FailNow()
 	}else{
-		fmt.Println("Init OK", string(res.Message))
+		testLog.Info("Init OK", string(res.Message))
 
 	}
 }
@@ -82,34 +83,34 @@ func checkInit(t *testing.T, stub *shim.MockStub, args [][]byte) {
 func checkNoState(t *testing.T, stub *shim.MockStub, name string) {
 	bytes := stub.State[name]
 	if bytes != nil {
-		fmt.Println("State", name, "should be absent; found value")
+		testLog.Info("State", name, "should be absent; found value")
 		t.FailNow()
 	}else {
-		fmt.Println("State", name, "is absent as it should be")
+		testLog.Info("State", name, "is absent as it should be")
 	}
 }
 
 func checkState(t *testing.T, stub *shim.MockStub, name string, value string) {
 	bytes := stub.State[name]
 	if bytes == nil {
-		fmt.Println("State", name, "failed to get value")
+		testLog.Info("State", name, "failed to get value")
 		t.FailNow()
 	}
 	if string(bytes) != value {
-		fmt.Println("State value", name, "was", string(bytes), "and not", value, "as expected")
+		testLog.Info("State value", name, "was", string(bytes), "and not", value, "as expected")
 		t.FailNow()
 	}else{
-		fmt.Println("State value", name, "is", string(bytes), "as expected")
+		testLog.Info("State value", name, "is", string(bytes), "as expected")
 	}
 }
 
 func checkBadQuery(t *testing.T, stub *shim.MockStub, function string, name string) {
 	res := stub.MockInvoke("1", [][]byte{[]byte(function), []byte(name)})
 	if res.Status == shim.OK {
-		fmt.Println("Query", name, "unexpectedly succeeded")
+		testLog.Info("Query", name, "unexpectedly succeeded")
 		t.FailNow()
 	}else {
-		fmt.Println("Query", name, "failed as espected, with message: ",res.Message)
+		testLog.Info("Query", name, "failed as espected, with message: ",res.Message)
 
 	}
 }
@@ -117,38 +118,38 @@ func checkBadQuery(t *testing.T, stub *shim.MockStub, function string, name stri
 func checkQuery(t *testing.T, stub *shim.MockStub, function string, name string, value string) {
 	res := stub.MockInvoke("1", [][]byte{[]byte(function), []byte(name)})
 	if res.Status != shim.OK {
-		fmt.Println("Query", name, "failed", string(res.Message))
+		testLog.Info("Query", name, "failed", string(res.Message))
 		t.FailNow()
 	}
 	if res.Payload == nil {
-		fmt.Println("Query", name, "failed to get value")
+		testLog.Info("Query", name, "failed to get value")
 		t.FailNow()
 	}
 	payload := string(res.Payload)
 	if payload != value {
-		fmt.Println("Query value", name, "was", payload, "and not", value, "as expected")
+		testLog.Info("Query value", name, "was", payload, "and not", value, "as expected")
 		t.FailNow()
 	}else{
-		fmt.Println("Query value", name, "is", payload, "as expected")
+		testLog.Info("Query value", name, "is", payload, "as expected")
 	}
 }
 
 func checkQueryArgs(t *testing.T, stub *shim.MockStub, args [][]byte, value string) {
 	res := stub.MockInvoke("1", args)
 	if res.Status != shim.OK {
-		fmt.Println("Query", string(args[1]), "failed", string(res.Message))
+		testLog.Info("Query", string(args[1]), "failed", string(res.Message))
 		t.FailNow()
 	}
 	if res.Payload == nil {
-		fmt.Println("Query", string(args[1]), "failed to get value")
+		testLog.Info("Query", string(args[1]), "failed to get value")
 		t.FailNow()
 	}
 	payload := string(res.Payload)
 	if payload != value {
-		fmt.Println("Query value", string(args[1]), "was", payload, "and not", value, "as expected")
+		testLog.Info("Query value", string(args[1]), "was", payload, "and not", value, "as expected")
 		t.FailNow()
 	}else {
-		fmt.Println("Query value", string(args[1]), "is", payload, "as expected")
+		testLog.Info("Query value", string(args[1]), "is", payload, "as expected")
 
 	}
 }
@@ -157,30 +158,30 @@ func checkBadInvoke(t *testing.T, stub *shim.MockStub, functionAndArgs []string)
 	functionAndArgsAsBytes := lib.ParseStringSliceToByteSlice(functionAndArgs)
 	res := stub.MockInvoke("1", functionAndArgsAsBytes)
 	if res.Status == shim.OK {
-		fmt.Println("Invoke", functionAndArgs, "unexpectedly succeeded")
+		testLog.Info("Invoke", functionAndArgs, "unexpectedly succeeded")
 		t.FailNow()
 	}else {
-		fmt.Println("Invoke", functionAndArgs, "failed as espected, with message: "+ res.Message)
+		testLog.Info("Invoke", functionAndArgs, "failed as espected, with message: "+ res.Message)
 	}
 }
 
 // func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte) {
 // 	res := stub.MockInvoke("1", args)
 // 	if res.Status != shim.OK {
-// 		fmt.Println("Invoke", args, "failed", string(res.Message))
+// 		testLog.Info("Invoke", args, "failed", string(res.Message))
 // 		t.FailNow()
 // 	}else {
-// 		fmt.Println("Invoke", args, "successful", string(res.Message))
+// 		testLog.Info("Invoke", args, "successful", string(res.Message))
 // 	}
 // }
 func checkInvoke(t *testing.T, stub *shim.MockStub, functionAndArgs []string) {
 	functionAndArgsAsBytes := lib.ParseStringSliceToByteSlice(functionAndArgs)
 	res := stub.MockInvoke("1", functionAndArgsAsBytes)
 	if res.Status != shim.OK {
-		fmt.Println("Invoke", functionAndArgs, "failed", string(res.Message))
+		testLog.Info("Invoke", functionAndArgs, "failed", string(res.Message))
 		t.FailNow()
 	}else {
-		fmt.Println("Invoke", functionAndArgs, "successful", string(res.Message))
+		testLog.Info("Invoke", functionAndArgs, "successful", string(res.Message))
 	}
 }
 
@@ -234,7 +235,7 @@ func TestServiceCreation(t *testing.T) {
 	serviceAsBytes, _ := json.Marshal(service)
 	// tradeKey, _ := mockStub.CreateCompositeKey("Trade", []string{serviceId})
 	checkState(t, mockStub, serviceId, string(serviceAsBytes))
-	fmt.Println(serviceComposition)
+	testLog.Info(serviceComposition)
 	serviceCompositionJsonRappresentation := "["
 	for i := 0; i<len(service.ServiceComposition) ;i++  {
 		if i == 0 {
@@ -313,7 +314,7 @@ func TestServiceCreationWithMissingServiceComposition(t *testing.T) {
 	checkState(t, mockStub, serviceId, string(serviceAsBytes))
 
 
-	fmt.Println(len(service.ServiceComposition))
+	testLog.Info(len(service.ServiceComposition))
 
 	expectedResp := "{\"ServiceId\":\""+ serviceId + "\",\"Name\":\""+ serviceName + "\",\"Description\":\""+ serviceDescription + "\",\"ServiceComposition\":null}"
 	checkQuery(t, mockStub, "GetServiceNotFoundError", serviceId, expectedResp)
@@ -895,6 +896,203 @@ func TestQueryByServiceName(t *testing.T) {
 
 }
 
+func TestDeleteService(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Delete Service", simpleChaincode)
+
+
+	// CREATION OF SERVICE 1:
+	var functionAndArgsCreateService1 []string
+	createServiceFunctionName := CreateService
+	newServiceId1 := NewServiceId
+	newServiceName1 := NewServiceName
+	newServiceDescription1 := NewServiceDescription
+	serviceCompositionAsString1 := "asd,fda"
+	serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString1)
+	args1 := []string{newServiceId1, newServiceName1, newServiceDescription1, serviceCompositionAsString1}
+	functionAndArgsCreateService1 = append(functionAndArgsCreateService1, createServiceFunctionName)
+	functionAndArgsCreateService1 = append(functionAndArgsCreateService1,args1...)
+
+	checkInvoke(t, mockStub, functionAndArgsCreateService1)
+
+	serviceCompositionJsonRappresentation := "["
+	for i := 0; i<len(serviceComposition) ;i++  {
+		if i == 0 {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + "\""+serviceComposition[i]+ "\""
+		}else {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + ",\""+serviceComposition[i]+ "\""
+		}
+	}
+	serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation +"]"
+
+
+	// VERIFY THE QUERY BEFORE THE DELETE GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	var functionAndArgs []string
+	functionName:= GetService
+
+	args3 := []string{newServiceId1}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs, args3...)
+	// {"ServiceId":"idservice6","Name":"service6","Description":"service Description 6","ServiceComposition":["asd","fda"]}
+	expectedRespBeforeDelete := "{\"ServiceId\":\""+ newServiceId1 + "\",\"Name\":\""+ newServiceName1 + "\",\"Description\":\""+ newServiceDescription1 + "\",\"ServiceComposition\":"+ serviceCompositionJsonRappresentation + "}"
+	checkQuery(t, mockStub, functionName, newServiceId1, expectedRespBeforeDelete)
+
+
+	// DELETE THE SERVICE RELATION AGENT
+	var functionAndArgsDelete []string
+
+	functionNameDelete := DeleteService
+	argsDelete := []string{newServiceId1}
+
+	functionAndArgsDelete = append(functionAndArgsDelete, functionNameDelete)
+	functionAndArgsDelete = append(functionAndArgsDelete, argsDelete...)
+
+	checkInvoke(t, mockStub, functionAndArgsDelete)
+
+
+	// VERIFY THE QUERY AFTER THE DELETE GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	var functionAndArgs2 []string
+
+	functionAndArgs2 = append(functionAndArgs2, functionName)
+	functionAndArgs2 = append(functionAndArgs2, args3...)
+
+
+	expectedRespAfterDelete := "{\"ServiceId\":\"\",\"Name\":\"\",\"Description\":\"\",\"ServiceComposition\":null}"
+	checkQuery(t, mockStub, functionName, newServiceId1, expectedRespAfterDelete)
+
+}
+
+func TestDeleteServiceRelationAgent(t *testing.T) {
+	simpleChaincode := new(SimpleChaincode)
+	simpleChaincode.testMode = true
+	mockStub := shim.NewMockStub("Test Delete ServiceRelationAgent", simpleChaincode)
+
+	// CREATION OF AGENT 1:
+	var functionAndArgsAgentCreation []string
+	createAgentFunctionName := CreateAgent
+	newAgentId1 := NewAgentId
+	newAgentName := NewAgentName
+	newAgentAddress := NewAgentAddress
+	args := []string{newAgentId1, newAgentName, newAgentAddress}
+	functionAndArgsAgentCreation = append(functionAndArgsAgentCreation, createAgentFunctionName)
+	functionAndArgsAgentCreation = append(functionAndArgsAgentCreation, args...)
+
+	checkInvoke(t, mockStub, functionAndArgsAgentCreation)
+
+
+	// CREATION OF SERVICE 1:
+	var functionAndArgsCreateService1 []string
+	createServiceFunctionName := CreateService
+	newServiceId1 := NewServiceId
+	sameServiceName := NewServiceName
+	newServiceDescription1 := NewServiceDescription
+	serviceCompositionAsString1 := "asd,fda"
+	serviceComposition := lib.ParseStringToStringSlice(serviceCompositionAsString1)
+	args1 := []string{newServiceId1, sameServiceName, newServiceDescription1, serviceCompositionAsString1}
+	functionAndArgsCreateService1 = append(functionAndArgsCreateService1, createServiceFunctionName)
+	functionAndArgsCreateService1 = append(functionAndArgsCreateService1,args1...)
+
+	checkInvoke(t, mockStub, functionAndArgsCreateService1)
+
+	serviceCompositionJsonRappresentation := "["
+	for i := 0; i<len(serviceComposition) ;i++  {
+		if i == 0 {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + "\""+serviceComposition[i]+ "\""
+		}else {
+			serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation + ",\""+serviceComposition[i]+ "\""
+		}
+	}
+	serviceCompositionJsonRappresentation = serviceCompositionJsonRappresentation +"]"
+
+	// CREATION OF SERVICE RELATION AGENT 1:
+	var functionAndArgsServiceRelationAgentCreation []string
+	createServiceRelationAgentFunctionName := CreateServiceAgentRelation
+	newServiceRelationAgentId := NewServiceId + NewAgentId
+	newServiceId := NewServiceId
+	newAgentId := NewAgentId
+	newCost := "7"
+	newTime := "3"
+	args2 := []string{ newServiceId, newAgentId, newCost, newTime}
+	functionAndArgsServiceRelationAgentCreation = append(functionAndArgsServiceRelationAgentCreation, createServiceRelationAgentFunctionName)
+	functionAndArgsServiceRelationAgentCreation = append(functionAndArgsServiceRelationAgentCreation, args2...)
+
+	checkInvoke(t, mockStub, functionAndArgsServiceRelationAgentCreation)
+
+	// VERIFY THE QUERY BEFORE THE DELETE GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	var functionAndArgs []string
+	functionName:= GetServiceRelationAgent
+
+	args3 := []string{newServiceRelationAgentId}
+	functionAndArgs = append(functionAndArgs, functionName)
+	functionAndArgs = append(functionAndArgs, args3...)
+	// {"RelationId":"idservice6idagent6","ServiceId":"idservice6","AgentId":"idagent6","Cost":"7","Time":"3"}
+	expectedRespBeforeDelete := "{\"RelationId\":\""+ newServiceRelationAgentId + "\",\"ServiceId\":\""+ newServiceId + "\",\"AgentId\":\""+ newAgentId + "\",\"Cost\":\""+ newCost + "\",\"Time\":\""+ newTime + "\"}"
+	checkQuery(t, mockStub, functionName, newServiceRelationAgentId, expectedRespBeforeDelete)
+
+
+	// DELETE THE SERVICE RELATION AGENT
+	var functionAndArgsDelete []string
+
+	functionNameDelete := DeleteServiceRelationAgent
+	argsDelete := []string{newServiceRelationAgentId}
+
+	functionAndArgsDelete = append(functionAndArgsDelete, functionNameDelete)
+	functionAndArgsDelete = append(functionAndArgsDelete, argsDelete...)
+
+	checkInvoke(t, mockStub, functionAndArgsDelete)
+
+
+	// VERIFY THE QUERY AFTER THE DELETE GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	var functionAndArgs2 []string
+
+	functionAndArgs2 = append(functionAndArgs2, functionName)
+	functionAndArgs2 = append(functionAndArgs2, args3...)
+
+	expectedRespAfterDelete := "{\"RelationId\":\"\",\"ServiceId\":\"\",\"AgentId\":\"\",\"Cost\":\"\",\"Time\":\"\"}"
+	checkQuery(t, mockStub, functionName, newServiceRelationAgentId, expectedRespAfterDelete)
+
+	// VERIFY THE QUERY ON THE INDEX AFTER THE DELETE GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	testLog.Info("Test the GetAgentsByService Query")
+	var functionAndArgs3 []string
+
+	functionNameIndexQuery := GetAgentsByService
+
+	args4 := []string{newServiceId}
+
+	functionAndArgs3 = append(functionAndArgs3, functionNameIndexQuery)
+	functionAndArgs3 = append(functionAndArgs3, args4...)
+
+	expectedRespAfterDeleteOnIndex := "{\"RelationId\":\"\",\"ServiceId\":\"\",\"AgentId\":\"\",\"Cost\":\"\",\"Time\":\"\"}"
+	checkQuery(t, mockStub, functionName, newServiceRelationAgentId, expectedRespAfterDeleteOnIndex)
+
+	// VERIFY THE QUERY ON THE INDEX AFTER THE DELETE GetServicesByName with the newly created services
+	//   0
+	// "serviceName"
+	testLog.Info("Test the GetAgentsByService Query")
+	var functionAndArgs4 []string
+
+	functionNameIndexGetServicesByAgentQuery := GetServicesByAgent
+
+	args5 := []string{newServiceId}
+
+	functionAndArgs4 = append(functionAndArgs4, functionNameIndexGetServicesByAgentQuery)
+	functionAndArgs4 = append(functionAndArgs4, args5...)
+
+	expectedRespAfterDeleteOnIndex2 := "{\"RelationId\":\"\",\"ServiceId\":\"\",\"AgentId\":\"\",\"Cost\":\"\",\"Time\":\"\"}"
+	checkQuery(t, mockStub, functionName, newServiceRelationAgentId, expectedRespAfterDeleteOnIndex2)
+
+}
 
 /*
 func TestTradeWorkflow_LetterOfCredit(t *testing.T) {

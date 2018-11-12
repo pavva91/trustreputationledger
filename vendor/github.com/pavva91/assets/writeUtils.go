@@ -5,12 +5,12 @@ package assets
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"errors"
 )
 
+var writeUtilsLog = shim.NewLogger("writeUtils")
 // =====================================================================================================================
 // InitLedger - create a batch of new agents and services (TEST)
 // =====================================================================================================================
@@ -46,41 +46,41 @@ func InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
 	// InitServiceAgentRelation(stub, []string{"idservice1idagent2", "idservice1", "idagent2", "6", "2", "8"})
 
 	for i := 0; i < len(services); i++ {
-		fmt.Println("i is ", i)
+		serviceLog.Info("i is ", i)
 		serviceAsBytes, _ := json.Marshal(services[i])
-		fmt.Println(serviceAsBytes)
+		serviceLog.Info(serviceAsBytes)
 		err := stub.PutState(services[i].ServiceId, serviceAsBytes)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		fmt.Println("Addeds", services[i])
+		serviceLog.Info("Addeds", services[i])
 	}
 	for i := 0; i < len(agents); i++ {
-		fmt.Println("i is ", i)
+		serviceLog.Info("i is ", i)
 		agentAsBytes, _ := json.Marshal(agents[i])
 		err := stub.PutState(agents[i].AgentId, agentAsBytes)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		fmt.Println("Added", agents[i])
+		serviceLog.Info("Added", agents[i])
 	}
 	for i := 0; i < len(serviceRelationAgents); i++ {
-		fmt.Println("i is ", i)
+		serviceLog.Info("i is ", i)
 		serviceRelationAgentsAsBytes, _ := json.Marshal(serviceRelationAgents[i])
 		err := stub.PutState(serviceRelationAgents[i].RelationId, serviceRelationAgentsAsBytes)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		fmt.Println("Added", serviceRelationAgents[i])
+		serviceLog.Info("Added", serviceRelationAgents[i])
 	}
 	for i := 0; i < len(reputations); i++ {
-		fmt.Println("i is ", i)
+		serviceLog.Info("i is ", i)
 		reputationsAsBytes, _ := json.Marshal(reputations[i])
 		err := stub.PutState(reputations[i].ReputationId, reputationsAsBytes)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		fmt.Println("Added", reputations[i])
+		serviceLog.Info("Added", reputations[i])
 	}
 
 	return shim.Success(nil)

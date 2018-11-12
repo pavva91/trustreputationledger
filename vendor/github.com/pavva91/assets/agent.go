@@ -12,6 +12,7 @@ import (
 	"github.com/pavva91/arglib"
 )
 
+var agentLog = shim.NewLogger("agent")
 // =====================================================================================================================
 // Define the Agent structure, with 3 properties.  Structure tags are used by encoding/json library
 // =====================================================================================================================
@@ -32,7 +33,7 @@ func CreateAgent(agentId string, agentName string, agentAddress string, stub shi
 	// TODO: Integrare creazione key id
 	// univocalCompositeKey,err:=generalcc.CreateUnivocalCompositeKey("AGN",agentId,stub)
 	// if err != nil {
-	// 	fmt.Println(err.Error())
+	// 	serviceLog.Info(err.Error())
 	// 	return nil
 	// }
 
@@ -85,8 +86,8 @@ func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Ag
 	if err != nil {                             //this seems to always succeed, even if key didn't exist
 		return agent, errors.New("Error in finding agent - " + error.Error(err))
 	}
-	fmt.Println(agentAsBytes)
-	fmt.Println(agent)
+	serviceLog.Info(agentAsBytes)
+	serviceLog.Info(agent)
 
 	if agentAsBytes == nil {
 		return agent, errors.New("Agent non found, AgentId: " + agentId)
@@ -96,7 +97,7 @@ func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Ag
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)
 
-	fmt.Println(agent)
+	serviceLog.Info(agent)
 
 	return agent, nil
 }
@@ -109,15 +110,15 @@ func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 	if err != nil {                             //this seems to always succeed, even if key didn't exist
 		return agent, errors.New("Error in finding agent - " + error.Error(err))
 	}
-	fmt.Println(agentAsBytes)
-	fmt.Println(agent)
+	serviceLog.Info(agentAsBytes)
+	serviceLog.Info(agent)
 
 
 	json.Unmarshal(agentAsBytes, &agent) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Agent)
 
-	fmt.Println(agent)
+	serviceLog.Info(agent)
 
 	return agent, nil
 }
@@ -138,12 +139,12 @@ func GetAllAgents(stub shim.ChaincodeStubInterface) ([]Agent, error) {
 		}
 		queryKeyAsStr := aKeyValue.Key
 		queryValAsBytes := aKeyValue.Value
-		fmt.Println("on agent id - ", queryKeyAsStr)
+		serviceLog.Info("on agent id - ", queryKeyAsStr)
 		var agent Agent
 		json.Unmarshal(queryValAsBytes, &agent) //un stringify it aka JSON.parse()
 		agents = append(agents, agent)
 	}
-	fmt.Println("agent array - ", agents)
+	serviceLog.Info("agent array - ", agents)
 	return agents, nil
 }
 
@@ -157,7 +158,7 @@ func GetAllAgents(stub shim.ChaincodeStubInterface) ([]Agent, error) {
 //
 // =====================================================================================================================
 func DeleteAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("starting delete_marble")
+	serviceLog.Info("starting delete_marble")
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
@@ -174,7 +175,7 @@ func DeleteAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// get the service
 	service, err := GetServiceNotFoundError(stub, agentId)
 	if err != nil {
-		fmt.Println("Failed to find service by AgentId " + agentId)
+		serviceLog.Info("Failed to find service by AgentId " + agentId)
 		return shim.Error(err.Error())
 	}
 
@@ -190,7 +191,7 @@ func DeleteAgent(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("Failed to delete agent: " + err.Error())
 	}
 
-	fmt.Println("Deleted agent: " + service.Name)
+	serviceLog.Info("Deleted agent: " + service.Name)
 	return shim.Success(nil)
 }
 
@@ -221,7 +222,7 @@ func DeleteAllAgentServiceRelations(agentId string, stub shim.ChaincodeStubInter
 		fmt.Printf("Delete the relation: from composite key OBJECT_TYPE:%s AGENT ID:%s SERVICE ID:%s RELATION ID: %s\n", objectType, agentId, serviceId, relationId)
 
 		// remove the serviceRelationAgent
-		err = DeleteServiceAgentRelation(stub, relationId) //remove the key from chaincode state
+		err = DeleteServiceRelationAgent(stub, relationId) //remove the key from chaincode state
 		if err != nil {
 			return err
 		}

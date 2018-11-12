@@ -15,6 +15,7 @@ import (
 
 )
 
+var activityInvokeCallLog = shim.NewLogger("activityInvokeCall")
 /*
 For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
  */
@@ -29,7 +30,7 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
 
-	fmt.Println("- start init Service Evaluation")
+	activityInvokeCallLog.Info("- start init Service Evaluation")
 
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
@@ -52,13 +53,13 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	// ==== Check if already existing demanderAgent ====
 	demanderAgent, errA := a.GetAgentNotFoundError(stub, demanderAgentId)
 	if errA != nil {
-		fmt.Println("Failed to find demanderAgent by id " + demanderAgentId)
+		activityInvokeCallLog.Info("Failed to find demanderAgent by id " + demanderAgentId)
 		return shim.Error("Failed to find demanderAgent by id: " + errA.Error())
 	}
 	// ==== Check if already existing executerAgent ====
 	executerAgent, errA := a.GetAgentNotFoundError(stub, executerAgentId)
 	if errA != nil {
-		fmt.Println("Failed to find executerAgent by id " + executerAgentId)
+		activityInvokeCallLog.Info("Failed to find executerAgent by id " + executerAgentId)
 		return shim.Error("Failed to find executerAgent by id: " + errA.Error())
 	}
 	// ==== Check if WriterAgent == DemanderAgent || ExecuterAgent ====
@@ -75,7 +76,7 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	// ==== Check if already existing executedService ====
 	executedService, errS := a.GetServiceNotFoundError(stub, executedServiceId)
 	if errS != nil {
-		fmt.Println("Failed to find executedService by id " + executedServiceId)
+		activityInvokeCallLog.Info("Failed to find executedService by id " + executedServiceId)
 		return shim.Error("Failed to find executedService by id " + errS.Error())
 	}
 
@@ -86,7 +87,7 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	if err != nil {
 		return shim.Error("Failed to get executedService demanderAgent relation: " + err.Error())
 	} else if serviceEvaluationAsBytes != nil {
-		fmt.Println("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
+		activityInvokeCallLog.Info("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
 		return shim.Error("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
 	}
 
@@ -131,13 +132,13 @@ func CreateActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	payloadAsBytes := []byte(eventPayload)
 	eventError := stub.SetEvent("ActivityCreatedEvent",payloadAsBytes)
 	if eventError != nil {
-		fmt.Println("Error in event Creation: " + eventError.Error())
+		activityInvokeCallLog.Info("Error in event Creation: " + eventError.Error())
 	}else {
-		fmt.Println("Event Create Activity OK")
+		activityInvokeCallLog.Info("Event Create Activity OK")
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Servizio: " + executedService.Name + " evaluated by: " + writerAgent.Name + " relative to the transaction: " + executedServiceTxId)
+	activityInvokeCallLog.Info("Servizio: " + executedService.Name + " evaluated by: " + writerAgent.Name + " relative to the transaction: " + executedServiceTxId)
 	return shim.Success(nil)
 }
 
@@ -165,10 +166,10 @@ func QueryActivity(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	// ==== get the serviceEvaluation ====
 	serviceEvaluation, err := a.GetActivityNotFoundError(stub, evaluationId)
 	if err != nil {
-		fmt.Println("Failed to find serviceEvaluation by id " + evaluationId)
+		activityInvokeCallLog.Info("Failed to find serviceEvaluation by id " + evaluationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Evaluation ID: " + serviceEvaluation.EvaluationId + ", Writer Agent: " + serviceEvaluation.WriterAgentId + ", Demander Agent: " + serviceEvaluation.DemanderAgentId + ", Executer Agent: " + serviceEvaluation.ExecuterAgentId + ", of the Service: " + serviceEvaluation.ExecutedServiceId + ", with ExecutedServiceTimestamp: " + serviceEvaluation.ExecutedServiceTimestamp + ", with Evaluation: " + serviceEvaluation.Value)
+		activityInvokeCallLog.Info("Evaluation ID: " + serviceEvaluation.EvaluationId + ", Writer Agent: " + serviceEvaluation.WriterAgentId + ", Demander Agent: " + serviceEvaluation.DemanderAgentId + ", Executer Agent: " + serviceEvaluation.ExecuterAgentId + ", of the Service: " + serviceEvaluation.ExecutedServiceId + ", with ExecutedServiceTimestamp: " + serviceEvaluation.ExecutedServiceTimestamp + ", with Evaluation: " + serviceEvaluation.Value)
 		// ==== Marshal the Get Service Evaluation query result ====
 		evaluationAsJSON, err := json.Marshal(serviceEvaluation)
 		if err != nil {
@@ -201,7 +202,7 @@ func QueryByExecutedServiceTx(stub shim.ChaincodeStubInterface, args []string) p
 	// ==== Run the byExecutedServiceTx query ====
 	byExecutedServiceTxIdQuery, err := a.GetByExecutedServiceTx(executedServiceTxId, stub)
 	if err != nil {
-		fmt.Println("Failed to get service evaluation for this serviceTxId: " + executedServiceTxId)
+		activityInvokeCallLog.Info("Failed to get service evaluation for this serviceTxId: " + executedServiceTxId)
 		return shim.Error(err.Error())
 	}
 
@@ -240,7 +241,7 @@ func QueryByDemanderExecuter(stub shim.ChaincodeStubInterface, args []string) pb
 	// ==== Run the byExecutedServiceTx query ====
 	byExecutedServiceTxIdQuery, err := a.GetByDemanderExecuterTimestamp(demanderAgentId, executerAgentId, timestamp, stub)
 	if err != nil {
-		fmt.Println("Failed to get service evaluation for this demander: " + demanderAgentId + " and executer: " + executerAgentId)
+		activityInvokeCallLog.Info("Failed to get service evaluation for this demander: " + demanderAgentId + " and executer: " + executerAgentId)
 		return shim.Error(err.Error())
 	}
 
@@ -278,7 +279,7 @@ func GetActivitiesByExecutedServiceTxId(stub shim.ChaincodeStubInterface, args [
 	// ==== Run the byService query ====
 	byServiceQuery, err := a.GetByExecutedServiceTx(executedServiceTxId, stub)
 	if err != nil {
-		fmt.Println("The service Tx Id " + executedServiceTxId + " is not mapped with any service evaluation.")
+		activityInvokeCallLog.Info("The service Tx Id " + executedServiceTxId + " is not mapped with any service evaluation.")
 		return shim.Error(err.Error())
 	}
 
@@ -324,7 +325,7 @@ func GetActivitiesByDemanderExecuterTimestamp(stub shim.ChaincodeStubInterface, 
 	// ==== Run the ByDemanderExecuter query ====
 	byExecutedServiceTxIdQuery, err := a.GetByDemanderExecuterTimestamp(demanderAgentId, executerAgentId, timestamp, stub)
 	if err != nil {
-		fmt.Println("Failed to get service evaluation for this demander: " + demanderAgentId + " and executer: " + executerAgentId)
+		activityInvokeCallLog.Info("Failed to get service evaluation for this demander: " + demanderAgentId + " and executer: " + executerAgentId)
 		return shim.Error(err.Error())
 	}
 

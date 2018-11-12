@@ -25,6 +25,7 @@ import (
 	"strconv"
 )
 
+// var complexInteractionsLog = log.Logger{}("complexInteractions")
 func ArgumentSizeVerification(args []string, numberOfArguments int) error {
 	if len(args) != numberOfArguments {
 		return errors.New("Incorrect number of arguments. Expecting " + string(numberOfArguments))

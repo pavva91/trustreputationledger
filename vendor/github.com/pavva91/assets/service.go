@@ -13,7 +13,11 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"github.com/pavva91/arglib"
+	"strconv"
 )
+
+var serviceLog = shim.NewLogger("service")
+
 
 // =====================================================================================================================
 // Define the Service structure, with 3 properties.
@@ -82,6 +86,12 @@ func CreateService(serviceId string, serviceName string, serviceDescription stri
 
 	// === Save marble to state ===
 	stub.PutState(serviceId, service2JSONAsBytes)
+	transientMap, err := stub.GetTransient()
+	transientData, ok := transientMap["event"]
+	serviceLog.Info("OK: " + strconv.FormatBool(ok))
+	serviceLog.Info(transientMap)
+	serviceLog.Info(transientData)
+
 	return service, nil
 }
 
@@ -117,7 +127,7 @@ func CreateAndIndexLeafService(serviceId string, serviceName string, serviceDesc
 	if nameIndexError != nil {
 		return errors.New(nameIndexError.Error())
 	}
-	fmt.Println(nameIndexKey)
+	serviceLog.Info(nameIndexKey)
 	// TODO: Mettere a Posto (fare un create Service index
 
 	saveIndexError := SaveIndex(nameIndexKey, stub)
@@ -143,7 +153,7 @@ func CreateAndIndexCompositeService(serviceId string, serviceName string, servic
 	if nameIndexError != nil {
 		return errors.New(nameIndexError.Error())
 	}
-	fmt.Println(nameIndexKey)
+	serviceLog.Info(nameIndexKey)
 	// TODO: Mettere a Posto (fare un create Service index
 
 	saveIndexError := SaveIndex(nameIndexKey, stub)
@@ -169,7 +179,7 @@ func CreateAndIndexService(serviceId string, serviceName string, serviceDescript
 	if nameIndexError != nil {
 		return errors.New(nameIndexError.Error())
 	}
-	fmt.Println(nameIndexKey)
+	serviceLog.Info(nameIndexKey)
 	// TODO: Mettere a Posto (fare un create Service index
 
 	saveIndexError := SaveIndex(nameIndexKey, stub)
@@ -221,8 +231,8 @@ func GetServiceNotFoundError(stub shim.ChaincodeStubInterface, serviceId string)
 	if err != nil {                                 //this seems to always succeed, even if key didn't exist
 		return service, errors.New("Error in finding service: " + error.Error(err))
 	}
-	fmt.Println(serviceAsBytes)
-	fmt.Println(service)
+	serviceLog.Info(serviceAsBytes)
+	serviceLog.Info(service)
 
 	if serviceAsBytes == nil {
 		return service, errors.New("Service non found, ServiceId: " + serviceId)
@@ -232,7 +242,7 @@ func GetServiceNotFoundError(stub shim.ChaincodeStubInterface, serviceId string)
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
 
-	fmt.Println(service)
+	serviceLog.Info(service)
 	return service, nil
 }
 // =====================================================================================================================
@@ -245,15 +255,15 @@ func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, er
 	if err != nil {                                 //this seems to always succeed, even if key didn't exist
 		return service, errors.New("Error in finding service: " + error.Error(err))
 	}
-	fmt.Println(serviceAsBytes)
-	fmt.Println(service)
+	serviceLog.Info(serviceAsBytes)
+	serviceLog.Info(service)
 
 
 	json.Unmarshal(serviceAsBytes, &service) //un stringify it aka JSON.parse()
 
 	// TODO: Inserire controllo di tipo (Verificare sia di tipo Service)
 
-	fmt.Println(service)
+	serviceLog.Info(service)
 	return service, nil
 }
 
@@ -292,7 +302,7 @@ func GetByServiceName(serviceName string, stub shim.ChaincodeStubInterface) (shi
 //     ServiceId
 // =====================================================================================================================
 func DeleteService(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("Starting Delete Service")
+	serviceLog.Info("Starting Delete Service")
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
@@ -309,7 +319,7 @@ func DeleteService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	// get the service
 	service, err := GetServiceNotFoundError(stub, serviceId)
 	if err != nil {
-		fmt.Println("Failed to find service by ServiceId " + serviceId)
+		serviceLog.Info("Failed to find service by ServiceId " + serviceId)
 		return shim.Error(err.Error())
 	}
 
@@ -325,7 +335,7 @@ func DeleteService(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 		return shim.Error("Failed to delete service: " + err.Error())
 	}
 
-	fmt.Println("Deleted service: " + service.Name)
+	serviceLog.Info("Deleted service: " + service.Name)
 	return shim.Success(nil)
 }
 
@@ -356,7 +366,7 @@ func DeleteAllServiceAgentRelations(serviceId string, stub shim.ChaincodeStubInt
 		fmt.Printf("Delete the relation: from composite key OBJECT_TYPE:%s SERVICE ID:%s AGENT ID:%s RELATION ID: %s\n", objectType, serviceId, agentId, relationId)
 
 		// remove the serviceRelationAgent
-		err = DeleteServiceAgentRelation(stub, relationId) //remove the key from chaincode state
+		err = DeleteServiceRelationAgent(stub, relationId) //remove the key from chaincode state
 		if err != nil {
 			return err
 		}

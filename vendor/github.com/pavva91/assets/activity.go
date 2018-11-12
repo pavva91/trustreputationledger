@@ -10,6 +10,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
+var activityLog = shim.NewLogger("activity")
 // =====================================================================================================================
 // Define the Service Evaluation structure
 // =====================================================================================================================
@@ -82,7 +83,7 @@ func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId stri
 	if err != nil {
 		return nil, errors.New("Failed to get executedService demanderAgent relation: " + err.Error())
 	} else if serviceEvaluationAsBytes != nil {
-		fmt.Println("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
+		serviceLog.Info("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
 		return nil, errors.New("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
 	}
 

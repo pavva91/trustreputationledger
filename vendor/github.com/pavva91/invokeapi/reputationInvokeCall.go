@@ -13,6 +13,8 @@ import (
 	a "github.com/pavva91/assets"
 	)
 
+var reputationInvokeCallLog = shim.NewLogger("reputationInvokeCall")
+
 /*
 For now we want that the Activity assets can only be added on the ledger (NO MODIFY, NO DELETE)
  */
@@ -42,20 +44,21 @@ func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 	// ==== Check if already existing agent ====
 	agent, errA := a.GetAgentNotFoundError(stub, agentId)
 	if errA != nil {
-		fmt.Println("Failed to find Agent by id " + agentId)
+		reputationInvokeCallLog.Error(errA.Error())
 		return shim.Error("Failed to find Agent by id: " + errA.Error())
 	}
 
 	// ==== Check if already existing service ====
 	service, errS := a.GetServiceNotFoundError(stub, serviceId)
 	if errS != nil {
-		fmt.Println("Failed to find service by id " + serviceId)
+		reputationInvokeCallLog.Error(errS.Error())
 		return shim.Error("Failed to find service by id " + errS.Error())
 	}
 
 	// ==== Actual checking, creation and indexing of Reputation  ====
 	reputation, err := a.CheckingCreatingIndexingReputation(agentId,serviceId,agentRole,value,stub)
 	if err != nil {
+		reputationInvokeCallLog.Error("Failed to create reputation of agent " + agent.Name + " of service: " + service.Name + " with agent role: " + agentRole + ": " + err.Error())
 		return shim.Error("Failed to create reputation of agent " + agent.Name + " of service: " + service.Name + " with agent role: " + agentRole + ": " + err.Error())
 	}
 
@@ -65,13 +68,14 @@ func CreateReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 	payloadAsBytes := []byte(eventPayload)
 	eventError := stub.SetEvent("ReputationCreatedEvent",payloadAsBytes)
 	if eventError != nil {
-		fmt.Println("Error in event Creation: " + eventError.Error())
+		reputationInvokeCallLog.Error(eventError.Error())
+		return shim.Error(eventError.Error())
 	}else {
-		fmt.Println("Event Create Reputation OK")
+		reputationInvokeCallLog.Info("Event Create Reputation OK")
 	}
 
 	// ==== Reputation saved & indexed. Return success ====
-	fmt.Println("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
+	reputationInvokeCallLog.Info("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
 	return shim.Success(nil)
 }
 
@@ -89,7 +93,7 @@ func ModifyOrCreateReputationValue(stub shim.ChaincodeStubInterface, args []stri
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
 	if sanitizeError != nil {
-		fmt.Print(sanitizeError)
+		reputationInvokeCallLog.Error(sanitizeError.Error())
 		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
@@ -101,14 +105,14 @@ func ModifyOrCreateReputationValue(stub shim.ChaincodeStubInterface, args []stri
 	// ==== Check if already existing agent ====
 	agent, errA := a.GetAgentNotFoundError(stub, agentId)
 	if errA != nil {
-		fmt.Println("Failed to find Agent by id " + agentId)
+		reputationInvokeCallLog.Info("Failed to find Agent by id " + agentId)
 		return shim.Error("Failed to find Agent by id: " + errA.Error())
 	}
 
 	// ==== Check if already existing service ====
 	service, errS := a.GetServiceNotFoundError(stub, serviceId)
 	if errS != nil {
-		fmt.Println("Failed to find service by id " + serviceId)
+		reputationInvokeCallLog.Info("Failed to find service by id " + serviceId)
 		return shim.Error("Failed to find service by id " + errS.Error())
 	}
 
@@ -119,12 +123,12 @@ func ModifyOrCreateReputationValue(stub shim.ChaincodeStubInterface, args []stri
 	}
 
 	// ==== Reputation modified (or saved & indexed). Return success ====
-	fmt.Println("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
+	reputationInvokeCallLog.Info("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
 	return shim.Success(nil)
 
 
 	// ==== Reputation saved & indexed. Return success ====
-	fmt.Println("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
+	reputationInvokeCallLog.Info("ReputationId: " + reputation.ReputationId + " of agent: " + reputation.AgentId + " in role of: " + reputation.AgentRole + " relative to the service: " + reputation.ServiceId)
 	return shim.Success(nil)
 }
 
@@ -152,14 +156,14 @@ func ModifyReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.R
 	// ==== get the reputation ====
 	reputation, getError := a.GetReputationNotFoundError(stub, reputationId)
 	if getError != nil {
-		fmt.Println("Failed to find reputation by id " + reputationId)
+		reputationInvokeCallLog.Info("Failed to find reputation by id " + reputationId)
 		return shim.Error(getError.Error())
 	}
 
 	// ==== modify the reputation ====
 	modifyError := a.ModifyReputationValue(reputation,newReputationValue,stub)
 	if modifyError != nil {
-		fmt.Println("Failed to modify the reputation value: " + newReputationValue)
+		reputationInvokeCallLog.Info("Failed to modify the reputation value: " + newReputationValue)
 		return shim.Error(modifyError.Error())
 	}
 
@@ -169,9 +173,9 @@ func ModifyReputationValue(stub shim.ChaincodeStubInterface, args []string) pb.R
 	payloadAsBytes := []byte(eventPayload)
 	eventError := stub.SetEvent("ReputationModifiedEvent",payloadAsBytes)
 	if eventError != nil {
-		fmt.Println("Error in event Modification: " + eventError.Error())
+		reputationInvokeCallLog.Info("Error in event Modification: " + eventError.Error())
 	}else {
-		fmt.Println("Event Modifify Reputation OK")
+		reputationInvokeCallLog.Info("Event Modifify Reputation OK")
 	}
 
 
@@ -201,10 +205,10 @@ func QueryReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 	// ==== get the reputation ====
 	reputation, err := a.GetReputation(stub, reputationId)
 	if err != nil {
-		fmt.Println("Failed to find reputation by id " + reputationId)
+		reputationInvokeCallLog.Info("Failed to find reputation by id " + reputationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId)
+		reputationInvokeCallLog.Info("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId)
 		// ==== Marshal the Get Service Evaluation query result ====
 		evaluationAsJSON, err := json.Marshal(reputation)
 		if err != nil {
@@ -236,10 +240,10 @@ func QueryReputationNotFoundError(stub shim.ChaincodeStubInterface, args []strin
 	// ==== get the reputation ====
 	reputation, err := a.GetReputationNotFoundError(stub, reputationId)
 	if err != nil {
-		fmt.Println("Failed to find reputation by id " + reputationId)
+		reputationInvokeCallLog.Info("Failed to find reputation by id " + reputationId)
 		return shim.Error(err.Error())
 	} else {
-		fmt.Println("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId)
+		reputationInvokeCallLog.Info("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId)
 		// ==== Marshal the Get Service Evaluation query result ====
 		evaluationAsJSON, err := json.Marshal(reputation)
 		if err != nil {
@@ -280,20 +284,20 @@ func QueryByAgentServiceRole(stub shim.ChaincodeStubInterface, args []string) pb
 		agentRole := args[2]
 		byAgentServiceRoleQuery, err = a.GetByAgentServiceRole(agentId, serviceId, agentRole, stub)
 		if err != nil {
-			fmt.Println("Failed to get reputation for this agent: " + agentId + ", in this service: " + serviceId + ", in this role: " + agentRole)
+			reputationInvokeCallLog.Info("Failed to get reputation for this agent: " + agentId + ", in this service: " + serviceId + ", in this role: " + agentRole)
 			return shim.Error(err.Error())
 		}
 	case 2:
 		serviceId := args[1]
 		byAgentServiceRoleQuery, err = a.GetByAgentService(agentId, serviceId, stub)
 		if err != nil {
-			fmt.Println("Failed to get reputation for this agent: " + agentId + ", in this service: " + serviceId)
+			reputationInvokeCallLog.Info("Failed to get reputation for this agent: " + agentId + ", in this service: " + serviceId)
 			return shim.Error(err.Error())
 		}
 	case 1:
 		byAgentServiceRoleQuery, err = a.GetByAgentOnly(agentId, stub)
 		if err != nil {
-			fmt.Println("Failed to get reputation for this agent: " + agentId)
+			reputationInvokeCallLog.Info("Failed to get reputation for this agent: " + agentId)
 			return shim.Error(err.Error())
 		}
 	}
@@ -340,7 +344,7 @@ func GetReputationsByAgentServiceRole(stub shim.ChaincodeStubInterface, args []s
 	// ==== Run the byAgentServiceRole query ====
 	// byAgentServiceRoleQuery, err := a.GetByAgentServiceRole(agentId, serviceId, agentRole, stub)
 	if err != nil {
-		fmt.Println("Failed to get reputation for this agent: " + agentId + ", in this service: " + serviceId + ", in this role: " + agentRole)
+		reputationInvokeCallLog.Info("Failed to get reputation for this agent: " + agentId + ", in this service: " + serviceId + ", in this role: " + agentRole)
 		return shim.Error(err.Error())
 	}
 

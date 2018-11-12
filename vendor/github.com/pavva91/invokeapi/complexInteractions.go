@@ -10,6 +10,7 @@ import (
 
 )
 
+var complexInteractionsLog = shim.NewLogger("complexInteractions")
 // =====================================================================================================================
 // Init Service And Service Agent Relation - Same as InitServiceAgentRelation, but if the service doesn't exist
 // it will create the service (and relative indexes) first.
@@ -42,7 +43,7 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 	// ==== Check if already existing agent ====
 	agent, errA := a.GetAgentNotFoundError(stub, agentId)
 	if errA != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
+		complexInteractionsLog.Info("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
 	}
 
@@ -50,7 +51,7 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 	service, errS := a.GetServiceNotFoundError(stub, serviceId)
 	if errS != nil {
 		// se il servizio non esiste lo creo
-		fmt.Println("Failed to find service by id " + serviceId)
+		complexInteractionsLog.Info("Failed to find service by id " + serviceId)
 		errorCreateAndIndex := a.CreateAndIndexLeafService(serviceId, serviceName, serviceDescription, stub)
 		if errorCreateAndIndex != nil {
 			return shim.Error("Error in creating and indexing service: " + errorCreateAndIndex.Error())
@@ -76,13 +77,13 @@ func CreateServiceAndServiceAgentRelation(stub shim.ChaincodeStubInterface, args
 	payloadAsBytes := []byte(eventPayload)
 	eventError := stub.SetEvent("ServiceRelationAgentAndReputationCreatedEvent",payloadAsBytes)
 	if eventError != nil {
-		fmt.Println("Error in event Creation: " + eventError.Error())
+		complexInteractionsLog.Info("Error in event Creation: " + eventError.Error())
 	}else {
-		fmt.Println("Event Create ServiceRelationAgent and Reputation OK")
+		complexInteractionsLog.Info("Event Create ServiceRelationAgent and Reputation OK")
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " at cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " in the relation with initial reputation value of: "+ reputation.Value)
+	complexInteractionsLog.Info("Service: " + service.Name + " mapped with agent: " + agent.Name + " at cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " in the relation with initial reputation value of: "+ reputation.Value)
 	return shim.Success(nil)
 }
 
@@ -117,7 +118,7 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 	// ==== Check if already existing agent ====
 	agent, errA := a.GetAgentNotFoundError(stub, agentId)
 	if errA != nil {
-		fmt.Println("Failed to find agent by id " + agentId)
+		complexInteractionsLog.Info("Failed to find agent by id " + agentId)
 		return shim.Error("Failed to find agent by id: " + errA.Error())
 	}
 
@@ -125,7 +126,7 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 	service, errS := a.GetServiceNotFoundError(stub, serviceId)
 	if errS != nil {
 		// se il servizio non esiste lo creo
-		fmt.Println("Failed to find service by id " + serviceId)
+		complexInteractionsLog.Info("Failed to find service by id " + serviceId)
 		errorCreateAndIndex := a.CreateAndIndexLeafService(serviceId, serviceName, serviceDescription, stub)
 		if errorCreateAndIndex != nil {
 			return shim.Error("Error in creating and indexing service: " + errorCreateAndIndex.Error())
@@ -153,12 +154,12 @@ func CreateServiceAndServiceAgentRelationWithStandardValue(stub shim.ChaincodeSt
 	payloadAsBytes := []byte(eventPayload)
 	eventError := stub.SetEvent("ServiceRelationAgentAndReputationStandardValueCreatedEvent",payloadAsBytes)
 	if eventError != nil {
-		fmt.Println("Error in event Creation: " + eventError.Error())
+		complexInteractionsLog.Info("Error in event Creation: " + eventError.Error())
 	}else {
-		fmt.Println("Event Create ServiceRelationAgent and Reputation OK")
+		complexInteractionsLog.Info("Event Create ServiceRelationAgent and Reputation OK")
 	}
 
 	// ==== AgentServiceRelation saved & indexed. Return success ====
-	fmt.Println("Service: " + service.Name + " mapped with agent: " + agent.Name + " with cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " with initial (standard) reputation value of: "+ reputation.Value)
+	complexInteractionsLog.Info("Service: " + service.Name + " mapped with agent: " + agent.Name + " with cost: " + serviceRelationAgent.Cost + " and time: " + serviceRelationAgent.Time + " with initial (standard) reputation value of: "+ reputation.Value)
 	return shim.Success(nil)
 }

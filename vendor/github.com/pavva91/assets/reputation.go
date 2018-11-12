@@ -10,6 +10,7 @@ import (
 	"fmt"
 )
 
+var reputationLog = shim.NewLogger("reputation")
 // =====================================================================================================================
 // Define the Agent's Reputation structure
 // =====================================================================================================================
@@ -88,7 +89,7 @@ func CheckingCreatingIndexingReputation(agentId string, serviceId string,agentRo
 	if err != nil {
 		return nil,errors.New("Failed to get service agent reputation: " + err.Error())
 	} else if reputationAsBytes != nil {
-		fmt.Println("This service agent reputation already exists with reputationId: " + reputationId)
+		serviceLog.Info("This service agent reputation already exists with reputationId: " + reputationId)
 		return nil,errors.New("This service agent reputation already exists with reputationId: " + reputationId)
 	}
 

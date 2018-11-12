@@ -13,11 +13,15 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 	a "github.com/pavva91/assets"
 	gen "github.com/pavva91/generalcc"
+	"strconv"
+
 	// a "github.com/pavva91/trustreputationledger/assets"
 	// gen "github.com/pavva91/trustreputationledger/generalcc"
 	// in "github.com/pavva91/trustreputationledger/invokeapi"
 	in "github.com/pavva91/invokeapi"
 )
+
+var log = shim.NewLogger("trustreputationledger")
 
 const(
 	InitLedger    = "InitLedger"
@@ -42,6 +46,7 @@ const(
 	GetServicesByName                                     = "GetServicesByName"
 	DeleteService                                         = "DeleteService"
 	DeleteAgent                                           = "DeleteAgent"
+	DeleteServiceRelationAgent = "DeleteServiceRelationAgent"
 	CreateActivity                                        = "CreateActivity"
 	GetActivity                                           = "GetActivity"
 	ByExecutedServiceTxId                                 = "byExecutedServiceTxId"
@@ -105,46 +110,47 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 // ============================================================================================================================
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
+	log.Info("########### INVOKE: " + function + " ###########")
 
 	// TRY ChaincodeStubInterface Functions:
-	// fmt.Println("Received function Name - " +function)
+	// log.Info("Received function Name - " +function)
 	// for i, singleArg := range args {
 	// 	// s:= string(singleArg)
-	// 	fmt.Println("Parameter n. "+ strconv.Itoa(i) + " - " + singleArg)
+	// 	log.Info("Parameter n. "+ strconv.Itoa(i) + " - " + singleArg)
 	// }
 	// txId:=stub.GetTxID()
-	// fmt.Println("TX_ID: " + txId)
+	// log.Info("TX_ID: " + txId)
 	//
 	// chId:=stub.GetChannelID()
-	// fmt.Println("CH_ID: " + chId)
+	// log.Info("CH_ID: " + chId)
 	//
 	// creator,_:= stub.GetCreator()
 	// fmt.Print("Creator: ")
-	// fmt.Println(creator)
+	// log.Info(creator)
 	//
 	// transient,_:= stub.GetTransient()
 	// fmt.Print("Transient: ")
-	// fmt.Println(transient)
+	// log.Info(transient)
 	//
 	// signedProposal,_:= stub.GetSignedProposal()
 	// fmt.Print("Signed Proposal: ")
-	// fmt.Println(signedProposal)
+	// log.Info(signedProposal)
 	//
 	// txTimestamp, txTimestampError := stub.GetTxTimestamp()
 	// if txTimestampError != nil {
-	// 	fmt.Println(txTimestampError.Error())
+	// 	log.Info(txTimestampError.Error())
 	// }else {
 	// 	fmt.Print("Original Timestamp: ")
-	// 	fmt.Println(txTimestamp.String())
+	// 	log.Info(txTimestamp.String())
 	// 	timestampHumanReadable := time.Unix(txTimestamp.Seconds, int64(txTimestamp.Nanos))
 	// 	fmt.Print("Human Readable Timestamp: ")
-	// 	fmt.Println(timestampHumanReadable)
+	// 	log.Info(timestampHumanReadable)
 	// }
 	// eventError:=stub.SetEvent("EventHello", []byte("EventPayload"))
 	// if eventError != nil {
-	// 	fmt.Println(eventError.Error())
+	// 	log.Info(eventError.Error())
 	// }else {
-	// 	fmt.Println("Event OK")
+	// 	log.Info("Event OK")
 	// }
 	// END TRY
 
@@ -215,6 +221,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return a.DeleteService(stub, args)
 	case DeleteAgent:
 		return a.DeleteAgent(stub, args)
+	case DeleteServiceRelationAgent:
+		// TODO: Aggiungere delete indexes correlati
+		return a.DeleteServiceRelationAgentApi(stub, args)
 
 	// ACTIVITY INVOKES
 	// CREATE:
@@ -275,23 +284,28 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case GetValue:
 		return gen.GetValue(stub, args)
 	case HelloWorld:
-		fmt.Println("Hello, lorem ipsum")
+		log.Info("Hello, lorem ipsum")
 		var buffer bytes.Buffer
 		buffer.WriteString("[{\"Hello\":\"HelloWorld\"}]")
 		// TRY SET EVENT, OK WORKS
+		transientMap, _ := stub.GetTransient()
+		transientData, ok := transientMap["event"]
+		log.Info("OK: " + strconv.FormatBool(ok))
+		log.Info(transientMap)
+		log.Info(transientData)
 		eventPayload:="EventHello"
 		payloadAsBytes := []byte(eventPayload)
 		eventError := stub.SetEvent("HelloEvent",payloadAsBytes)
 		if eventError != nil {
-			fmt.Println(eventError.Error())
+			log.Info(eventError.Error())
 		}else {
-			fmt.Println("Event Create Service OK")
+			log.Info("Event Create Service OK")
 		}
 
 		return shim.Success(buffer.Bytes())
 	default:
 		// Error Output
-		fmt.Println("Received unknown in function Name - " + function)
+		log.Info("Received unknown in function Name - " + function)
 		return shim.Error("Invalid Smart Contract function Name.")
 	}
 
