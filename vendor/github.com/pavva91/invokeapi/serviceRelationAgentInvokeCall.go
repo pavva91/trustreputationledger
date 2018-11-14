@@ -160,13 +160,14 @@ func ModifyServiceRelationAgentCost(stub shim.ChaincodeStubInterface, args []str
 	// "relationId", "newRelationCost"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
 	if argumentSizeError != nil {
+		serviceRelationAgentInvokeCallLog.Error(argumentSizeError.Error())
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
 
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
 	if sanitizeError != nil {
-		fmt.Print(sanitizeError)
+		serviceRelationAgentInvokeCallLog.Error(sanitizeError)
 		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
@@ -176,17 +177,29 @@ func ModifyServiceRelationAgentCost(stub shim.ChaincodeStubInterface, args []str
 	// ==== get the serviceRelationAgent ====
 	serviceRelationAgent, getError := a.GetServiceRelationAgentNotFoundError(stub, relationId)
 	if getError != nil {
-		serviceRelationAgentInvokeCallLog.Info("Failed to find serviceRelationAgent by id " + relationId)
+		serviceRelationAgentInvokeCallLog.Info(getError.Error())
 		return shim.Error(getError.Error())
 	}
 
 	// ==== modify the serviceRelationAgent ====
 	modifyError := a.ModifyServiceRelationAgentCost(serviceRelationAgent, newRelationCost, stub)
 	if modifyError != nil {
-		serviceRelationAgentInvokeCallLog.Info("Failed to modify the serviceRelationAgent cost: " + newRelationCost)
+		serviceRelationAgentInvokeCallLog.Error(modifyError.Error())
 		return shim.Error(modifyError.Error())
 	}
 
+	// ==== ServiceRelationAgent Cost modified. Set Event ====
+
+	eventPayload:="Modified Service RelationAgent: " + serviceRelationAgent.ServiceId + " with agent: " + serviceRelationAgent.AgentId + "from old cost value: " + serviceRelationAgent.Cost + "to new cost value: " + newRelationCost
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceRelationAgentCostModifiedEvent",payloadAsBytes)
+	if eventError != nil {
+		serviceRelationAgentInvokeCallLog.Info("Error in event Creation: " + eventError.Error())
+	}else {
+		serviceRelationAgentInvokeCallLog.Info("Event Modifiy ServiceRelationAgent Cost OK")
+	}
+
+	serviceRelationAgentInvokeCallLog.Info("Modify Service RelationAgent Time OK")
 	return shim.Success(nil)
 }
 
@@ -198,13 +211,14 @@ func ModifyServiceRelationAgentTime(stub shim.ChaincodeStubInterface, args []str
 	// "relationId", "newRelationTime"
 	argumentSizeError := arglib.ArgumentSizeVerification(args, 2)
 	if argumentSizeError != nil {
+		serviceRelationAgentInvokeCallLog.Error(argumentSizeError.Error())
 		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
 	}
 
 	// ==== Input sanitation ====
 	sanitizeError := arglib.SanitizeArguments(args)
 	if sanitizeError != nil {
-		fmt.Print(sanitizeError)
+		serviceRelationAgentInvokeCallLog.Error(sanitizeError)
 		return shim.Error("Sanitize error: " + sanitizeError.Error())
 	}
 
@@ -214,17 +228,29 @@ func ModifyServiceRelationAgentTime(stub shim.ChaincodeStubInterface, args []str
 	// ==== get the serviceRelationAgent ====
 	serviceRelationAgent, getError := a.GetServiceRelationAgentNotFoundError(stub, relationId)
 	if getError != nil {
-		serviceRelationAgentInvokeCallLog.Info("Failed to find serviceRelationAgent by id " + relationId)
+		serviceRelationAgentInvokeCallLog.Error(getError.Error())
 		return shim.Error(getError.Error())
 	}
 
 	// ==== modify the serviceRelationAgent ====
 	modifyError := a.ModifyServiceRelationAgentTime(serviceRelationAgent, newRelationTime, stub)
 	if modifyError != nil {
-		serviceRelationAgentInvokeCallLog.Info("Failed to modify the serviceRelationAgent cost: " + newRelationTime)
+		serviceRelationAgentInvokeCallLog.Info(modifyError.Error())
 		return shim.Error(modifyError.Error())
 	}
 
+	// ==== ServiceRelationAgent Time modified. Set Event ====
+
+	eventPayload:="Modified Service RelationAgent: " + serviceRelationAgent.ServiceId + " with agent: " + serviceRelationAgent.AgentId + "from old time value: " + serviceRelationAgent.Time + "to new time value: " + newRelationTime
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceRelationAgentTimeModifiedEvent",payloadAsBytes)
+	if eventError != nil {
+		serviceRelationAgentInvokeCallLog.Info("Error in event Creation: " + eventError.Error())
+	}else {
+		serviceRelationAgentInvokeCallLog.Info("Event Modifiy ServiceRelationAgent Time OK")
+	}
+
+	serviceRelationAgentInvokeCallLog.Info("Modify Service RelationAgent Time OK")
 	return shim.Success(nil)
 }
 
@@ -612,9 +638,9 @@ func QueryByAgentServiceRelation(stub shim.ChaincodeStubInterface, args []string
 
 // ============================================================================================================================
 // Remove Service Agent Relation - wrapper of DeleteServiceRelationAgent a marble from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
-// UNSAFE function, TODO: you have to remove also the indexes
+// UNSAFE function
 // ============================================================================================================================
-func RemoveServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func DeleteServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	serviceRelationAgentInvokeCallLog.Info("starting delete serviceRelationAgent agent relation")
 
 	//   0
@@ -648,3 +674,73 @@ func RemoveServiceAgentRelation(stub shim.ChaincodeStubInterface, args []string)
 	fmt.Printf("Deleted serviceRelationAgent that maps ServiceId: %s, with AgentId: %s of Cost: %s, Time: %s\n", serviceRelationAgent.ServiceId, serviceRelationAgent.AgentId, serviceRelationAgent.Cost, serviceRelationAgent.Time)
 	return shim.Success(nil)
 }
+
+// =====================================================================================================================
+// DeleteServiceRelationAgentApi() - remove a service from state and from service index
+//
+// Shows Off DelState() - "removing"" a key/value from the ledger
+//
+// Inputs:
+//      0
+//     RelationId
+// =====================================================================================================================
+func DeleteServiceRelationAgentAndIndexes(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	//   0
+	// "RelationId"
+	argumentSizeError := arglib.ArgumentSizeVerification(args, 1)
+	if argumentSizeError != nil {
+		serviceRelationAgentInvokeCallLog.Error(argumentSizeError)
+		return shim.Error("Argument Size Error: " + argumentSizeError.Error())
+	}
+	// input sanitation
+	err := arglib.SanitizeArguments(args)
+	if err != nil {
+		serviceRelationAgentInvokeCallLog.Error(err.Error())
+		return shim.Error(err.Error())
+	}
+
+	// get args into variables
+	relationId := args[0]
+
+	// get the serviceRelationAgent
+	serviceRelationAgent, err := a.GetServiceRelationAgentNotFoundError(stub, relationId)
+	if err != nil {
+		serviceRelationAgentInvokeCallLog.Info("Failed to find serviceRelationAgent by relationId " + relationId)
+		return shim.Error(err.Error())
+	}
+
+	// ==== remove the serviceRelationAgent ====
+	err = stub.DelState(relationId) //remove the key from chaincode state
+	if err != nil {
+		return shim.Error("Failed to delete serviceRelationAgent: " + err.Error())
+	}
+
+	// ==== remove the indexes ====
+	indexNameService := "service~agent~relation"
+	err = a.DeleteServiceIndex(stub, indexNameService,serviceRelationAgent.ServiceId,serviceRelationAgent.AgentId,serviceRelationAgent.RelationId)
+	if err != nil {
+		return shim.Error("Failed to delete serviceRelationAgent Agent Index: " + err.Error())
+	}
+
+	indexNameAgent := "agent~service~relation"
+	err = a.DeleteAgentIndex(stub, indexNameAgent,serviceRelationAgent.AgentId,serviceRelationAgent.ServiceId,serviceRelationAgent.RelationId)
+	if err != nil {
+		return shim.Error("Failed to delete serviceRelationAgent Agent Index: " + err.Error())
+	}
+
+	// ==== ServiceRelationAgent and indexed deleted. Set Event ====
+	eventPayload:="Deleted Service RelationAgent: " + serviceRelationAgent.RelationId + ", of service: " + serviceRelationAgent.ServiceId + ", with agent: " + serviceRelationAgent.AgentId
+	payloadAsBytes := []byte(eventPayload)
+	eventError := stub.SetEvent("ServiceRelationAgentDeletedEvent",payloadAsBytes)
+	if eventError != nil {
+		serviceRelationAgentInvokeCallLog.Error("Error in event Creation: " + eventError.Error())
+	}else {
+		serviceRelationAgentInvokeCallLog.Info("Event Delete ServiceRelationAgent OK")
+	}
+
+	// ==== ServiceRelationAgent saved & indexed. Return success ====
+	serviceRelationAgentInvokeCallLog.Info("Deleted serviceRelationAgent: " + serviceRelationAgent.RelationId)
+	return shim.Success(nil)
+}
+

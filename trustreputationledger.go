@@ -46,7 +46,9 @@ const(
 	GetServicesByName                                     = "GetServicesByName"
 	DeleteService                                         = "DeleteService"
 	DeleteAgent                                           = "DeleteAgent"
-	DeleteServiceRelationAgent = "DeleteServiceRelationAgent"
+	DeleteServiceRelationAgent 							  = "DeleteServiceRelationAgent"
+	ModifyServiceRelationAgentCost 						  = "ModifyServiceRelationAgentCost"
+	ModifyServiceRelationAgentTime						  = "ModifyServiceRelationAgentTime"
 	CreateActivity                                        = "CreateActivity"
 	GetActivity                                           = "GetActivity"
 	ByExecutedServiceTxId                                 = "byExecutedServiceTxId"
@@ -111,48 +113,6 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	log.Info("########### INVOKE: " + function + " ###########")
-
-	// TRY ChaincodeStubInterface Functions:
-	// log.Info("Received function Name - " +function)
-	// for i, singleArg := range args {
-	// 	// s:= string(singleArg)
-	// 	log.Info("Parameter n. "+ strconv.Itoa(i) + " - " + singleArg)
-	// }
-	// txId:=stub.GetTxID()
-	// log.Info("TX_ID: " + txId)
-	//
-	// chId:=stub.GetChannelID()
-	// log.Info("CH_ID: " + chId)
-	//
-	// creator,_:= stub.GetCreator()
-	// fmt.Print("Creator: ")
-	// log.Info(creator)
-	//
-	// transient,_:= stub.GetTransient()
-	// fmt.Print("Transient: ")
-	// log.Info(transient)
-	//
-	// signedProposal,_:= stub.GetSignedProposal()
-	// fmt.Print("Signed Proposal: ")
-	// log.Info(signedProposal)
-	//
-	// txTimestamp, txTimestampError := stub.GetTxTimestamp()
-	// if txTimestampError != nil {
-	// 	log.Info(txTimestampError.Error())
-	// }else {
-	// 	fmt.Print("Original Timestamp: ")
-	// 	log.Info(txTimestamp.String())
-	// 	timestampHumanReadable := time.Unix(txTimestamp.Seconds, int64(txTimestamp.Nanos))
-	// 	fmt.Print("Human Readable Timestamp: ")
-	// 	log.Info(timestampHumanReadable)
-	// }
-	// eventError:=stub.SetEvent("EventHello", []byte("EventPayload"))
-	// if eventError != nil {
-	// 	log.Info(eventError.Error())
-	// }else {
-	// 	log.Info("Event OK")
-	// }
-	// END TRY
 
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	switch function {
@@ -222,8 +182,13 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case DeleteAgent:
 		return a.DeleteAgent(stub, args)
 	case DeleteServiceRelationAgent:
-		// TODO: Aggiungere delete indexes correlati
-		return a.DeleteServiceRelationAgentApi(stub, args)
+		return in.DeleteServiceRelationAgentAndIndexes(stub, args)
+
+		// MODIFY:
+	case ModifyServiceRelationAgentCost:
+		return in.ModifyServiceRelationAgentCost(stub,args)
+	case ModifyServiceRelationAgentTime:
+		return in.ModifyServiceRelationAgentTime(stub,args)
 
 	// ACTIVITY INVOKES
 	// CREATE:

@@ -6,7 +6,6 @@ package assets
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -46,7 +45,11 @@ func CreateActivity(evaluationId string, writerAgentId string, demanderAgentId s
 	serviceEvaluationJSONAsBytes, _ := json.Marshal(serviceEvaluation)
 
 	// === Save Service Evaluation to state ===
-	stub.PutState(evaluationId, serviceEvaluationJSONAsBytes)
+	if err := stub.PutState(evaluationId, serviceEvaluationJSONAsBytes) ; err != nil {
+		activityLog.Error(err)
+		return nil, err
+	}
+
 
 	return serviceEvaluation, nil
 }
@@ -58,6 +61,7 @@ func CreateServiceTxIndex(activity *Activity, stub shim.ChaincodeStubInterface) 
 	indexName := "serviceTx~evaluation"
 	serviceTxIndexKey, err = stub.CreateCompositeKey(indexName, []string{activity.ExecutedServiceTxid, activity.EvaluationId})
 	if err != nil {
+		activityLog.Error(err)
 		return serviceTxIndexKey, err
 	}
 	return serviceTxIndexKey, nil
@@ -70,6 +74,7 @@ func CreateDemanderExecuterTimestampIndex(activity *Activity, stub shim.Chaincod
 	indexName := "demander~executer~timestamp~evaluation"
 	agentServiceIndex, err = stub.CreateCompositeKey(indexName, []string{activity.DemanderAgentId, activity.ExecuterAgentId, activity.ExecutedServiceTimestamp, activity.EvaluationId})
 	if err != nil {
+		activityLog.Error(err)
 		return agentServiceIndex, err
 	}
 	return agentServiceIndex, nil
@@ -81,16 +86,21 @@ func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId stri
 	evaluationId := writerAgentId + demanderAgentId + executerAgentId + executedServiceTxId
 	serviceEvaluationAsBytes, err := stub.GetState(evaluationId)
 	if err != nil {
-		return nil, errors.New("Failed to get executedService demanderAgent relation: " + err.Error())
+		newError :=  errors.New("Failed to get executedService demanderAgent relation: " + err.Error())
+		activityLog.Error(newError)
+		return nil, newError
 	} else if serviceEvaluationAsBytes != nil {
-		serviceLog.Info("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
-		return nil, errors.New("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
+		newError := errors.New("This executedService demanderAgent relation already exists with relationId: " + evaluationId)
+		activityLog.Error(newError)
+		return nil, newError
 	}
 
 	// ==== Actual creation of Service Evaluation  ====
 	serviceEvaluation, err := CreateActivity(evaluationId, writerAgentId, demanderAgentId, executerAgentId, executedServiceId, executedServiceTxId, timestamp, value, stub)
 	if err != nil {
-		return nil, errors.New("Failed to create executedService demanderAgent relation of executedService " + executedServiceId + " with demanderAgent " + executedServiceId)
+		newError:=errors.New("Failed to create executedService demanderAgent relation of executedService " + executedServiceId + " with demanderAgent " + executedServiceId)
+		activityLog.Error(newError)
+		return nil, newError
 	}
 
 	// ==== Indexing of serviceEvaluation by Service Tx Id ====
@@ -98,7 +108,9 @@ func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId stri
 	// index create
 	serviceTxIndexKey, serviceIndexError := CreateServiceTxIndex(serviceEvaluation, stub)
 	if serviceIndexError != nil {
-		return nil, errors.New(serviceIndexError.Error())
+		newError := errors.New(serviceIndexError.Error())
+		activityLog.Error(newError)
+		return nil, newError
 	}
 	//  Note - passing a 'nil' emptyValue will effectively delete the key from state, therefore we pass null character as emptyValue
 	//  Save index entry to state. Only the key Name is needed, no need to store a duplicate copy of the ServiceAgentRelation.
@@ -106,7 +118,9 @@ func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId stri
 	// index save
 	putStateError := stub.PutState(serviceTxIndexKey, emptyValue)
 	if putStateError != nil {
-		return nil, errors.New("Error  saving Service index: " + putStateError.Error())
+		newError := errors.New("Error  saving Service index: " + putStateError.Error())
+		activityLog.Error(newError)
+		return nil, newError
 	}
 
 	// ==== Indexing of serviceEvaluation by Agent ====
@@ -114,12 +128,16 @@ func CheckingCreatingIndexingActivity(writerAgentId string, demanderAgentId stri
 	// index create
 	demanderExecuterIndexKey, agentIndexError := CreateDemanderExecuterTimestampIndex(serviceEvaluation, stub)
 	if agentIndexError != nil {
-		return nil, errors.New(agentIndexError.Error())
+		newError := errors.New(agentIndexError.Error())
+		activityLog.Error(newError)
+		return nil, newError
 	}
 	// index save
 	putStateDemanderExecuterIndexError := stub.PutState(demanderExecuterIndexKey, emptyValue)
 	if putStateDemanderExecuterIndexError != nil {
-		return nil, errors.New("Error  saving Agent index: " + putStateDemanderExecuterIndexError.Error())
+		newError := errors.New("Error  saving Agent index: " + putStateDemanderExecuterIndexError.Error())
+		activityLog.Error(newError)
+		return nil, newError
 	}
 
 	return serviceEvaluation, nil
@@ -132,7 +150,9 @@ func GetActivity(stub shim.ChaincodeStubInterface, evaluationId string) (Activit
 	var serviceRelationAgent Activity
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) // getState retreives a key/value from the ledger
 	if err != nil { // this seems to always succeed, even if key didn't exist
-		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
+		newError := errors.New("Error in finding service relation with agent: " + error.Error(err))
+		activityLog.Error(newError)
+		return serviceRelationAgent, newError
 	}
 
 	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) // un stringify it aka JSON.parse()
@@ -149,11 +169,15 @@ func GetActivityNotFoundError(stub shim.ChaincodeStubInterface, evaluationId str
 	var serviceRelationAgent Activity
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) // getState retreives a key/value from the ledger
 	if err != nil { // this seems to always succeed, even if key didn't exist
-		return serviceRelationAgent, errors.New("Error in finding service evaluation: " + error.Error(err))
+	newError := errors.New("Error in finding service evaluation: " + error.Error(err))
+		activityLog.Error(newError)
+		return serviceRelationAgent,newError
 	}
 
 	if serviceRelationAgentAsBytes == nil {
-		return Activity{}, errors.New("Service Evaluation non found, EvaluationId: " + evaluationId)
+		newError := errors.New("Service Evaluation non found, EvaluationId: " + evaluationId)
+		activityLog.Error(newError)
+		return Activity{}, newError
 	}
 	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) // un stringify it aka JSON.parse()
 
@@ -171,6 +195,7 @@ func GetByExecutedServiceTx(executedServiceTxId string, stub shim.ChaincodeStubI
 	indexName := "serviceTx~evaluation"
 	executedServiceTxResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{executedServiceTxId})
 	if err != nil {
+		activityLog.Error(err)
 		return executedServiceTxResultsIterator, err
 	}
 	return executedServiceTxResultsIterator, nil
@@ -185,6 +210,7 @@ func GetByDemanderExecuterTimestamp(demanderAgentId string, executerAgentId stri
 	indexName := "demander~executer~timestamp~evaluation"
 	demanderExecuterResultsIterator, err := stub.GetStateByPartialCompositeKey(indexName, []string{demanderAgentId, executerAgentId, timestamp})
 	if err != nil {
+		activityLog.Error(err)
 		return demanderExecuterResultsIterator, err
 	}
 	return demanderExecuterResultsIterator, nil
@@ -197,6 +223,7 @@ func DeleteServiceEvaluation(stub shim.ChaincodeStubInterface, evaluationId stri
 	// remove the serviceRelationAgent
 	err := stub.DelState(evaluationId) // remove the key from chaincode state
 	if err != nil {
+		activityLog.Error(err)
 		return err
 	}
 	return nil
@@ -211,12 +238,16 @@ func DeleteExecutedServiceTxIndex(stub shim.ChaincodeStubInterface, executedServ
 
 	agentServiceIndex, err := stub.CreateCompositeKey(indexName, []string{executedServiceTxId, evaluationId})
 	if err != nil {
+		activityLog.Error(err)
 		return err
 	}
 	err = stub.DelState(agentServiceIndex) // remove the key from chaincode state
 	if err != nil {
+		activityLog.Error(err)
+		activityLog.Error(err)
 		return err
 	}
+	activityLog.Info("DeleteExecutedServiceTxIndex: DELETED - indexName: " + indexName + " , executedServiceTxId: " + executedServiceTxId + ", evaluationId: " + evaluationId)
 	return nil
 }
 
@@ -224,17 +255,24 @@ func DeleteExecutedServiceTxIndex(stub shim.ChaincodeStubInterface, executedServ
 // Delete Agent Service Relation - delete from state and from marble index Shows Off DelState() - "removing"" a key/value from the ledger
 // =====================================================================================================================
 func DeleteDemanderExecuterIndex(stub shim.ChaincodeStubInterface, demanderAgentId string, executerAgentId string, evaluationId string) error {
-	// remove the serviceRelationAgent
+
+	// indexName
 	indexName := "demander~executer~evaluation"
 
+	// create the composite key
 	agentServiceIndex, err := stub.CreateCompositeKey(indexName, []string{demanderAgentId, executerAgentId, evaluationId})
 	if err != nil {
+		activityLog.Error(err.Error())
 		return err
 	}
+
+	// eliminate the record related to the composite key
 	err = stub.DelState(agentServiceIndex) // remove the key from chaincode state
 	if err != nil {
+		activityLog.Error(err.Error())
 		return err
 	}
+	activityLog.Info("DeleteDemanderExecuterIndex: DELETED - indexName: " + indexName + " , demanderAgentId: " + demanderAgentId + ", executerAgentId: " + executerAgentId + ", evaluationId: " + evaluationId)
 	return nil
 }
 
@@ -248,6 +286,7 @@ func GetActivitySliceFromServiceTxIdRangeQuery(queryIterator shim.StateQueryIter
 	for i := 0; queryIterator.HasNext(); i++ {
 		responseRange, err := queryIterator.Next()
 		if err != nil {
+			activityLog.Error(err.Error())
 			return nil, err
 		}
 		_, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
@@ -257,9 +296,10 @@ func GetActivitySliceFromServiceTxIdRangeQuery(queryIterator shim.StateQueryIter
 		iserviceRelationAgent, err := GetActivity(stub, evaluationId)
 		serviceEvaluations = append(serviceEvaluations, iserviceRelationAgent)
 		if err != nil {
+			activityLog.Error(err.Error())
 			return nil, err
 		}
-		fmt.Printf("- found a relation EVALUATION ID: %s \n", evaluationId)
+		activityLog.Info("- found a relation EVALUATION ID: %s \n", evaluationId)
 	}
 	return serviceEvaluations, nil
 }
@@ -275,6 +315,7 @@ func GetActivitySliceFromDemanderExecuterTimestampRangeQuery(queryIterator shim.
 	for i := 0; queryIterator.HasNext(); i++ {
 		responseRange, err := queryIterator.Next()
 		if err != nil {
+			activityLog.Error(err.Error())
 			return nil, err
 		}
 		_, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
@@ -284,9 +325,10 @@ func GetActivitySliceFromDemanderExecuterTimestampRangeQuery(queryIterator shim.
 		iserviceRelationAgent, err := GetActivity(stub, evaluationId)
 		serviceEvaluations = append(serviceEvaluations, iserviceRelationAgent)
 		if err != nil {
+			activityLog.Error(err.Error())
 			return nil, err
 		}
-		fmt.Printf("- found a relation EVALUATION ID: %s , VALUE: %s\n", iserviceRelationAgent.EvaluationId, iserviceRelationAgent.Value)
+		activityLog.Info("- found a relation EVALUATION ID: %s , VALUE: %s\n", iserviceRelationAgent.EvaluationId, iserviceRelationAgent.Value)
 	}
 	return serviceEvaluations, nil
 }
@@ -300,6 +342,7 @@ func PrintByExecutedServiceTxIdResultsIterator(queryIterator shim.StateQueryIter
 	for i := 0; queryIterator.HasNext(); i++ {
 		responseRange, err := queryIterator.Next()
 		if err != nil {
+			activityLog.Error(err.Error())
 			return err
 		}
 		// get the service agent relation from service~agent~relation composite key
@@ -309,9 +352,10 @@ func PrintByExecutedServiceTxIdResultsIterator(queryIterator shim.StateQueryIter
 		evaluationId := compositeKeyParts[1]
 
 		if err != nil {
+			activityLog.Error(err.Error())
 			return err
 		}
-		fmt.Printf("- found a relation from OBJECT_TYPE:%s EXECUTED SERVICE TX ID:%s EVALUATION ID: %s\n", indexName, executedServiceTxId, evaluationId)
+		activityLog.Info("- found a relation from OBJECT_TYPE:%s EXECUTED SERVICE TX ID:%s EVALUATION ID: %s\n", indexName, executedServiceTxId, evaluationId)
 	}
 	return nil
 }
@@ -324,6 +368,7 @@ func PrintByDemanderExecuterTimestampResultsIterator(queryIterator shim.StateQue
 	for i := 0; queryIterator.HasNext(); i++ {
 		responseRange, err := queryIterator.Next()
 		if err != nil {
+			activityLog.Error(err.Error())
 			return err
 		}
 		indexName, compositeKeyParts, err := stub.SplitCompositeKey(responseRange.Key)
@@ -333,9 +378,10 @@ func PrintByDemanderExecuterTimestampResultsIterator(queryIterator shim.StateQue
 		evaluationId := compositeKeyParts[3]
 
 		if err != nil {
+			activityLog.Error(err.Error())
 			return err
 		}
-		fmt.Printf("- found a relation from OBJECT_TYPE:%s Demander AGENT ID:%s Executer AGENT ID:%s  EVALUATION ID: %s\n", indexName, demanderAgentId, executerAgentId, evaluationId)
+		activityLog.Info("- found a relation from OBJECT_TYPE:%s Demander AGENT ID:%s Executer AGENT ID:%s  EVALUATION ID: %s\n", indexName, demanderAgentId, executerAgentId, evaluationId)
 	}
 	return nil
 }

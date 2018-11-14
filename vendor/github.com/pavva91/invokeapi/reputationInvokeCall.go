@@ -208,7 +208,7 @@ func QueryReputation(stub shim.ChaincodeStubInterface, args []string) pb.Respons
 		reputationInvokeCallLog.Info("Failed to find reputation by id " + reputationId)
 		return shim.Error(err.Error())
 	} else {
-		reputationInvokeCallLog.Info("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId)
+		reputationInvokeCallLog.Info("Reputation ID: " + reputation.ReputationId + ", of Agent: " + reputation.AgentId + ", Agent Role: " + reputation.AgentRole + ", of the Service: " + reputation.ServiceId + ", with the value: " + reputation.Value)
 		// ==== Marshal the Get Service Evaluation query result ====
 		evaluationAsJSON, err := json.Marshal(reputation)
 		if err != nil {
