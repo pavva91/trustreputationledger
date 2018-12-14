@@ -203,7 +203,7 @@ func GetReputation(stub shim.ChaincodeStubInterface, reputationId string) (Reput
 	var reputation Reputation
 	reputationAsBytes, err := stub.GetState(reputationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
-		return reputation, errors.New("Error in finding the reputation of the agent: " + error.Error(err))
+		return reputation, errors.New("Error in finding the reputation of the agent: " + err.Error())
 	}
 
 	json.Unmarshal(reputationAsBytes, &reputation) //un stringify it aka JSON.parse()
@@ -220,7 +220,7 @@ func GetReputationNotFoundError(stub shim.ChaincodeStubInterface, reputationId s
 	var reputation Reputation
 	serviceRelationAgentAsBytes, err := stub.GetState(reputationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
-		return reputation, errors.New("Error in finding service relation with agent: " + error.Error(err))
+		return reputation, errors.New("Error in finding service relation with agent: " + err.Error())
 	}
 
 	if serviceRelationAgentAsBytes == nil {

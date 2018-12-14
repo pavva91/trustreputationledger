@@ -84,7 +84,7 @@ func GetAgentNotFoundError(stub shim.ChaincodeStubInterface, agentId string) (Ag
 	var agent Agent
 	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
 	if err != nil {                             //this seems to always succeed, even if key didn't exist
-		return agent, errors.New("Error in finding agent - " + error.Error(err))
+		return agent, errors.New("Error in finding agent - " + err.Error())
 	}
 	serviceLog.Info(agentAsBytes)
 	serviceLog.Info(agent)
@@ -108,7 +108,7 @@ func GetAgent(stub shim.ChaincodeStubInterface, agentId string) (Agent, error) {
 	var agent Agent
 	agentAsBytes, err := stub.GetState(agentId) //getState retreives agent key/value from the ledger
 	if err != nil {                             //this seems to always succeed, even if key didn't exist
-		return agent, errors.New("Error in finding agent - " + error.Error(err))
+		return agent, errors.New("Error in finding agent - " + err.Error())
 	}
 	serviceLog.Info(agentAsBytes)
 	serviceLog.Info(agent)

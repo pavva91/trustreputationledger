@@ -150,7 +150,7 @@ func GetActivity(stub shim.ChaincodeStubInterface, evaluationId string) (Activit
 	var serviceRelationAgent Activity
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) // getState retreives a key/value from the ledger
 	if err != nil { // this seems to always succeed, even if key didn't exist
-		newError := errors.New("Error in finding service relation with agent: " + error.Error(err))
+		newError := errors.New("Error in finding service relation with agent: " + err.Error())
 		activityLog.Error(newError)
 		return serviceRelationAgent, newError
 	}
@@ -169,7 +169,7 @@ func GetActivityNotFoundError(stub shim.ChaincodeStubInterface, evaluationId str
 	var serviceRelationAgent Activity
 	serviceRelationAgentAsBytes, err := stub.GetState(evaluationId) // getState retreives a key/value from the ledger
 	if err != nil { // this seems to always succeed, even if key didn't exist
-	newError := errors.New("Error in finding service evaluation: " + error.Error(err))
+	newError := errors.New("Error in finding service evaluation: " + err.Error())
 		activityLog.Error(newError)
 		return serviceRelationAgent,newError
 	}

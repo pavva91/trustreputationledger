@@ -165,7 +165,7 @@ func GetServiceRelationAgent(stub shim.ChaincodeStubInterface, relationId string
 	var serviceRelationAgent ServiceRelationAgent
 	serviceRelationAgentAsBytes, err := stub.GetState(relationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
-		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
+		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + err.Error())
 	}
 
 	json.Unmarshal(serviceRelationAgentAsBytes, &serviceRelationAgent) //un stringify it aka JSON.parse()
@@ -182,7 +182,7 @@ func GetServiceRelationAgentNotFoundError(stub shim.ChaincodeStubInterface, rela
 	var serviceRelationAgent ServiceRelationAgent
 	serviceRelationAgentAsBytes, err := stub.GetState(relationId) //getState retreives a key/value from the ledger
 	if err != nil {                                               //this seems to always succeed, even if key didn't exist
-		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + error.Error(err))
+		return serviceRelationAgent, errors.New("Error in finding service relation with agent: " + err.Error())
 	}
 
 	if serviceRelationAgentAsBytes == nil {

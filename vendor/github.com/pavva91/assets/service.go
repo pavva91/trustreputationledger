@@ -229,7 +229,7 @@ func GetServiceNotFoundError(stub shim.ChaincodeStubInterface, serviceId string)
 	var service Service
 	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
 	if err != nil {                                 //this seems to always succeed, even if key didn't exist
-		return service, errors.New("Error in finding service: " + error.Error(err))
+		return service, errors.New("Error in finding service: " + err.Error())
 	}
 	serviceLog.Info(serviceAsBytes)
 	serviceLog.Info(service)
@@ -253,7 +253,7 @@ func GetService(stub shim.ChaincodeStubInterface, serviceId string) (Service, er
 	var service Service
 	serviceAsBytes, err := stub.GetState(serviceId) //getState retreives a key/value from the ledger
 	if err != nil {                                 //this seems to always succeed, even if key didn't exist
-		return service, errors.New("Error in finding service: " + error.Error(err))
+		return service, errors.New("Error in finding service: " + err.Error())
 	}
 	serviceLog.Info(serviceAsBytes)
 	serviceLog.Info(service)
